@@ -5,12 +5,11 @@ project(EKOSYSTEM)
 set(CMAKE_CXX_STANDARD 20)
 set(EKOSYSTEM_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(EKOSYSTEM_SOURCE "${EKOSYSTEM_INCLUDE}/ekosystem")
-set(EKOSYSTEM_ASSETS "${EKOSYSTEM_SOURCE}/assets")
+set(EKOSYSTEM_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
 #  Require Suprengine
 set(SUPRENGINE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cpp-suprengine/" CACHE FILEPATH "Path to the suprengine project")
 add_subdirectory("${SUPRENGINE_PATH}" "suprengine")
-message("DLLs: '${SUPRENGINE_DLLS}'")
 
 #  Find source files
 file(GLOB_RECURSE EKOSYSTEM_SOURCES CONFIGURE_DEPENDS "${EKOSYSTEM_SOURCE}/*.cpp")
