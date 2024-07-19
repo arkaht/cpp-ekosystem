@@ -5,7 +5,7 @@
 #include "world.h"
 #include "entities/pawn.h"
 #include "components/camera-controller.h"
-#include "data/pawn-data.hpp"
+#include "data/pawn-data.h"
 
 namespace eks
 {
@@ -26,15 +26,19 @@ namespace eks
 
 
 	public:
-		World* world;
+		World* world { nullptr };
 		SafePtr<CameraController> camera_controller;
 
 	private:
+		void _refresh_pawn_datas_names(
+			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
+		);
+
 		void _populate_pawns_table( 
 			const std::vector<SafePtr<Pawn>>& pawns
 		);
 		void _populate_pawn_factory(
-			const std::map<std::string, SharedPtr<PawnData>> pawn_datas
+			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
 		);
 		void _populate_selected_pawn(
 			const std::vector<SafePtr<Pawn>>& pawns 

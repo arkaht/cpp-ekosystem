@@ -42,15 +42,7 @@ void DebugMenu::populate()
 	auto& pawns = world->get_pawns();
 	auto& pawn_datas = world->get_pawn_datas();
 
-	//  Construct items list for combo
-	int i = 0;
-	_pawn_datas_names.clear();
-	_pawn_datas_names.resize( pawn_datas.size() );
-	for ( auto& pair : pawn_datas )
-	{
-		_pawn_datas_names[i] = pair.second->name.c_str();
-		i++;
-	}
+	_refresh_pawn_datas_names( pawn_datas );
 
 	//  Show ImGui demo window
 	static bool show_demo_menu = false;
@@ -70,6 +62,9 @@ void DebugMenu::populate()
 	//  Populate Engine header
 	if ( ImGui::CollapsingHeader( "Engine", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
+		auto fps = engine.get_updater()->get_fps();
+		ImGui::TextColored( ImVec4 { 1.0f, 1.0f, 1.0f, 1.0f }, "FPS: %d", fps );
+
 		//  Pause & time scale
 		ImGui::Checkbox( "Pause Game", &engine.is_game_paused );
 		ImGui::SliderFloat( "Time Scale", &updater->time_scale, 0.001f, 32.0f );
@@ -119,17 +114,136 @@ void DebugMenu::populate()
 	}
 	if ( ImGui::CollapsingHeader( "Data Assets", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
-		auto& pawn_datas = world->get_pawn_datas();
+		ImGui::SeparatorText( "Pawns" );
 
-		//ImGui::Combo()
+		ImGui::PushID( "PawnEditor" );
+		ImGui::Combo( "Pawn Data", &_selected_pawn_data_id, 
+			_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
+		if ( ImGui::Button( "Create Data" ) )
+		{
+			//world->
+		}
+
+		ImGui::Spacing();
+
+		//  Populate pawn data editor
+		std::string key = _pawn_datas_names[_selected_pawn_data_id];
+		auto& data = pawn_datas.at( key );
+
+        ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+		if ( ImGui::TreeNode( "General" ) )
+		{
+			//  Modulate
+			float modulate[3] {
+				data->modulate.r / 255.0f,
+				data->modulate.g / 255.0f,
+				data->modulate.b / 255.0f
+			};
+			if ( ImGui::ColorEdit3( "Modulate", modulate, ImGuiColorEditFlags_None ) )
+			{
+				data->modulate.r = (uint8_t)( modulate[0] * 255 );
+				data->modulate.g = (uint8_t)( modulate[1] * 255 );
+				data->modulate.b = (uint8_t)( modulate[2] * 255 );
+			}
+			ImGui::SetItemTooltip( "Color of the pawn" );
+
+			//  Move speed
+			ImGui::DragFloat( "Move Speed", &data->move_speed, 0.01f, 0.0f );
+			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
+
+			ImGui::TreePop();
+		}
+
+		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+		if ( ImGui::TreeNode( "Reproduction" ) )
+		{
+			ImGui::InputInt( "Child Spawn Count", &data->child_spawn_count );
+			ImGui::SetItemTooltip( "Amount of child to generate upon reproduction. Set to 0 to disable reproduction" );
+			
+			ImGui::DragFloat( "Min Food Reproduction", &data->min_food_reproduction, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Minimum amount of hunger this pawn needs before reproducing" );
+			
+			ImGui::DragFloat( "Food Loss on Reproduction", &data->food_loss_on_reproduction, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Amount of food to lose after reproduction" );
+			
+			ImGui::TreePop();
+		}
+
+		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+		if ( ImGui::TreeNode( "Nutrition" ) )
+		{
+			ImGui::DragFloat( "Food Amount", &data->food_amount, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Amount of food this pawn provide when eaten" );
+			
+			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Maximum amount of hunger this pawn can hold" );
+			
+			ImGui::DragFloat( "Hunger Gain Rate", &data->hunger_gain_rate, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Rate of increase of hunger per second" );
+			
+			ImGui::DragFloat( "Min Hunger to Eat", &data->min_hunger_to_eat, 0.001f, 0.0f );
+			ImGui::SetItemTooltip( "Minimum amount of hunger to start eating" );
+			
+			ImGui::TreePop();
+		}
+
+		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+		if ( ImGui::TreeNode( "Adjectives" ) )
+		{
+			if ( ImGui::BeginTable( "adjectives", 3, ImGuiTableFlags_None ) )
+			{
+				auto adjectives = reinterpret_cast<uint32_t*>( &data->adjectives );
+			
+				ImGui::TableNextColumn();
+				ImGui::CheckboxFlags( "Photosynthesis",	adjectives, (uint32_t)Adjectives::Photosynthesis );
+				ImGui::SetItemTooltip( "Consume light as food" );
+
+				ImGui::TableNextColumn();
+				ImGui::CheckboxFlags( "Carnivore",		adjectives, (uint32_t)Adjectives::Carnivore );
+				ImGui::SetItemTooltip( "Consume Meat as food" );
+
+				ImGui::TableNextColumn();
+				ImGui::CheckboxFlags( "Herbivore",		adjectives, (uint32_t)Adjectives::Herbivore );
+				ImGui::SetItemTooltip( "Consume Vegetal as food" );
+
+				ImGui::TableNextColumn();
+				ImGui::CheckboxFlags( "Meat",			adjectives, (uint32_t)Adjectives::Meat );
+				ImGui::SetItemTooltip( "Is eatable by Carnivore" );
+
+				ImGui::TableNextColumn();
+				ImGui::CheckboxFlags( "Vegetal",		adjectives, (uint32_t)Adjectives::Vegetal );
+				ImGui::SetItemTooltip( "Is eatable by Herbivore" );
+				
+				ImGui::EndTable();
+			}
+		
+			ImGui::TreePop();
+		}
+
+		ImGui::PopID();
 		ImGui::Spacing();
 	}
 
 	ImGui::End();
 }
 
-void DebugMenu::_populate_pawns_table( 
+void DebugMenu::_refresh_pawn_datas_names( 
+	const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
+)
+{
+	//  Construct items list for combo
+	int i = 0;
+	_pawn_datas_names.clear();
+	_pawn_datas_names.resize( pawn_datas.size() );
+	for ( auto& pair : pawn_datas )
+	{
+		_pawn_datas_names[i] = pair.second->name.c_str();
+		i++;
+	}
+}
+
+void DebugMenu::_populate_pawns_table(
 	const std::vector<SafePtr<Pawn>>& pawns
 )
 {
@@ -226,12 +340,12 @@ void DebugMenu::_populate_pawns_table(
 }
 
 void DebugMenu::_populate_pawn_factory(
-	const std::map<std::string, SharedPtr<PawnData>> pawn_datas
+	const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
 )
 {
 	ImGui::SeparatorText( "Pawn Factory" );
 
-	ImGui::Combo( "Pawn Data", &_selected_pawn_data_id, 
+	ImGui::Combo( "Pawn Data##Factory", &_selected_pawn_data_id, 
 		_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
 	if ( ImGui::Button( "Create Pawn" ) )

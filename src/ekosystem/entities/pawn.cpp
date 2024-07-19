@@ -17,6 +17,9 @@ void Pawn::setup()
 
 void Pawn::update_this( float dt )
 {
+	//  TODO: Debug build only
+	_renderer->modulate = data->modulate;
+
 	bool has_just_reached_tile = false;
 	if ( _move_path.size() > 0 )
 	{

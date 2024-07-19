@@ -14,18 +14,18 @@ namespace eks
 
 		//  Food consumption
 
-		//  Consume light as food.
+		//  Consume light as food
 		Photosynthesis	= 1 << 1,
-		//  Consume meat as food.
+		//  Consume Meat as food
 		Carnivore		= 1 << 2,
-		//  Consume vegetal as food.
+		//  Consume Vegetal as food
 		Herbivore		= 1 << 3,
 
 		//  Food type
 		
-		//  Is eatable by carnivores.
+		//  Is eatable by Carnivore
 		Meat			= 1 << 4,
-		//  Is eatable by herbivore.
+		//  Is eatable by Herbivore
 		Vegetal			= 1 << 5,
 	};
 	DEFINE_ENUM_WITH_FLAGS( Adjectives, uint32_t )
@@ -41,10 +41,10 @@ namespace eks
 		//  Color of the pawn
 		Color modulate;
 
-		//  In tile per seconds, how fast the pawn is?
+		//  Movement speed in tile per seconds
 		float move_speed = 1.0f;
 
-		//  How much child does it generate upon reproduction?
+		//  Amount of child to generate upon reproduction.
 		//  Set to 0 to disable reproduction.
 		int child_spawn_count = 0;
 		//  Minimum amount of hunger this pawn needs before 
