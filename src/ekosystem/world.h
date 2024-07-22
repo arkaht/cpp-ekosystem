@@ -4,7 +4,7 @@
 
 #include <suprengine/entity.h>
 
-#include <ekosystem/data/pawn-data.hpp>
+#include <ekosystem/data/pawn-data.h>
 
 namespace eks
 {
