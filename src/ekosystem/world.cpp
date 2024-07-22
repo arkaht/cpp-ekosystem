@@ -80,7 +80,7 @@ void World::clear()
 	_pawns.clear();
 }
 
-Vec3 World::find_random_tile_pos()
+Vec3 World::find_random_tile_pos() const
 {
 	return Vec3::snap_to_grid(
 		random::generate_location(
@@ -115,6 +115,11 @@ const std::vector<SafePtr<Pawn>>& World::get_pawns() const
 }
 
 const std::map<std::string, SharedPtr<PawnData>>& World::get_pawn_datas() const
+{
+	return _pawn_datas;
+}
+
+std::map<std::string, SharedPtr<PawnData>>& World::get_pawn_datas()
 {
 	return _pawn_datas;
 }

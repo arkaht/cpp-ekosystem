@@ -27,13 +27,14 @@ namespace eks
 
 		void clear();
 
-		Vec3 find_random_tile_pos();
+		Vec3 find_random_tile_pos() const;
 		SafePtr<Pawn> find_pawn_with( 
 			Adjectives adjectives, 
 			SafePtr<Pawn> pawn_to_ignore 
 		);
 
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
+		std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas();
 		const std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas() const;
 
 		Vec2 get_size() const;
