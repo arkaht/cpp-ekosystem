@@ -3,6 +3,7 @@
 #include <suprengine/usings.h>
 #include <suprengine/model.h>
 #include <suprengine/enum-flags.hpp>
+#include <suprengine/json.h>
 
 namespace eks
 {
@@ -71,6 +72,32 @@ namespace eks
 		bool has_adjective( Adjectives adjective ) const
 		{
 			return ( adjectives & adjective ) == adjective;
+		}
+
+		bool serialize( json::document& doc ) const
+		{
+			doc.SetObject();
+
+			json::add_string( doc, "name", name );
+			//  TODO: Store model asset reference
+			json::add_color( doc, "modulate", modulate );
+			
+			json::add_float( doc, "move_speed", move_speed );
+			
+			json::add_int( doc, "child_spawn_count", child_spawn_count );
+			json::add_float( doc, "min_food_reproduction", min_food_reproduction );
+			json::add_float( doc, "food_loss_on_reproduction", food_loss_on_reproduction );
+
+			json::add_float( doc, "food_amount", food_amount );
+			json::add_float( doc, "max_hunger", max_hunger );
+			json::add_float( doc, "hunger_gain_rate", hunger_gain_rate );
+			json::add_float( doc, "min_hunger_to_eat", min_hunger_to_eat );
+			
+			return true;
+		}
+		bool unserialize( const json::document& document )
+		{
+		
 		}
 	};
 }

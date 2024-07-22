@@ -1,6 +1,7 @@
 #include "debug-menu.h"
 
 #include <array>
+#include <filesystem>
 
 using namespace eks;
 
@@ -120,17 +121,44 @@ void DebugMenu::populate()
 		ImGui::Combo( "Pawn Data", &_selected_pawn_data_id, 
 			_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
+		std::string key = _pawn_datas_names[_selected_pawn_data_id];
+		auto& data = pawn_datas.at( key );
+
 		if ( ImGui::Button( "Create Data" ) )
 		{
 			//world->
+		}
+		if ( ImGui::Button( "Save Data" ) )
+		{
+			//  Serialize data
+			json::document doc;
+			data->serialize( doc );
+
+			//  Write the JSON into a string buffer
+			rapidjson::StringBuffer buffer;
+			rapidjson::PrettyWriter<rapidjson::StringBuffer> writer( buffer );
+			writer.SetMaxDecimalPlaces( 3 );  //  Fixes float values having unnecessary decimals
+			doc.Accept( writer );
+
+			//  TODO: Create and use the engine's filesystem
+			//  Ensure directories are created
+			std::string folder_path = "assets/ekosystem/data/pawns/";
+			std::filesystem::create_directories( folder_path );
+
+			//  Write the output into the file
+			std::string file_path = folder_path + data->name + ".json";
+			std::ofstream file( file_path );
+			if ( file.is_open() )
+			{
+				file << buffer.GetString();
+				file.close();
+				Logger::info( "The pawn data '%s' has been saved to '%s'!", data->name.c_str(), file_path.c_str() );
+			}
 		}
 
 		ImGui::Spacing();
 
 		//  Populate pawn data editor
-		std::string key = _pawn_datas_names[_selected_pawn_data_id];
-		auto& data = pawn_datas.at( key );
-
         ImGui::SetNextItemOpen( true, ImGuiCond_Once );
 		if ( ImGui::TreeNode( "General" ) )
 		{
