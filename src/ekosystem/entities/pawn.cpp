@@ -1,5 +1,7 @@
 #include "pawn.h"
 
+#include <suprengine/assets.h>
+
 using namespace eks;
 
 Pawn::Pawn( World* world, SafePtr<PawnData> _data )
@@ -8,8 +10,10 @@ Pawn::Pawn( World* world, SafePtr<PawnData> _data )
 
 void Pawn::setup()
 {
+	auto model = Assets::get_model( data->model_name );
+
 	_renderer = create_component<ModelRenderer>( 
-		data->model, 
+		model, 
 		SHADER_LIT_MESH, 
 		data->modulate
 	);

@@ -4,6 +4,7 @@
 #include <suprengine/model.h>
 #include <suprengine/enum-flags.hpp>
 #include <suprengine/json.h>
+#include <suprengine/render-batch.h>
 
 namespace eks
 {
@@ -37,8 +38,8 @@ namespace eks
 
 		//  Unique name of the pawn data
 		std::string name = "N/A";
-		//  Model of the pawn
-		SharedPtr<Model> model;
+		//  Model name of the pawn
+		std::string model_name = MESH_CUBE;
 		//  Color of the pawn
 		Color modulate;
 
@@ -74,30 +75,7 @@ namespace eks
 			return ( adjectives & adjective ) == adjective;
 		}
 
-		bool serialize( json::document& doc ) const
-		{
-			doc.SetObject();
-
-			json::add_string( doc, "name", name );
-			//  TODO: Store model asset reference
-			json::add_color( doc, "modulate", modulate );
-			
-			json::add_float( doc, "move_speed", move_speed );
-			
-			json::add_int( doc, "child_spawn_count", child_spawn_count );
-			json::add_float( doc, "min_food_reproduction", min_food_reproduction );
-			json::add_float( doc, "food_loss_on_reproduction", food_loss_on_reproduction );
-
-			json::add_float( doc, "food_amount", food_amount );
-			json::add_float( doc, "max_hunger", max_hunger );
-			json::add_float( doc, "hunger_gain_rate", hunger_gain_rate );
-			json::add_float( doc, "min_hunger_to_eat", min_hunger_to_eat );
-			
-			return true;
-		}
-		bool unserialize( const json::document& document )
-		{
-		
-		}
+		bool serialize( json::document& doc ) const;
+		bool unserialize( const json::document& doc );
 	};
 }

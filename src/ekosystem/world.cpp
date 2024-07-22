@@ -4,8 +4,11 @@
 #include <suprengine/assets.h>
 #include <suprengine/components/colliders/box-collider.h>
 #include <suprengine/random.h>
+#include <suprengine/json.h>
 
 #include "entities/pawn.h"
+
+#include <filesystem>
 
 using namespace eks;
 
@@ -131,6 +134,34 @@ Vec2 World::get_size() const
 
 void World::_init_datas()
 {
+	//  Load all pawn data files
+	std::filesystem::directory_iterator itr( "assets/ekosystem/data/pawns/" );
+	for ( const auto& entry : itr )
+	{
+		if ( entry.is_directory() ) continue;
+
+		auto& file_path = entry.path();
+		Logger::info( "Loading pawn data at '%s'", file_path.string().c_str() );
+
+		//  Read file contents
+		std::ifstream file( file_path );
+		std::string content( 
+			( std::istreambuf_iterator<char>( file ) ), 
+			( std::istreambuf_iterator<char>() ) 
+		);
+		file.close();
+
+		//  Parse contents into JSON
+		json::document doc;
+		doc.Parse( content.c_str() );
+		
+		//  Unserialize JSON to game data
+		auto data = std::make_shared<PawnData>();
+		data->name = file_path.filename().replace_extension().string();
+		data->unserialize( doc );
+		_add_pawn_data( data );
+	}
+	/*
 	auto model = Assets::get_model( MESH_CUBE );
 
 	//  Hare
@@ -182,6 +213,7 @@ void World::_init_datas()
 						 | Adjectives::Vegetal;
 		_add_pawn_data( data );
 	}
+	*/
 }
 
 void World::_add_pawn_data( SharedPtr<PawnData> data )

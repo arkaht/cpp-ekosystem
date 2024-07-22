@@ -1,0 +1,13 @@
+{
+    "model_name": "suprengine::arrow",
+    "modulate": "#FF0A64FF",
+    "move_speed": 1.5,
+    "child_spawn_count": 1,
+    "min_food_reproduction": 0.8,
+    "food_loss_on_reproduction": 0.4,
+    "food_amount": 1.0,
+    "max_hunger": 1.0,
+    "hunger_gain_rate": 0.07,
+    "min_hunger_to_eat": 0.3,
+    "adjectives": 20
+}
