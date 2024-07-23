@@ -23,14 +23,15 @@ namespace eks
 			const Vec3& tile_pos 
 		);
 
+		void add_pawn_data( SharedPtr<PawnData> data );
 		SafePtr<PawnData> get_pawn_data( rconst_str name ) const;
 
 		void clear();
 
 		Vec3 find_random_tile_pos() const;
 		SafePtr<Pawn> find_pawn_with( 
-			Adjectives adjectives, 
-			SafePtr<Pawn> pawn_to_ignore 
+			Adjectives adjectives,
+			SafePtr<Pawn> pawn_to_ignore
 		);
 
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
@@ -44,7 +45,6 @@ namespace eks
 
 	private:
 		void _init_datas();
-		void _add_pawn_data( SharedPtr<PawnData> data );
 
 		void _on_entity_removed( Entity* entity );
 

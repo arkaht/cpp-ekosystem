@@ -31,7 +31,8 @@ namespace eks
 
 	private:
 		void _refresh_pawn_datas_names(
-			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
+			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas,
+			const std::string& auto_select_name = ""
 		);
 
 		void _populate_pawns_table( 
@@ -47,6 +48,9 @@ namespace eks
 	private:
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
+
+		static const size_t _small_input_buffer_size = 32u;
+		char _small_input_buffer[_small_input_buffer_size];
 
 		std::vector<const char*> _pawn_datas_names;
 	};

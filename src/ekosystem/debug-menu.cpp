@@ -124,11 +124,47 @@ void DebugMenu::populate()
 		std::string key = _pawn_datas_names[_selected_pawn_data_id];
 		auto& data = pawn_datas.at( key );
 
+		const char* create_pawn_data_popup_id = "Create Data";
 		if ( ImGui::Button( "Create Data" ) )
 		{
-			//  TODO: Implement
-			//world->
+			memset( _small_input_buffer, NULL, _small_input_buffer_size );
+			ImGui::OpenPopup( create_pawn_data_popup_id );
 		}
+
+		//  Create data popup
+		auto center = viewport->GetCenter();
+		ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2 { 0.5f, 0.5f } );
+		if ( ImGui::BeginPopupModal( create_pawn_data_popup_id, NULL, ImGuiWindowFlags_AlwaysAutoResize ) )
+		{
+			ImGui::Text( "Choose an identifier for the new pawn data." );
+			ImGui::Separator();
+
+			ImGui::InputText( "Name", _small_input_buffer, _small_input_buffer_size, ImGuiInputTextFlags_CharsNoBlank );
+
+			ImGui::BeginDisabled( strlen( _small_input_buffer ) == 0 );
+			if ( ImGui::Button( "Create" ) )
+			{
+				auto data = std::make_shared<PawnData>();
+				data->name = _small_input_buffer;
+				world->add_pawn_data( data );
+				
+				//  Refresh and auto-select newly created data
+				_refresh_pawn_datas_names( pawn_datas, data->name );
+
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndDisabled();
+
+			ImGui::SameLine();
+
+			if ( ImGui::Button( "Cancel" ) )
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::SameLine();
 		if ( ImGui::Button( "Save Data" ) )
 		{
@@ -161,7 +197,7 @@ void DebugMenu::populate()
 		ImGui::Spacing();
 
 		//  Populate pawn data editor
-        ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
 		if ( ImGui::TreeNode( "General" ) )
 		{
 			//  Modulate
@@ -259,7 +295,8 @@ void DebugMenu::populate()
 }
 
 void DebugMenu::_refresh_pawn_datas_names( 
-	const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
+	const std::map<std::string, SharedPtr<PawnData>>& pawn_datas,
+	const std::string& auto_select_name
 )
 {
 	//  Construct items list for combo
@@ -269,6 +306,13 @@ void DebugMenu::_refresh_pawn_datas_names(
 	for ( auto& pair : pawn_datas )
 	{
 		_pawn_datas_names[i] = pair.second->name.c_str();
+
+		//  Auto-select
+		if ( !auto_select_name.empty() && auto_select_name == pair.second->name )
+		{
+			_selected_pawn_data_id = i;
+		}
+
 		i++;
 	}
 }

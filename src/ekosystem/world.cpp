@@ -67,6 +67,20 @@ SharedPtr<Pawn> World::create_pawn(
 	return pawn;
 }
 
+void World::add_pawn_data( SharedPtr<PawnData> data )
+{
+	if ( _pawn_datas.find( data->name ) != _pawn_datas.end() )
+	{
+		Logger::critical( "A pawn data with 'name' property equals to '%s' already exists! Please ensure they all are unique!",
+			data->name.c_str() );
+		return;
+	}
+
+	_pawn_datas[data->name] = data;
+	Logger::info( "A pawn data has been registered as '%s'", 
+		data->name.c_str() );
+}
+
 SafePtr<PawnData> World::get_pawn_data( rconst_str name ) const
 {
 	return _pawn_datas.at( name );
@@ -159,7 +173,7 @@ void World::_init_datas()
 		auto data = std::make_shared<PawnData>();
 		data->name = file_path.filename().replace_extension().string();
 		data->unserialize( doc );
-		_add_pawn_data( data );
+		add_pawn_data( data );
 	}
 	/*
 	auto model = Assets::get_model( MESH_CUBE );
@@ -214,20 +228,6 @@ void World::_init_datas()
 		_add_pawn_data( data );
 	}
 	*/
-}
-
-void World::_add_pawn_data( SharedPtr<PawnData> data )
-{
-	if ( _pawn_datas.find( data->name ) != _pawn_datas.end() )
-	{
-		Logger::critical( "A pawn data with 'name' property equals to '%s' already exists! Please ensure they all are unique!",
-			data->name.c_str() );
-		return;
-	}
-
-	_pawn_datas[data->name] = data;
-	Logger::info( "A pawn data has been registered as '%s'", 
-		data->name.c_str() );
 }
 
 void World::_on_entity_removed( Entity* entity )
