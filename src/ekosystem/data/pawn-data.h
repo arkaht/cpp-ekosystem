@@ -12,23 +12,23 @@ namespace eks
 
 	enum class Adjectives : uint32_t
 	{
-		None			= 1 << 0,
+		None			= 0,
 
 		//  Food consumption
 
 		//  Consume light as food
-		Photosynthesis	= 1 << 1,
+		Photosynthesis	= 1 << 0,
 		//  Consume Meat as food
-		Carnivore		= 1 << 2,
+		Carnivore		= 1 << 1,
 		//  Consume Vegetal as food
-		Herbivore		= 1 << 3,
+		Herbivore		= 1 << 2,
 
 		//  Food type
 		
 		//  Is eatable by Carnivore
-		Meat			= 1 << 4,
+		Meat			= 1 << 3,
 		//  Is eatable by Herbivore
-		Vegetal			= 1 << 5,
+		Vegetal			= 1 << 4,
 	};
 	DEFINE_ENUM_WITH_FLAGS( Adjectives, uint32_t )
 

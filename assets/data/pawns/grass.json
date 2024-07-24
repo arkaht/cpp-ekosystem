@@ -9,5 +9,5 @@
     "max_hunger": 1.0,
     "hunger_gain_rate": 0.05,
     "min_hunger_to_eat": 0.4,
-    "adjectives": 34
+    "adjectives": 49
 }
