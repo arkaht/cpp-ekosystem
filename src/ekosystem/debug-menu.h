@@ -14,6 +14,7 @@ namespace eks
 	namespace settings
 	{
 		constexpr ImVec4 HUNGER_COLOR { 0.8f, 0.3f, 0.1f, 1.0f };
+		constexpr size_t SMALL_INPUT_BUFFER_SIZE = 32;
 	}
 
 	class DebugMenu
@@ -49,8 +50,7 @@ namespace eks
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
 
-		static const size_t _small_input_buffer_size = 32u;
-		char _small_input_buffer[_small_input_buffer_size];
+		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE];
 
 		std::vector<const char*> _pawn_datas_names;
 	};

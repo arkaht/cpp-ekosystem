@@ -127,7 +127,7 @@ void DebugMenu::populate()
 		const char* create_pawn_data_popup_id = "Create Data";
 		if ( ImGui::Button( "Create Data" ) )
 		{
-			memset( _small_input_buffer, NULL, _small_input_buffer_size );
+			memset( _small_input_buffer, NULL, settings::SMALL_INPUT_BUFFER_SIZE );
 			ImGui::OpenPopup( create_pawn_data_popup_id );
 		}
 
@@ -139,7 +139,7 @@ void DebugMenu::populate()
 			ImGui::Text( "Choose an identifier for the new pawn data." );
 			ImGui::Separator();
 
-			ImGui::InputText( "Name", _small_input_buffer, _small_input_buffer_size, ImGuiInputTextFlags_CharsNoBlank );
+			ImGui::InputText( "Name", _small_input_buffer, settings::SMALL_INPUT_BUFFER_SIZE, ImGuiInputTextFlags_CharsNoBlank );
 
 			ImGui::BeginDisabled( strlen( _small_input_buffer ) == 0 );
 			if ( ImGui::Button( "Create" ) )
