@@ -36,8 +36,6 @@ namespace eks
 
 	struct PawnData
 	{
-		//  "Food" is the opposite of "hunger": 1.0f - hunger
-
 		//  Unique name of the pawn data
 		std::string name = "N/A";
 		//  Model name of the pawn
@@ -53,16 +51,16 @@ namespace eks
 		int child_spawn_count = 0;
 		//  Minimum amount of hunger this pawn needs before 
 		//  reproducing
-		float min_food_reproduction = 0.8f;
-		//  Amount of food to lose after reproduction
-		float food_loss_on_reproduction = 0.4f;
+		float min_hunger_for_reproduction = 0.8f;
+		//  Amount of hunger to consume after reproduction
+		float hunger_consumption_on_reproduction = 0.4f;
 
 		//  Amount of food this pawn provide when eaten
 		float food_amount = 1.0f;
 		//  Maximum amount of hunger this pawn can hold
 		float max_hunger = 1.0f;
 		//  Rate of increase of hunger per second
-		float hunger_gain_rate = 0.1f;
+		float natural_hunger_consumption = 0.1f;
 		//  Minimum amount of hunger to start eating
 		float min_hunger_to_eat = 0.4f;
 

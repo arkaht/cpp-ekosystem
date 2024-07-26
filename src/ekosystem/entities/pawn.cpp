@@ -8,7 +8,7 @@ Pawn::Pawn( World* world, SafePtr<PawnData> _data )
 	: _world( world ), data( _data )
 {
 	//  Avoid immediate reproduction upon creation
-	hunger = 1.0f - data->min_food_reproduction;
+	hunger = data->min_hunger_for_reproduction;
 }
 
 void Pawn::setup()
@@ -58,13 +58,17 @@ void Pawn::update_this( float dt )
 		transform->set_location( new_tile_pos * _world->TILE_SIZE );
 	}
 
+	//  BUG: High delta time values (i.e. time scaled by 32) can 
+	//		 make some behaviors such as reproduction impossible. 
+	//		 Substepping?
+
 	//  Hunger gain
-	hunger = math::min( 
-		hunger + data->hunger_gain_rate * dt, 
-		data->max_hunger 
+	hunger = math::max(
+		hunger - data->natural_hunger_consumption * dt,
+		0.0f
 	);
 
-	if ( hunger > data->min_hunger_to_eat )
+	if ( hunger < data->min_hunger_to_eat )
 	{
 		if ( !_food_target.is_valid() )
 		{
@@ -73,7 +77,10 @@ void Pawn::update_this( float dt )
 		}
 		else if ( _food_target->get_tile_pos() == _tile_pos )
 		{
-			hunger -= _food_target->data->food_amount;
+			hunger = math::min( 
+				hunger + _food_target->data->food_amount, 
+				data->max_hunger 
+			);
 			printf( "'%s' ate '%s'\n", 
 				get_name().c_str(), _food_target->get_name().c_str() );
 			
@@ -100,7 +107,7 @@ void Pawn::update_this( float dt )
 			_move_path.clear();
 			_find_partner();
 		}
-		else if ( 1.0f - _partner_target->hunger > _partner_target->data->min_food_reproduction )
+		else if ( _partner_target->hunger < _partner_target->data->min_hunger_for_reproduction )
 		{
 			_partner_target.reset();
 			_find_partner();
@@ -117,7 +124,7 @@ void Pawn::update_this( float dt )
 	}
 
 	//  Kill from hunger
-	if ( hunger >= data->max_hunger )
+	if ( hunger <= 0.0f )
 	{
 		kill();
 	}
@@ -141,11 +148,11 @@ void Pawn::reproduce()
 		auto child = _world->create_pawn( data, spawn_pos );
 	}
 
-	hunger += data->food_loss_on_reproduction;
+	hunger -= data->hunger_consumption_on_reproduction;
 
 	if ( _partner_target.is_valid() )
 	{
-		_partner_target->hunger += _partner_target->data->food_loss_on_reproduction;
+		_partner_target->hunger -= _partner_target->data->hunger_consumption_on_reproduction;
 		_partner_target.reset();
 	}
 }
@@ -169,8 +176,8 @@ Vec3 Pawn::get_tile_pos() const
 
 bool Pawn::can_reproduce() const
 {
-	return data->child_spawn_count > 0 
-		&& 1.0f - hunger > data->min_food_reproduction;
+	return data->child_spawn_count > 0
+		&& hunger >= data->min_hunger_for_reproduction;
 }
 
 std::string Pawn::get_name() const
@@ -217,7 +224,7 @@ void Pawn::_find_food()
 	}
 	else if ( data->has_adjective( Adjectives::Photosynthesis ) )
 	{
-		hunger = 0.0f;
+		hunger = data->max_hunger;
 		printf( "Photosynthesis '%s' wants to eat!\n", 
 			get_name().c_str() );
 	}

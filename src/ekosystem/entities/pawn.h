@@ -31,7 +31,7 @@ namespace eks
 	public:
 		SafePtr<PawnData> data;
 
-		float hunger = 0.0f;
+		float hunger = 1.0f;
 
 	private:
 		void _find_food();

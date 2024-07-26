@@ -248,7 +248,7 @@ void World::_init_datas()
 		data->food_amount = 1.0f;
 		data->max_hunger = 1.0f;
 		data->min_hunger_to_eat = 0.3f;
-		data->hunger_gain_rate = 0.05f;
+		data->natural_hunger_consumption = 0.05f;
 		data->child_spawn_count = 2;
 		data->adjectives = Adjectives::Herbivore
 						 | Adjectives::Meat;
@@ -265,7 +265,7 @@ void World::_init_datas()
 		data->food_amount = 1.0f;
 		data->max_hunger = 1.0f;
 		data->min_hunger_to_eat = 0.3f;
-		data->hunger_gain_rate = 0.07f;
+		data->natural_hunger_consumption = 0.07f;
 		data->child_spawn_count = 1;
 		data->adjectives = Adjectives::Carnivore
 						 | Adjectives::Meat;
@@ -281,7 +281,7 @@ void World::_init_datas()
 		data->move_speed = 0.0f;
 		data->food_amount = 0.3f;
 		data->max_hunger = 1.0f;
-		data->hunger_gain_rate = 0.05f;
+		data->natural_hunger_consumption = 0.05f;
 		data->child_spawn_count = 0;
 		data->adjectives = Adjectives::Photosynthesis
 						 | Adjectives::Vegetal;

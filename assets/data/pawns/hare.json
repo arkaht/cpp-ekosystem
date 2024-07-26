@@ -3,11 +3,11 @@
     "modulate": "#646464FF",
     "move_speed": 2.0,
     "child_spawn_count": 2,
-    "min_food_reproduction": 0.8,
-    "food_loss_on_reproduction": 0.4,
+    "min_hunger_for_reproduction": 0.8,
+    "hunger_consumption_on_reproduction": 0.4,
     "food_amount": 1.0,
     "max_hunger": 1.0,
-    "hunger_gain_rate": 0.05,
+    "natural_hunger_consumption": 0.05,
     "min_hunger_to_eat": 0.3,
     "adjectives": 12
 }
