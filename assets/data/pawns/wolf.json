@@ -1,5 +1,5 @@
 {
-    "model_name": "suprengine::arrow",
+    "model_name": "suprengine::sphere",
     "modulate": "#FF0A64FF",
     "move_speed": 1.5,
     "min_child_spawn_count": 1,
@@ -9,6 +9,6 @@
     "food_amount": 1.0,
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.07,
-    "min_hunger_to_eat": 0.3,
+    "min_hunger_to_eat": 0.5,
     "adjectives": 10
 }

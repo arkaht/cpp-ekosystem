@@ -173,6 +173,33 @@ SafePtr<Pawn> World::find_pawn_at(
 	return nullptr;
 }
 
+SafePtr<Pawn> eks::World::find_nearest_pawn(
+	const Vec3& origin,
+	std::function<bool( SafePtr<Pawn> )> callback
+) const
+{
+	SafePtr<Pawn> nearest_pawn = nullptr;
+	float nearest_dist = math::PLUS_INFINITY;
+	for ( auto& pawn : _pawns )
+	{
+		if ( callback( pawn ) )
+		{
+			float dist = Vec3::distance2d_sqr( 
+				origin, 
+				pawn->get_tile_pos() 
+			);
+
+			if ( nearest_pawn == nullptr || nearest_dist > dist )
+			{
+				nearest_pawn = pawn;
+				nearest_dist = dist;
+			}
+		}
+	}
+
+	return nearest_pawn;
+}
+
 SafePtr<Pawn> World::find_pawn( std::function<bool(SafePtr<Pawn>)> callback ) const
 {
 	for ( auto& pawn : _pawns )

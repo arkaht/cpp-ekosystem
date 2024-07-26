@@ -9,6 +9,6 @@
     "food_amount": 1.0,
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.05,
-    "min_hunger_to_eat": 0.3,
+    "min_hunger_to_eat": 0.6,
     "adjectives": 12
 }

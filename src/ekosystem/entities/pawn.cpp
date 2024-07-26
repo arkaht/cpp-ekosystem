@@ -202,9 +202,13 @@ void Pawn::_find_food()
 {
 	if ( data->has_adjective( Adjectives::Herbivore ) )
 	{
-		auto target = _world->find_pawn_with( 
-			Adjectives::Vegetal,
-			as<Pawn>()
+		auto target = _world->find_nearest_pawn(
+			_tile_pos,
+			[&]( auto pawn )
+			{
+				if ( pawn.get() == this ) return false;
+				return pawn->data->has_adjective( Adjectives::Vegetal );
+			}
 		);
 		if ( !target.is_valid() )
 		{
@@ -220,9 +224,13 @@ void Pawn::_find_food()
 	}
 	else if ( data->has_adjective( Adjectives::Carnivore ) )
 	{
-		auto target = _world->find_pawn_with( 
-			Adjectives::Meat,
-			as<Pawn>()
+		auto target = _world->find_nearest_pawn(
+			_tile_pos,
+			[&]( auto pawn )
+			{
+				if ( pawn.get() == this ) return false;
+				return pawn->data->has_adjective( Adjectives::Meat );
+			}
 		);
 		if ( !target.is_valid() )
 		{

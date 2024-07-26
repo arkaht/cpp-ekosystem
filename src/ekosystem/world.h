@@ -38,7 +38,13 @@ namespace eks
 			Adjectives adjectives,
 			const Vec3& pos
 		) const;
-		SafePtr<Pawn> find_pawn( std::function<bool(SafePtr<Pawn>)> callback ) const;
+		SafePtr<Pawn> find_nearest_pawn(
+			const Vec3& origin,
+			std::function<bool(SafePtr<Pawn>)> callback 
+		) const;
+		SafePtr<Pawn> find_pawn(
+			std::function<bool(SafePtr<Pawn>)> callback 
+		) const;
 
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
 		std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas();
