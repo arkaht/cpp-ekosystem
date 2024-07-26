@@ -1,6 +1,7 @@
 #include "pawn.h"
 
 #include <suprengine/assets.h>
+#include <suprengine/random.h>
 
 using namespace eks;
 
@@ -88,9 +89,9 @@ void Pawn::tick( float dt )
 		}
 		else if ( _food_target->get_tile_pos() == _tile_pos )
 		{
-			hunger = math::min( 
-				hunger + _food_target->data->food_amount, 
-				data->max_hunger 
+			hunger = math::min(
+				hunger + _food_target->data->food_amount,
+				data->max_hunger
 			);
 			printf( "'%s' ate '%s'\n", 
 				get_name().c_str(), _food_target->get_name().c_str() );
@@ -151,7 +152,8 @@ void Pawn::move_to( const Vec3& target )
 
 void Pawn::reproduce()
 {
-	for ( int i = 0; i < data->child_spawn_count; i++ )
+	int child_spawn_count = random::generate( data->min_child_spawn_count, data->max_child_spawn_count );
+	for ( int i = 0; i < child_spawn_count; i++ )
 	{
 		Vec3 spawn_pos;
 		if ( !_world->find_empty_tile_pos_around( _tile_pos, &spawn_pos ) ) continue;
@@ -187,7 +189,7 @@ Vec3 Pawn::get_tile_pos() const
 
 bool Pawn::can_reproduce() const
 {
-	return data->child_spawn_count > 0
+	return data->max_child_spawn_count > 0
 		&& hunger >= data->min_hunger_for_reproduction;
 }
 

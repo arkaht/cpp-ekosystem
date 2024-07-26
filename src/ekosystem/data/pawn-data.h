@@ -46,9 +46,10 @@ namespace eks
 		//  Movement speed in tile per seconds
 		float move_speed = 1.0f;
 
-		//  Amount of child to generate upon reproduction.
+		//  Range amount of child to generate upon reproduction.
 		//  Set to 0 to disable reproduction.
-		int child_spawn_count = 0;
+		int min_child_spawn_count = 0;
+		int max_child_spawn_count = 0;
 		//  Minimum amount of hunger this pawn needs before 
 		//  reproducing
 		float min_hunger_for_reproduction = 0.8f;

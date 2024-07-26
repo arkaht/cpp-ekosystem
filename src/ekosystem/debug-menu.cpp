@@ -224,7 +224,13 @@ void DebugMenu::populate()
 		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
 		if ( ImGui::TreeNode( "Reproduction" ) )
 		{
-			ImGui::InputInt( "Child Spawn Count", &data->child_spawn_count );
+			//  NOTE: Using pointer to 'min_child_spawn_count' 
+			//  since they are stored aside.
+			if ( ImGui::DragInt2( "Child Spawn Count", &data->min_child_spawn_count, 1, 0, 10 ) )
+			{
+				data->min_child_spawn_count = math::min( data->min_child_spawn_count, data->max_child_spawn_count );
+				data->max_child_spawn_count = math::max( data->max_child_spawn_count, data->min_child_spawn_count );
+			}
 			ImGui::SetItemTooltip( "Amount of child to generate upon reproduction. Set to 0 to disable reproduction" );
 			
 			ImGui::DragFloat( "Min Hunger for Reproduction", &data->min_hunger_for_reproduction, 0.001f, 0.0f );
@@ -245,7 +251,7 @@ void DebugMenu::populate()
 			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Maximum amount of hunger this pawn can hold" );
 			
-			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f );
+			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f, NULL, "%.3f hunger/s" );
 			ImGui::SetItemTooltip( "Rate of increase of hunger per second" );
 			
 			ImGui::DragFloat( "Min Hunger to Eat", &data->min_hunger_to_eat, 0.001f, 0.0f );

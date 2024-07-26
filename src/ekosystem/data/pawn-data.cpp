@@ -11,8 +11,9 @@ bool PawnData::serialize( json::document& doc ) const
 	json::add( doc, "modulate", modulate );
 
 	json::add( doc, "move_speed", move_speed );
-
-	json::add( doc, "child_spawn_count", child_spawn_count );
+	
+	json::add( doc, "min_child_spawn_count", min_child_spawn_count );
+	json::add( doc, "max_child_spawn_count", max_child_spawn_count );
 	json::add( doc, "min_hunger_for_reproduction", min_hunger_for_reproduction );
 	json::add( doc, "hunger_consumption_on_reproduction", hunger_consumption_on_reproduction );
 
@@ -33,7 +34,8 @@ bool PawnData::unserialize( const json::document& doc )
 
 	json::get( doc, "move_speed", &move_speed );
 
-	json::get( doc, "child_spawn_count", &child_spawn_count );
+	json::get( doc, "max_child_spawn_count", &max_child_spawn_count );
+	json::get( doc, "min_child_spawn_count", &min_child_spawn_count, max_child_spawn_count );
 	json::get( doc, "min_hunger_for_reproduction", &min_hunger_for_reproduction );
 	json::get( doc, "hunger_consumption_on_reproduction", &hunger_consumption_on_reproduction );
 
