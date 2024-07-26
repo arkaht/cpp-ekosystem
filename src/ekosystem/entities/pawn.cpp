@@ -27,6 +27,21 @@ void Pawn::update_this( float dt )
 	//  TODO: Debug build only
 	_renderer->modulate = data->modulate;
 
+	//  Substepping tick
+	//  NOTE: It fixes issues in behaviors when the time scale is 
+	//	really high (e.g. time scale set to 32). Reproduction could
+	//  not happen if the threshold was too thin.
+	auto& engine = Engine::instance();
+	int substeps = (int)math::ceil( engine.get_updater()->time_scale );
+	float subdelta = dt / substeps;
+	for ( int substep = 0; substep < substeps; substep++ )
+	{
+		tick( subdelta );
+	}
+}
+
+void Pawn::tick( float dt )
+{
 	bool has_just_reached_tile = false;
 	if ( _move_path.size() > 0 )
 	{
@@ -57,10 +72,6 @@ void Pawn::update_this( float dt )
 
 		transform->set_location( new_tile_pos * _world->TILE_SIZE );
 	}
-
-	//  BUG: High delta time values (i.e. time scaled by 32) can 
-	//		 make some behaviors such as reproduction impossible. 
-	//		 Substepping?
 
 	//  Hunger gain
 	hunger = math::max(

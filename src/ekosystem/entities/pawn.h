@@ -16,6 +16,7 @@ namespace eks
 
 		void setup() override;
 		void update_this( float dt ) override;
+		void tick( float dt );
 
 		void move_to( const Vec3& target );
 		void reproduce();
