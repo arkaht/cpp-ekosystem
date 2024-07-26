@@ -259,7 +259,8 @@ void Pawn::_find_partner()
 	}
 	else
 	{
-		_partner_target = _world->find_pawn(
+		_partner_target = _world->find_nearest_pawn(
+			_tile_pos,
 			[&]( auto pawn )
 			{
 				if ( pawn.get() == this ) return false;
