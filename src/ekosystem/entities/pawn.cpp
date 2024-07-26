@@ -6,7 +6,10 @@ using namespace eks;
 
 Pawn::Pawn( World* world, SafePtr<PawnData> _data )
 	: _world( world ), data( _data )
-{}
+{
+	//  Avoid immediate reproduction upon creation
+	hunger = 1.0f - data->min_food_reproduction;
+}
 
 void Pawn::setup()
 {
@@ -90,6 +93,28 @@ void Pawn::update_this( float dt )
 				Vec3::world_to_grid( transform->location, _world->TILE_SIZE ).to_string().c_str() );*/
 		}
 	}
+	else if ( can_reproduce() )
+	{
+		if ( !_partner_target.is_valid() )
+		{
+			_move_path.clear();
+			_find_partner();
+		}
+		else if ( 1.0f - _partner_target->hunger > _partner_target->data->min_food_reproduction )
+		{
+			_partner_target.reset();
+			_find_partner();
+		}
+		else if ( Vec3::distance2d( _partner_target->get_tile_pos(), _tile_pos ) <= 1.5f )
+		{
+			reproduce();
+		}
+		else if ( _move_path.size() == 0
+			  || ( has_just_reached_tile && _move_path.at( _move_path.size() - 1 ) != _partner_target->get_tile_pos() ) )
+		{
+			move_to( _partner_target->get_tile_pos() );
+		}
+	}
 
 	//  Kill from hunger
 	if ( hunger >= data->max_hunger )
@@ -104,6 +129,25 @@ void Pawn::move_to( const Vec3& target )
 	_move_progress = 0.0f;
 
 	_move_to = target;
+}
+
+void Pawn::reproduce()
+{
+	for ( int i = 0; i < data->child_spawn_count; i++ )
+	{
+		Vec3 spawn_pos;
+		if ( !_world->find_empty_tile_pos_around( _tile_pos, &spawn_pos ) ) continue;
+
+		auto child = _world->create_pawn( data, spawn_pos );
+	}
+
+	hunger += data->food_loss_on_reproduction;
+
+	if ( _partner_target.is_valid() )
+	{
+		_partner_target->hunger += _partner_target->data->food_loss_on_reproduction;
+		_partner_target.reset();
+	}
 }
 
 void Pawn::set_tile_pos( const Vec3& tile_pos )
@@ -121,6 +165,12 @@ void Pawn::update_tile_pos()
 Vec3 Pawn::get_tile_pos() const
 {
 	return _tile_pos;
+}
+
+bool Pawn::can_reproduce() const
+{
+	return data->child_spawn_count > 0 
+		&& 1.0f - hunger > data->min_food_reproduction;
 }
 
 std::string Pawn::get_name() const
@@ -170,6 +220,30 @@ void Pawn::_find_food()
 		hunger = 0.0f;
 		printf( "Photosynthesis '%s' wants to eat!\n", 
 			get_name().c_str() );
+	}
+}
+
+void Pawn::_find_partner()
+{
+	if ( data->has_adjective( Adjectives::Vegetal ) )
+	{
+		reproduce();
+	}
+	else
+	{
+		_partner_target = _world->find_pawn(
+			[&]( auto pawn )
+			{
+				if ( pawn.get() == this ) return false;
+				return pawn->data == data && pawn->can_reproduce();
+			}
+		);
+		if ( !_partner_target.is_valid() ) return;
+
+		printf( "'%s' will mate with '%s'\n", 
+			get_name().c_str(), 
+			_partner_target->get_name().c_str() 
+		);
 	}
 }
 

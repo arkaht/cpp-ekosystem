@@ -97,6 +97,37 @@ void World::clear()
 	_pawns.clear();
 }
 
+bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
+{
+	//  Randomize signs to avoid giving the same direction each time
+	int random_sign_x = random::generate_sign();
+	int random_sign_y = random::generate_sign();
+
+	for ( int x = -1; x <= 1; x++ )
+	{
+		for ( int y = -1; y <= 1; y++ )
+		{
+			//  Filter out input position
+			if ( x == 0 && y == 0 ) continue;
+
+			out->x = pos.x + x * random_sign_x;
+			out->y = pos.y + y * random_sign_y;
+
+			//  Filter out any out-of-bounds positions
+			if ( out->x < 0 || out->x > _size.x ) continue;
+			if ( out->y < 0 || out->y > _size.y ) continue;
+
+			//  Filter out position already containing a pawn
+			auto pawn = find_pawn_at( Adjectives::None, *out );
+			if ( pawn.is_valid() ) continue;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Vec3 World::find_random_tile_pos() const
 {
 	return Vec3::snap_to_grid(
@@ -111,16 +142,45 @@ Vec3 World::find_random_tile_pos() const
 SafePtr<Pawn> World::find_pawn_with( 
 	Adjectives adjectives, 
 	SafePtr<Pawn> pawn_to_ignore 
-)
+) const
 {
 	for ( auto& pawn : _pawns )
 	{
 		if ( pawn == pawn_to_ignore ) continue;
-		//  TODO: Clear reference from list as soon as pawn is destroyed
 		if ( !pawn.is_valid() ) continue;
 		if ( !pawn->data->has_adjective( adjectives ) ) continue;
 
 		return pawn;
+	}
+
+	return nullptr;
+}
+
+SafePtr<Pawn> World::find_pawn_at(
+	Adjectives adjectives,
+	const Vec3& pos
+) const
+{
+	for ( auto& pawn : _pawns )
+	{
+		if ( !pawn.is_valid() ) continue;
+		if ( pawn->get_tile_pos() != pos ) continue;
+		if ( !pawn->data->has_adjective( adjectives ) ) continue;
+
+		return pawn;
+	}
+
+	return nullptr;
+}
+
+SafePtr<Pawn> World::find_pawn( std::function<bool(SafePtr<Pawn>)> callback ) const
+{
+	for ( auto& pawn : _pawns )
+	{
+		if ( callback( pawn ) )
+		{
+			return pawn;
+		}
 	}
 
 	return nullptr;

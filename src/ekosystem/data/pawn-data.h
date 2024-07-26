@@ -29,6 +29,8 @@ namespace eks
 		Meat			= 1 << 3,
 		//  Is eatable by Herbivore
 		Vegetal			= 1 << 4,
+
+		All				= 0xFFFFFFFF,
 	};
 	DEFINE_ENUM_WITH_FLAGS( Adjectives, uint32_t )
 

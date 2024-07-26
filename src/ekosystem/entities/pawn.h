@@ -18,10 +18,13 @@ namespace eks
 		void update_this( float dt ) override;
 
 		void move_to( const Vec3& target );
+		void reproduce();
 
 		void set_tile_pos( const Vec3& tile_pos );
 		void update_tile_pos();
 		Vec3 get_tile_pos() const;
+
+		bool can_reproduce() const;
 
 		std::string get_name() const;
 
@@ -32,6 +35,7 @@ namespace eks
 
 	private:
 		void _find_food();
+		void _find_partner();
 		void _find_path_to( const Vec3& target );
 
 	private:
@@ -39,6 +43,7 @@ namespace eks
 		SharedPtr<ModelRenderer> _renderer; 
 
 		SafePtr<Pawn> _food_target;
+		SafePtr<Pawn> _partner_target;
 
 		std::vector<Vec3> _move_path;
 

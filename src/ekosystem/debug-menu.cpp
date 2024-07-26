@@ -410,6 +410,15 @@ void DebugMenu::_populate_pawns_table(
 		ImGui::EndTable();
 	}
 
+	if ( ImGui::Button( "Purge" ) )
+	{
+		for ( auto& pawn : pawns )
+		{
+			pawn->kill();
+		}
+	}
+	ImGui::SetItemTooltip( "Kill all existing pawns" );
+
 	ImGui::Spacing();
 }
 
