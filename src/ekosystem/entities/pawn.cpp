@@ -9,7 +9,7 @@ Pawn::Pawn( World* world, SafePtr<PawnData> _data )
 	: _world( world ), data( _data )
 {
 	//  Avoid immediate reproduction upon creation
-	hunger = data->min_hunger_for_reproduction;
+	hunger = 1.0f - data->hunger_consumption_on_reproduction;
 }
 
 void Pawn::setup()
@@ -80,7 +80,18 @@ void Pawn::tick( float dt )
 		0.0f
 	);
 
-	if ( hunger < data->min_hunger_to_eat )
+	//  Photosynthesis
+	if ( data->has_adjective( Adjectives::Photosynthesis ) )
+	{
+		//  TODO: Store the gain value in a variable
+		hunger = math::min( 
+			hunger + 0.05f * dt,
+			data->max_hunger
+		);
+	}
+
+	if ( !data->has_adjective( Adjectives::Photosynthesis )
+	  && hunger < data->min_hunger_to_eat )
 	{
 		if ( !_food_target.is_valid() )
 		{

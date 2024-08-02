@@ -5,7 +5,7 @@
     "min_child_spawn_count": 1,
     "max_child_spawn_count": 2,
     "min_hunger_for_reproduction": 0.99,
-    "hunger_consumption_on_reproduction": 0.1,
+    "hunger_consumption_on_reproduction": 0.9,
     "food_amount": 1.0,
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.02,
