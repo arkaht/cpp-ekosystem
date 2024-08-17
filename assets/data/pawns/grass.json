@@ -10,5 +10,6 @@
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.02,
     "min_hunger_to_eat": 0.2,
+    "photosynthesis_gain": 0.05,
     "adjectives": 49
 }

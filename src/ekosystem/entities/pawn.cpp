@@ -83,9 +83,8 @@ void Pawn::tick( float dt )
 	//  Photosynthesis
 	if ( data->has_adjective( Adjectives::Photosynthesis ) )
 	{
-		//  TODO: Store the gain value in a variable
 		hunger = math::min( 
-			hunger + 0.05f * dt,
+			hunger + data->photosynthesis_gain * dt,
 			data->max_hunger
 		);
 	}

@@ -22,6 +22,8 @@ bool PawnData::serialize( json::document& doc ) const
 	json::add( doc, "natural_hunger_consumption", natural_hunger_consumption );
 	json::add( doc, "min_hunger_to_eat", min_hunger_to_eat );
 
+	json::add( doc, "photosynthesis_gain", photosynthesis_gain );
+
 	json::add( doc, "adjectives", (uint32_t)adjectives );
 
 	return true;
@@ -44,6 +46,8 @@ bool PawnData::unserialize( const json::document& doc )
 	json::get( doc, "natural_hunger_consumption", &natural_hunger_consumption );
 	json::get( doc, "min_hunger_to_eat", &min_hunger_to_eat );
 
+	json::get( doc, "photosynthesis_gain", &photosynthesis_gain );
+	
 	adjectives = (Adjectives)json::get( doc, "adjectives", 0Ui32 );
 
 	return true;

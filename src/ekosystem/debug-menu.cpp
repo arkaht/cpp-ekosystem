@@ -245,18 +245,26 @@ void DebugMenu::populate()
 		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
 		if ( ImGui::TreeNode( "Nutrition" ) )
 		{
+			const char* hunger_format = "%.3f hunger/s";
+
 			ImGui::DragFloat( "Food Amount", &data->food_amount, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Amount of food this pawn provide when eaten" );
 			
 			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Maximum amount of hunger this pawn can hold" );
 			
-			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f, NULL, "%.3f hunger/s" );
-			ImGui::SetItemTooltip( "Rate of increase of hunger per second" );
+			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f, NULL, hunger_format );
+			ImGui::SetItemTooltip( "Rate of decrease of hunger per second" );
 			
 			ImGui::DragFloat( "Min Hunger to Eat", &data->min_hunger_to_eat, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Minimum amount of hunger to start eating" );
 			
+			bool has_photosynthesis = data->has_adjective( Adjectives::Photosynthesis ); 
+			if ( !has_photosynthesis ) ImGui::BeginDisabled();
+			ImGui::DragFloat( "Photosynthesis Gain", &data->photosynthesis_gain, 0.001f, 0.0f, NULL, hunger_format );
+			ImGui::SetItemTooltip( "Rate of increase of hunger per second by photosynthesis" );
+			if ( !has_photosynthesis ) ImGui::EndDisabled();
+
 			ImGui::TreePop();
 		}
 

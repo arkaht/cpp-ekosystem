@@ -60,10 +60,13 @@ namespace eks
 		float food_amount = 1.0f;
 		//  Maximum amount of hunger this pawn can hold
 		float max_hunger = 1.0f;
-		//  Rate of increase of hunger per second
+		//  Rate of decrease of hunger per second
 		float natural_hunger_consumption = 0.1f;
 		//  Minimum amount of hunger to start eating
 		float min_hunger_to_eat = 0.4f;
+
+		//  Rate of increase of hunger per second by photosynthesis
+		float photosynthesis_gain = 0.05f;
 
 		//  Behaviors defining this pawn
 		Adjectives adjectives = Adjectives::None;
