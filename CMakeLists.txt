@@ -23,4 +23,4 @@ target_link_libraries(EKOSYSTEM PRIVATE SUPRENGINE)
 
 #  Copy DLLs and assets
 suprengine_copy_dlls(EKOSYSTEM)
-suprengine_copy_assets(EKOSYSTEM "ekosystem")
+suprengine_symlink_assets(EKOSYSTEM "ekosystem")
