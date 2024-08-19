@@ -21,6 +21,29 @@ target_include_directories(EKOSYSTEM PRIVATE "${EKOSYSTEM_INCLUDE}")
 target_sources(EKOSYSTEM PRIVATE "${EKOSYSTEM_SOURCES}")
 target_link_libraries(EKOSYSTEM PRIVATE SUPRENGINE)
 
+#  Setup install rules
+#  Install executable
+install(TARGETS EKOSYSTEM DESTINATION "bin")
+#  Install assets
+install(
+	DIRECTORY "${EKOSYSTEM_ASSETS}/"
+	DESTINATION "bin/assets/ekosystem"
+	PATTERN "*.blend" EXCLUDE
+	PATTERN "*.blend1" EXCLUDE
+	PATTERN "*.afphoto" EXCLUDE
+)
+install(
+	DIRECTORY "${SUPRENGINE_ASSETS}/"
+	DESTINATION "bin/assets/suprengine"
+	PATTERN "*.blend" EXCLUDE 
+	PATTERN "*.blend1" EXCLUDE
+	PATTERN "*.afphoto" EXCLUDE
+)
+#  Install DLLs
+foreach(FILE ${SUPRENGINE_DLLS})
+	install(FILES ${FILE} TYPE BIN)
+endforeach()
+
 #  Copy DLLs and assets
 suprengine_copy_dlls(EKOSYSTEM)
 suprengine_symlink_assets(EKOSYSTEM "ekosystem")
