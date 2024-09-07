@@ -25,7 +25,6 @@ namespace eks
 
 		void populate();
 
-
 	public:
 		World* world { nullptr };
 		SafePtr<CameraController> camera_controller;
@@ -50,7 +49,7 @@ namespace eks
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
 
-		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE];
+		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
 
 		std::vector<const char*> _pawn_datas_names;
 	};

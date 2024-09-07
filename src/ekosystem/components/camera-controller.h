@@ -20,7 +20,6 @@ namespace eks
 	
 	public:
 		float move_speed;
-		Vec3 offset;
 		SafePtr<Transform> focus_target;
 	};
 }

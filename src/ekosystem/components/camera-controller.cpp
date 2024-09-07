@@ -8,14 +8,11 @@ CameraController::CameraController(
 	float move_speed,
 	const Vec3& offset
 )
-	: move_speed( move_speed ),
-	  offset( offset )
+	: move_speed( move_speed )
 {}
 
 void CameraController::setup()
-{
-	transform->location += offset;
-}
+{}
 
 void CameraController::update( float dt )
 {
@@ -36,7 +33,7 @@ void CameraController::update( float dt )
 	{
 		if ( focus_target.is_valid() )
 		{
-			pos = focus_target->location + offset;
+			pos = focus_target->location;
 		}
 	}
 	else

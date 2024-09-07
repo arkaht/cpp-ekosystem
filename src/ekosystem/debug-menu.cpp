@@ -104,6 +104,52 @@ void DebugMenu::populate()
 
 		ImGui::Spacing();
 	}
+	if ( ImGui::CollapsingHeader( "Camera", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		Camera* camera = engine.camera;
+		
+		ImGui::SeparatorText( "Projection" );
+
+		//  Projection settings
+		if ( ImGui::DragFloat( "FOV", &camera->projection_settings.fov, 1.0f, 20.0f, 120.0f ) )
+		{
+			camera->update_projection_from_settings();
+		}
+		if ( ImGui::DragFloat( "ZNear", &camera->projection_settings.znear, 1.0f, CAMERA_DEFAULT_ZNEAR, camera->projection_settings.zfar ) )
+		{
+			camera->update_projection_from_settings();
+		}
+		if ( ImGui::DragFloat( "ZFar", &camera->projection_settings.zfar, 1.0f, camera->projection_settings.znear, CAMERA_DEFAULT_ZFAR ) )
+		{
+			camera->update_projection_from_settings();
+		}
+		
+		ImGui::SeparatorText( "Controller" );
+
+		//  Show focused target UID or NULL
+		{
+			char buffer[5];
+			if ( camera_controller->focus_target.is_valid() )
+			{
+				sprintf_s( buffer, "%04d", camera_controller->focus_target->get_owner()->get_unique_id() );
+			}
+			else
+			{
+				strcpy_s( buffer, "NULL" );
+			}
+			ImGui::Text( "Focused Target (UID): %s", buffer );
+		}
+
+		//  Controller settings
+		Vec3 offset = camera->get_offset();
+		if ( ImGui::DragFloat3( "Offset", &offset.x, 1.0f, 0.0f, 100.0f ) )
+		{
+			camera->set_offset( offset );
+		}
+		ImGui::DragFloat( "Move Speed", &camera_controller->move_speed, 1.0f, 0.0f, 500.0f );
+
+		ImGui::Spacing();
+	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
 		_populate_pawns_table( pawns );
