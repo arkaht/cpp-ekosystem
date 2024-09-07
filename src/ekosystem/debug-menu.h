@@ -49,6 +49,8 @@ namespace eks
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
 
+		int _spawn_count = 1;
+
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
 
 		std::vector<const char*> _pawn_datas_names;

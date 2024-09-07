@@ -495,7 +495,19 @@ void DebugMenu::_populate_pawn_factory(
 	{
 		std::string key = _pawn_datas_names[_selected_pawn_data_id];
 		auto& data = pawn_datas.at( key );
-		world->create_pawn( data, world->find_random_tile_pos() );
+		for ( int i = 0; i < _spawn_count; i++ )
+		{
+			Vec3 pos = world->find_random_tile_pos();
+			world->create_pawn( data, pos );
+		}
+	}
+
+	//  Spawn count
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth( 70.0f );
+	if ( ImGui::InputInt( "Spawn Count", &_spawn_count ) )
+	{
+		_spawn_count = math::clamp( _spawn_count, 1, 99 );
 	}
 
 	ImGui::Spacing();
