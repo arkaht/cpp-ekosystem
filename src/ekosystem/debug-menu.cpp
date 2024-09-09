@@ -102,6 +102,15 @@ void DebugMenu::populate()
 			}
 		}
 
+		//  Window mode
+		auto window = engine.get_window();
+		const char* window_modes[3] = { "Windowed",	"Fullscreen", "Borderless Fullscreen" };
+		auto current_window_mode = (int)window->get_mode();
+		if (ImGui::Combo("Window Mode", &current_window_mode, window_modes, 3))
+		{
+			window->set_mode((WindowMode)current_window_mode);
+		}
+
 		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Camera", ImGuiTreeNodeFlags_DefaultOpen ) )
