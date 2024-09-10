@@ -33,13 +33,15 @@ void GameScene::init()
 	auto camera_owner = engine.create_entity<Entity>();
 	camera_owner->transform->location = Vec3 { _world->get_size() * 0.5f * _world->TILE_SIZE, 0.4f };
 	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
-	_camera_controller = camera_owner->create_component<CameraController>( CAMERA_SPEED );
+	_camera_controller = camera_owner->create_component<CameraController>( 
+		CAMERA_SPEED,
+		Vec3 { 15.0f, 15.0f, 20.0f }
+	);
 
 	CameraProjectionSettings projection_settings {};
 	projection_settings.fov = 60.0f;
 
 	auto camera = camera_owner->create_component<Camera>( projection_settings );
-	camera->set_offset( Vec3 { 15.0f, 15.0f, 20.0f } );
 	camera->activate();
 
 	RenderBatch* render_batch = engine.get_render_batch();

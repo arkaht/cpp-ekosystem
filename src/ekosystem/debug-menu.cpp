@@ -150,11 +150,8 @@ void DebugMenu::populate()
 		}
 
 		//  Controller settings
-		Vec3 offset = camera->get_offset();
-		if ( ImGui::DragFloat3( "Offset", &offset.x, 1.0f, 0.0f, 100.0f ) )
-		{
-			camera->set_offset( offset );
-		}
+		ImGui::DragFloat3( "Offset", &camera_controller->camera_offset.x, 1.0f, 0.0f, 1000.0f );
+		ImGui::DragFloat( "Arm Length", &camera_controller->target_arm_length, 1.0f, 1.0f, 500.0f );
 		ImGui::DragFloat( "Move Speed", &camera_controller->move_speed, 1.0f, 0.0f, 500.0f );
 
 		ImGui::Spacing();

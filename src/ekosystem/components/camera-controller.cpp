@@ -8,7 +8,7 @@ CameraController::CameraController(
 	float move_speed,
 	const Vec3& offset
 )
-	: move_speed( move_speed )
+	: move_speed( move_speed ), camera_offset( offset )
 {}
 
 void CameraController::setup()
@@ -21,6 +21,8 @@ void CameraController::update( float dt )
 
 	//  Don't use scaled delta time (for dev. menu)
 	dt = engine.get_updater()->get_unscaled_delta_time();
+
+	update_arm_length( dt );
 
 	//  Retrieve input direction
 	Vec3 dir {};
@@ -58,4 +60,34 @@ void CameraController::update( float dt )
 
 	//  Apply new location
 	transform->set_location( pos );
+}
+
+void CameraController::update_arm_length( float dt )
+{
+	auto& engine = Engine::instance();
+	auto inputs = engine.get_inputs();
+
+	//  Control target arm length with mouse wheel
+	if ( inputs->mouse_wheel.y )
+	{
+		target_arm_length = math::clamp( 
+			target_arm_length + target_arm_length * inputs->mouse_wheel.y * 0.25f,
+			1.0f,
+			500.0f
+		);
+	}
+
+	//  Smooth arm length towards target arm length
+	arm_length = math::lerp( arm_length, target_arm_length, dt * 8.0f );
+
+	//  Auto-compute arm length for the first time
+	float offset_length = camera_offset.length();
+	if ( target_arm_length < 0.0f )
+	{
+		target_arm_length = offset_length;
+	}
+
+	//  Update camera offset
+	const Vec3 new_offset = camera_offset * ( offset_length / arm_length );
+	engine.camera->set_offset( new_offset );
 }
