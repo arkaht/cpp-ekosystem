@@ -14,6 +14,14 @@ DebugMenu::DebugMenu()
 			this
 		)
 	);
+	engine.get_window()->on_size_changed.listen( "eks_debug_menu",
+		std::bind(
+			&DebugMenu::_on_window_resized,
+			this,
+			std::placeholders::_1,
+			std::placeholders::_2
+		)
+	);
 }
 
 DebugMenu::~DebugMenu()
@@ -30,15 +38,28 @@ void DebugMenu::populate()
 	//  Setup default position and size of the window
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos( { viewport->WorkPos.x + 850, viewport->WorkPos.y + 20 }, ImGuiCond_FirstUseEver );
-	ImGui::SetNextWindowSize( { 400, 680 }, ImGuiCond_FirstUseEver );
+	ImGui::SetNextWindowSize( { _next_window_size.x, _next_window_size.y }, ImGuiCond_FirstUseEver );
 
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+	//  Update window size and position if needed (auto-resize from application window sizes)
+	if ( _should_update_window )
+	{
+		ImGui::SetNextWindowPos( { _next_window_pos.x, _next_window_pos.y }, ImGuiCond_None );
+		ImGui::SetNextWindowSize( { _next_window_size.x, _next_window_size.y }, ImGuiCond_None );
+		_should_update_window = false;
+	}
 
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar 
+		| ImGuiWindowFlags_NoSavedSettings; // Disable saved settings to avoid weird sizes caused by window modes
+	
 	if ( !ImGui::Begin( "Ekosystem Debug Menu", nullptr, window_flags ) )
 	{
 		ImGui::End();
 		return;
 	}
+
+	//  Update stored window bounds for auto-resize (user can move and resize it)
+	_next_window_pos = ImGui::GetWindowPos();
+	_next_window_size = ImGui::GetWindowSize();
 
 	auto& pawns = world->get_pawns();
 	auto& pawn_datas = world->get_pawn_datas();
@@ -563,4 +584,12 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 	}
 
 	ImGui::TreePop();
+}
+
+void DebugMenu::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
+{
+	float ratio = new_size.x / old_size.x;
+	_next_window_size *= ratio;
+	_next_window_pos *= ratio;
+	_should_update_window = true;
 }

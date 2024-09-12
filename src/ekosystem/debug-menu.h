@@ -45,6 +45,8 @@ namespace eks
 			const std::vector<SafePtr<Pawn>>& pawns 
 		);
 
+		void _on_window_resized( const Vec2& new_size, const Vec2& old_size );
+
 	private:
 		int _selected_pawn_id = 0;
 		int _selected_pawn_data_id = 0;
@@ -52,6 +54,10 @@ namespace eks
 		int _spawn_count = 1;
 
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
+
+		Vec2 _next_window_size { 400.0f, 680.0f };
+		Vec2 _next_window_pos { 0.0f, 0.0f };
+		bool _should_update_window = false;
 
 		std::vector<const char*> _pawn_datas_names;
 	};
