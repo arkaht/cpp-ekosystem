@@ -525,7 +525,8 @@ void DebugMenu::_populate_pawn_factory(
 		for ( int i = 0; i < _spawn_count; i++ )
 		{
 			Vec3 pos = world->find_random_tile_pos();
-			world->create_pawn( data, pos );
+			auto pawn = world->create_pawn( data, pos );
+			pawn->hunger = _hunger_ratio * data->max_hunger;
 		}
 	}
 
@@ -536,6 +537,10 @@ void DebugMenu::_populate_pawn_factory(
 	{
 		_spawn_count = math::clamp( _spawn_count, 1, 99 );
 	}
+
+	//  Hunger ratio
+	ImGui::Extra::DragPercent( "Hunger Ratio", &_hunger_ratio, 0.01f, 0.0f, 1.0f );
+	ImGui::SetItemTooltip( "Start hunger ratio (computed using max hunger) for new pawns" );
 
 	ImGui::Spacing();
 }

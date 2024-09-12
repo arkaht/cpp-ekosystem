@@ -52,6 +52,7 @@ namespace eks
 		int _selected_pawn_data_id = 0;
 
 		int _spawn_count = 1;
+		float _hunger_ratio = 1.0f;
 
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
 
