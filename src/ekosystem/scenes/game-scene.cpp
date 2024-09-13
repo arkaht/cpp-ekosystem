@@ -89,7 +89,7 @@ void GameScene::update( float dt )
 		}
 	}*/
 
-	if ( inputs->is_key_just_pressed( SDL_SCANCODE_C ) )
+	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_C ) )
 	{
 		if ( _world != nullptr )
 		{
@@ -108,7 +108,7 @@ void GameScene::update( float dt )
 			_world = nullptr;
 			printf( "Delete world!\n" );
 		}
-	}
+	}*/
 
 	if ( _camera_controller->focus_target.is_valid() )
 	{
