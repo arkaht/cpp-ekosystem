@@ -169,6 +169,7 @@ void Pawn::reproduce()
 		if ( !_world->find_empty_tile_pos_around( _tile_pos, &spawn_pos ) ) continue;
 
 		auto child = _world->create_pawn( data, spawn_pos );
+		child->group_id = group_id;
 	}
 
 	hunger -= data->hunger_consumption_on_reproduction;
@@ -203,6 +204,11 @@ bool Pawn::can_reproduce() const
 		&& hunger >= data->min_hunger_for_reproduction;
 }
 
+bool Pawn::is_same_group( GroupID target_group_id ) const
+{
+	return group_id > 0 && group_id == target_group_id;
+}
+
 std::string Pawn::get_name() const
 {
 	return data->name + "#" + std::to_string( get_unique_id() );
@@ -217,6 +223,7 @@ void Pawn::_find_food()
 			[&]( auto pawn )
 			{
 				if ( pawn.get() == this ) return false;
+				if ( pawn->is_same_group( group_id ) ) return false;
 				return pawn->data->has_adjective( Adjectives::Vegetal );
 			}
 		);
@@ -239,6 +246,7 @@ void Pawn::_find_food()
 			[&]( auto pawn )
 			{
 				if ( pawn.get() == this ) return false;
+				if ( pawn->is_same_group( group_id ) ) return false;
 				return pawn->data->has_adjective( Adjectives::Meat );
 			}
 		);

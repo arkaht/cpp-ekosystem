@@ -9,6 +9,8 @@ namespace eks
 {
 	using namespace suprengine;
 
+	using GroupID = uint8_t;
+
 	class Pawn : public Entity
 	{
 	public:
@@ -26,12 +28,14 @@ namespace eks
 		Vec3 get_tile_pos() const;
 
 		bool can_reproduce() const;
+		bool is_same_group( GroupID group_id ) const;
 
 		std::string get_name() const;
 
 	public:
 		SafePtr<PawnData> data;
 
+		GroupID group_id = 0;
 		float hunger = 1.0f;
 
 	private:

@@ -53,6 +53,7 @@ namespace eks
 
 		int _spawn_count = 1;
 		float _hunger_ratio = 1.0f;
+		GroupID _group_id = 0;
 
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
 

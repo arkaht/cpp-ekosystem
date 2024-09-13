@@ -455,7 +455,7 @@ void DebugMenu::_populate_pawns_table(
 				ImGui::TableSetColumnIndex( 2 );
 				if ( ImGui::SmallButton( "Focus" ) )
 				{
-					camera_controller->focus_target = 
+					camera_controller->focus_target =
 						pawn->transform;
 				}
 				ImGui::SameLine();
@@ -471,9 +471,9 @@ void DebugMenu::_populate_pawns_table(
 					0.0f, 1.0f
 				);
 				ImGui::Extra::ColoredProgressBar(
-					hunger_ratio, 
+					hunger_ratio,
 					settings::HUNGER_COLOR,
-					{ 0.0f, 0.0f } 
+					{ 0.0f, 0.0f }
 				);
 			}
 			else
@@ -515,7 +515,7 @@ void DebugMenu::_populate_pawn_factory(
 {
 	ImGui::SeparatorText( "Pawn Factory" );
 
-	ImGui::Combo( "Pawn Data##Factory", &_selected_pawn_data_id, 
+	ImGui::Combo( "Pawn Data##Factory", &_selected_pawn_data_id,
 		_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
 	if ( ImGui::Button( "Create Pawn" ) )
@@ -527,6 +527,7 @@ void DebugMenu::_populate_pawn_factory(
 			Vec3 pos = world->find_random_tile_pos();
 			auto pawn = world->create_pawn( data, pos );
 			pawn->hunger = _hunger_ratio * data->max_hunger;
+			pawn->group_id = _group_id;
 		}
 	}
 
@@ -541,6 +542,17 @@ void DebugMenu::_populate_pawn_factory(
 	//  Hunger ratio
 	ImGui::Extra::DragPercent( "Hunger Ratio", &_hunger_ratio, 0.01f, 0.0f, 1.0f );
 	ImGui::SetItemTooltip( "Start hunger ratio (computed using max hunger) for new pawns" );
+
+	//  Group ID
+	int group_id = _group_id;
+	if ( ImGui::InputInt( "Group ID", &group_id, 1, 10 ) )
+	{
+		_group_id = (GroupID)math::clamp( group_id, 0, (int)std::numeric_limits<GroupID>::max() );
+	}
+	ImGui::SetItemTooltip( 
+		"Group identifier for new pawns inherited to childs and preventing them from eating each other.\n"
+		"Set to 0 for no groups"
+	);
 
 	ImGui::Spacing();
 }
