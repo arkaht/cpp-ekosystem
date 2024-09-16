@@ -534,7 +534,7 @@ void DebugMenu::_populate_pawn_factory(
 	//  Spawn count
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth( 70.0f );
-	if ( ImGui::InputInt( "Spawn Count", &_spawn_count ) )
+	if ( ImGui::InputInt( "Spawn Count", &_spawn_count, 1, 10 ) )
 	{
 		_spawn_count = math::clamp( _spawn_count, 1, 99 );
 	}
