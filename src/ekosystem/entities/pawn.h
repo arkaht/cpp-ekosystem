@@ -33,7 +33,7 @@ namespace eks
 		std::string get_name() const;
 
 	public:
-		SafePtr<PawnData> data;
+		SafePtr<PawnData> data = nullptr;
 
 		GroupID group_id = 0;
 		float hunger = 1.0f;
@@ -44,18 +44,18 @@ namespace eks
 		void _find_path_to( const Vec3& target );
 
 	private:
-		World* _world;
-		SharedPtr<ModelRenderer> _renderer;
+		World* _world = nullptr;
+		SharedPtr<ModelRenderer> _renderer = nullptr;
 
-		SafePtr<Pawn> _food_target;
-		SafePtr<Pawn> _partner_target;
+		SafePtr<Pawn> _food_target = nullptr;
+		SafePtr<Pawn> _partner_target = nullptr;
 
 		std::vector<Vec3> _move_path;
 
 		float _move_progress = 1.0f;
-		Vec3 _move_to;
+		Vec3 _move_to = Vec3::zero;
 
 		//  Position in tile coordinates
-		Vec3 _tile_pos;
+		Vec3 _tile_pos = Vec3::zero;
 	};
 }

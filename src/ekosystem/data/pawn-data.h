@@ -41,7 +41,7 @@ namespace eks
 		//  Model name of the pawn
 		std::string model_name = MESH_CUBE;
 		//  Color of the pawn
-		Color modulate;
+		Color modulate = Color::white;
 
 		//  Movement speed in tile per seconds
 		float move_speed = 1.0f;

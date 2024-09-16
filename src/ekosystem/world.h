@@ -61,11 +61,11 @@ namespace eks
 		void _on_entity_removed( Entity* entity );
 
 	private:
-		Vec2 _size;
+		Vec2 _size = Vec2::zero;
 
-		SafePtr<Entity> _ground;
-		std::vector<SafePtr<Pawn>> _pawns;
+		SafePtr<Entity> _ground = nullptr;
+		std::vector<SafePtr<Pawn>> _pawns {};
 
-		std::map<std::string, SharedPtr<PawnData>> _pawn_datas;
+		std::map<std::string, SharedPtr<PawnData>> _pawn_datas {};
 	};
 }
