@@ -29,11 +29,11 @@ void GameScene::init()
 
 	//  setup camera
 	const float CAMERA_SPEED = 50.0f;
-	
+
 	auto camera_owner = engine.create_entity<Entity>();
 	camera_owner->transform->location = Vec3 { _world->get_size() * 0.5f * _world->TILE_SIZE, 0.4f };
 	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
-	_camera_controller = camera_owner->create_component<CameraController>( 
+	_camera_controller = camera_owner->create_component<CameraController>(
 		CAMERA_SPEED,
 		Vec3 { 15.0f, 15.0f, 20.0f }
 	);
@@ -55,7 +55,7 @@ void GameScene::init()
 void GameScene::setup_world()
 {
 	_world = new World( Vec2 { 10.0f, 10.0f } );
-	
+
 	auto hare_data  = _world->get_pawn_data( "hare" );
 	auto grass_data = _world->get_pawn_data( "grass" );
 	auto wolf_data  = _world->get_pawn_data( "wolf" );
@@ -112,7 +112,7 @@ void GameScene::update( float dt )
 
 	if ( _camera_controller->focus_target.is_valid() )
 	{
-		printf( "Target Location: %s\n", 
+		printf( "Target Location: %s\n",
 			_camera_controller->focus_target->location.to_string().c_str() );
 	}
 }

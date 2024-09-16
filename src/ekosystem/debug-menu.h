@@ -35,14 +35,14 @@ namespace eks
 			const std::string& auto_select_name = ""
 		);
 
-		void _populate_pawns_table( 
+		void _populate_pawns_table(
 			const std::vector<SafePtr<Pawn>>& pawns
 		);
 		void _populate_pawn_factory(
 			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas
 		);
 		void _populate_selected_pawn(
-			const std::vector<SafePtr<Pawn>>& pawns 
+			const std::vector<SafePtr<Pawn>>& pawns
 		);
 
 		void _on_window_resized( const Vec2& new_size, const Vec2& old_size );

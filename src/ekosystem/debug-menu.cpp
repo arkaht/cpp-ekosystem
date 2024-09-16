@@ -8,8 +8,8 @@ using namespace eks;
 DebugMenu::DebugMenu()
 {
 	auto& engine = Engine::instance();
-	engine.on_imgui_update.listen( "eks_debug_menu", 
-		std::bind( 
+	engine.on_imgui_update.listen( "eks_debug_menu",
+		std::bind(
 			&DebugMenu::populate,
 			this
 		)
@@ -48,9 +48,9 @@ void DebugMenu::populate()
 		_should_update_window = false;
 	}
 
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar 
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
 		| ImGuiWindowFlags_NoSavedSettings; // Disable saved settings to avoid weird sizes caused by window modes
-	
+
 	if ( !ImGui::Begin( "Ekosystem Debug Menu", nullptr, window_flags ) )
 	{
 		ImGui::End();
@@ -93,9 +93,9 @@ void DebugMenu::populate()
 
 		//  Time scale presets
 		std::array<float, 9> numbers {
-			0.25f, 0.5f, 0.75f, 
-			1.0f, 
-			2.0f, 4.0f, 8.0f, 16.0f, 32.0f 
+			0.25f, 0.5f, 0.75f,
+			1.0f,
+			2.0f, 4.0f, 8.0f, 16.0f, 32.0f
 		};
 		for ( int i = 0; i < numbers.size(); i++ )
 		{
@@ -127,9 +127,9 @@ void DebugMenu::populate()
 		auto window = engine.get_window();
 		const char* window_modes[3] = { "Windowed",	"Fullscreen", "Borderless Fullscreen" };
 		auto current_window_mode = (int)window->get_mode();
-		if (ImGui::Combo("Window Mode", &current_window_mode, window_modes, 3))
+		if ( ImGui::Combo( "Window Mode", &current_window_mode, window_modes, 3 ) )
 		{
-			window->set_mode((WindowMode)current_window_mode);
+			window->set_mode( (WindowMode)current_window_mode );
 		}
 
 		ImGui::Spacing();
@@ -137,7 +137,7 @@ void DebugMenu::populate()
 	if ( ImGui::CollapsingHeader( "Camera", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
 		Camera* camera = engine.camera;
-		
+
 		ImGui::SeparatorText( "Projection" );
 
 		//  Projection settings
@@ -153,7 +153,7 @@ void DebugMenu::populate()
 		{
 			camera->update_projection_from_settings();
 		}
-		
+
 		ImGui::SeparatorText( "Controller" );
 
 		//  Show focused target UID or NULL
@@ -191,7 +191,7 @@ void DebugMenu::populate()
 		ImGui::SeparatorText( "Pawns" );
 
 		ImGui::PushID( "PawnEditor" );
-		ImGui::Combo( "Pawn Data", &_selected_pawn_data_id, 
+		ImGui::Combo( "Pawn Data", &_selected_pawn_data_id,
 			_pawn_datas_names.data(), (int)_pawn_datas_names.size() );
 
 		std::string key = _pawn_datas_names[_selected_pawn_data_id];
@@ -220,7 +220,7 @@ void DebugMenu::populate()
 				auto data = std::make_shared<PawnData>();
 				data->name = _small_input_buffer;
 				world->add_pawn_data( data );
-				
+
 				//  Refresh and auto-select newly created data
 				_refresh_pawn_datas_names( pawn_datas, data->name );
 
@@ -305,13 +305,13 @@ void DebugMenu::populate()
 				data->max_child_spawn_count = math::max( data->max_child_spawn_count, data->min_child_spawn_count );
 			}
 			ImGui::SetItemTooltip( "Amount of child to generate upon reproduction. Set to 0 to disable reproduction" );
-			
+
 			ImGui::DragFloat( "Min Hunger for Reproduction", &data->min_hunger_for_reproduction, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Minimum amount of hunger this pawn needs before reproducing" );
-			
+
 			ImGui::DragFloat( "Hunger Consumption on Reproduction", &data->hunger_consumption_on_reproduction, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Amount of hunger to consume after reproduction" );
-			
+
 			ImGui::TreePop();
 		}
 
@@ -322,17 +322,17 @@ void DebugMenu::populate()
 
 			ImGui::DragFloat( "Food Amount", &data->food_amount, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Amount of food this pawn provide when eaten" );
-			
+
 			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Maximum amount of hunger this pawn can hold" );
-			
+
 			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f, NULL, hunger_format );
 			ImGui::SetItemTooltip( "Rate of decrease of hunger per second" );
-			
+
 			ImGui::DragFloat( "Min Hunger to Eat", &data->min_hunger_to_eat, 0.001f, 0.0f );
 			ImGui::SetItemTooltip( "Minimum amount of hunger to start eating" );
-			
-			bool has_photosynthesis = data->has_adjective( Adjectives::Photosynthesis ); 
+
+			bool has_photosynthesis = data->has_adjective( Adjectives::Photosynthesis );
 			if ( !has_photosynthesis ) ImGui::BeginDisabled();
 			ImGui::DragFloat( "Photosynthesis Gain", &data->photosynthesis_gain, 0.001f, 0.0f, NULL, hunger_format );
 			ImGui::SetItemTooltip( "Rate of increase of hunger per second by photosynthesis" );
@@ -347,30 +347,30 @@ void DebugMenu::populate()
 			if ( ImGui::BeginTable( "adjectives", 3, ImGuiTableFlags_None ) )
 			{
 				auto adjectives = reinterpret_cast<uint32_t*>( &data->adjectives );
-			
+
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Photosynthesis",	adjectives, (uint32_t)Adjectives::Photosynthesis );
+				ImGui::CheckboxFlags( "Photosynthesis", adjectives, (uint32_t)Adjectives::Photosynthesis );
 				ImGui::SetItemTooltip( "Consume light as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Carnivore",		adjectives, (uint32_t)Adjectives::Carnivore );
+				ImGui::CheckboxFlags( "Carnivore", adjectives, (uint32_t)Adjectives::Carnivore );
 				ImGui::SetItemTooltip( "Consume Meat as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Herbivore",		adjectives, (uint32_t)Adjectives::Herbivore );
+				ImGui::CheckboxFlags( "Herbivore", adjectives, (uint32_t)Adjectives::Herbivore );
 				ImGui::SetItemTooltip( "Consume Vegetal as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Meat",			adjectives, (uint32_t)Adjectives::Meat );
+				ImGui::CheckboxFlags( "Meat", adjectives, (uint32_t)Adjectives::Meat );
 				ImGui::SetItemTooltip( "Is eatable by Carnivore" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Vegetal",		adjectives, (uint32_t)Adjectives::Vegetal );
+				ImGui::CheckboxFlags( "Vegetal", adjectives, (uint32_t)Adjectives::Vegetal );
 				ImGui::SetItemTooltip( "Is eatable by Herbivore" );
-				
+
 				ImGui::EndTable();
 			}
-		
+
 			ImGui::TreePop();
 		}
 
@@ -381,7 +381,7 @@ void DebugMenu::populate()
 	ImGui::End();
 }
 
-void DebugMenu::_refresh_pawn_datas_names( 
+void DebugMenu::_refresh_pawn_datas_names(
 	const std::map<std::string, SharedPtr<PawnData>>& pawn_datas,
 	const std::string& auto_select_name
 )
@@ -549,7 +549,7 @@ void DebugMenu::_populate_pawn_factory(
 	{
 		_group_id = (GroupID)math::clamp( group_id, 0, (int)std::numeric_limits<GroupID>::max() );
 	}
-	ImGui::SetItemTooltip( 
+	ImGui::SetItemTooltip(
 		"Group identifier for new pawns inherited to childs and preventing them from eating each other.\n"
 		"Set to 0 for no groups"
 	);
@@ -561,13 +561,13 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 {
 	if ( !ImGui::TreeNode( "Selected Pawn" ) ) return;
 
-	if ( _selected_pawn_id < 0 || _selected_pawn_id >= pawns.size() ) 
+	if ( _selected_pawn_id < 0 || _selected_pawn_id >= pawns.size() )
 	{
 		ImGui::Text( "Select a pawn first to inspect it." );
 		ImGui::TreePop();
 		return;
 	}
-	
+
 	auto& pawn = pawns[_selected_pawn_id];
 	if ( pawn.is_valid() )
 	{
@@ -576,7 +576,7 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 		//  Compute hunger
 		float hunger = pawn->hunger;
 		float max_hunger = pawn->data->max_hunger;
-		float hunger_ratio = math::clamp( 
+		float hunger_ratio = math::clamp(
 			hunger / max_hunger,
 			0.0f,
 			1.0f
@@ -584,17 +584,17 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 
 		//  Create progress text
 		char buffer[32];
-		sprintf_s( 
+		sprintf_s(
 			buffer, "%.03f/%.03f (%d%%)",
 			hunger, max_hunger, (int)( hunger_ratio * 100 )
 		);
 
 		//  Display hunger
-		ImGui::Extra::ColoredProgressBar( 
-			hunger_ratio, 
-			settings::HUNGER_COLOR, 
-			{ 0.0f, 0.0f }, 
-			buffer 
+		ImGui::Extra::ColoredProgressBar(
+			hunger_ratio,
+			settings::HUNGER_COLOR,
+			{ 0.0f, 0.0f },
+			buffer
 		);
 		ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
 		ImGui::Text( "Hunger" );

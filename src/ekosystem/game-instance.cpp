@@ -7,14 +7,13 @@
 using namespace eks;
 
 void GameInstance::load_assets()
-{
-}
+{}
 
 void GameInstance::init()
 {
 	Engine& engine = Engine::instance();
 	auto inputs = engine.get_inputs();
-	
+
 	//  setup inputs
 	inputs->set_relative_mouse_mode( false );
 
@@ -28,8 +27,7 @@ void GameInstance::init()
 }
 
 void GameInstance::release()
-{
-}
+{}
 
 GameInfos GameInstance::get_infos() const
 {

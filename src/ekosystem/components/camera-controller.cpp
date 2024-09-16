@@ -50,7 +50,7 @@ void CameraController::update( float dt )
 		Vec3 right = transform->get_right();
 
 		//  Transform direction according to camera's orientation
-		dir = dir.x * right 
+		dir = dir.x * right
 			+ dir.y * forward;
 
 		//  Compute final movement vector 
@@ -70,7 +70,7 @@ void CameraController::update_arm_length( float dt )
 	//  Control target arm length with mouse wheel
 	if ( inputs->mouse_wheel.y )
 	{
-		target_arm_length = math::clamp( 
+		target_arm_length = math::clamp(
 			target_arm_length + target_arm_length * inputs->mouse_wheel.y * 0.25f,
 			1.0f,
 			500.0f

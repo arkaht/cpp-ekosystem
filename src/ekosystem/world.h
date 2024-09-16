@@ -12,15 +12,15 @@ namespace eks
 
 	class Pawn;
 
-	class World 
+	class World
 	{
 	public:
 		World( const Vec2& size );
 		~World();
 
-		SharedPtr<Pawn> create_pawn( 
-			SafePtr<PawnData> data, 
-			const Vec3& tile_pos 
+		SharedPtr<Pawn> create_pawn(
+			SafePtr<PawnData> data,
+			const Vec3& tile_pos
 		);
 
 		void add_pawn_data( SharedPtr<PawnData> data );
@@ -30,20 +30,20 @@ namespace eks
 
 		bool find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const;
 		Vec3 find_random_tile_pos() const;
-		SafePtr<Pawn> find_pawn_with( 
+		SafePtr<Pawn> find_pawn_with(
 			Adjectives adjectives,
 			SafePtr<Pawn> pawn_to_ignore
 		) const;
-		SafePtr<Pawn> find_pawn_at( 
+		SafePtr<Pawn> find_pawn_at(
 			Adjectives adjectives,
 			const Vec3& pos
 		) const;
 		SafePtr<Pawn> find_nearest_pawn(
 			const Vec3& origin,
-			std::function<bool(SafePtr<Pawn>)> callback 
+			std::function<bool( SafePtr<Pawn> )> callback
 		) const;
 		SafePtr<Pawn> find_pawn(
-			std::function<bool(SafePtr<Pawn>)> callback 
+			std::function<bool( SafePtr<Pawn> )> callback
 		) const;
 
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;

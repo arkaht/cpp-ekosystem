@@ -36,10 +36,10 @@ World::World( const Vec2& size )
 	_init_datas();
 
 	engine.on_entity_removed.listen( "eks_world",
-		std::bind( 
-			&World::_on_entity_removed, this, 
-			std::placeholders::_1 
-		) 
+		std::bind(
+			&World::_on_entity_removed, this,
+			std::placeholders::_1
+		)
 	);
 }
 
@@ -53,9 +53,9 @@ World::~World()
 	}
 }
 
-SharedPtr<Pawn> World::create_pawn( 
-	SafePtr<PawnData> data, 
-	const Vec3& tile_pos 
+SharedPtr<Pawn> World::create_pawn(
+	SafePtr<PawnData> data,
+	const Vec3& tile_pos
 )
 {
 	auto& engine = Engine::instance();
@@ -77,7 +77,7 @@ void World::add_pawn_data( SharedPtr<PawnData> data )
 	}
 
 	_pawn_datas[data->name] = data;
-	Logger::info( "A pawn data has been registered as '%s'", 
+	Logger::info( "A pawn data has been registered as '%s'",
 		data->name.c_str() );
 }
 
@@ -88,7 +88,7 @@ SafePtr<PawnData> World::get_pawn_data( rconst_str name ) const
 
 void World::clear()
 {
-	for ( auto& pawn : _pawns ) 
+	for ( auto& pawn : _pawns )
 	{
 		if ( !pawn.is_valid() ) continue;
 
@@ -139,9 +139,9 @@ Vec3 World::find_random_tile_pos() const
 	);
 }
 
-SafePtr<Pawn> World::find_pawn_with( 
-	Adjectives adjectives, 
-	SafePtr<Pawn> pawn_to_ignore 
+SafePtr<Pawn> World::find_pawn_with(
+	Adjectives adjectives,
+	SafePtr<Pawn> pawn_to_ignore
 ) const
 {
 	for ( auto& pawn : _pawns )
@@ -184,9 +184,9 @@ SafePtr<Pawn> eks::World::find_nearest_pawn(
 	{
 		if ( callback( pawn ) )
 		{
-			float dist = Vec3::distance2d_sqr( 
-				origin, 
-				pawn->get_tile_pos() 
+			float dist = Vec3::distance2d_sqr(
+				origin,
+				pawn->get_tile_pos()
 			);
 
 			if ( nearest_pawn == nullptr || nearest_dist > dist )
@@ -200,7 +200,7 @@ SafePtr<Pawn> eks::World::find_nearest_pawn(
 	return nearest_pawn;
 }
 
-SafePtr<Pawn> World::find_pawn( std::function<bool(SafePtr<Pawn>)> callback ) const
+SafePtr<Pawn> World::find_pawn( std::function<bool( SafePtr<Pawn> )> callback ) const
 {
 	for ( auto& pawn : _pawns )
 	{
@@ -229,8 +229,8 @@ std::map<std::string, SharedPtr<PawnData>>& World::get_pawn_datas()
 }
 
 Vec2 World::get_size() const
-{ 
-	return _size; 
+{
+	return _size;
 }
 
 void World::_init_datas()
@@ -246,16 +246,16 @@ void World::_init_datas()
 
 		//  Read file contents
 		std::ifstream file( file_path );
-		std::string content( 
-			( std::istreambuf_iterator<char>( file ) ), 
-			( std::istreambuf_iterator<char>() ) 
+		std::string content(
+			( std::istreambuf_iterator<char>( file ) ),
+			( std::istreambuf_iterator<char>() )
 		);
 		file.close();
 
 		//  Parse contents into JSON
 		json::document doc;
 		doc.Parse( content.c_str() );
-		
+
 		//  Unserialize JSON to game data
 		auto data = std::make_shared<PawnData>();
 		data->name = file_path.filename().replace_extension().string();
@@ -323,7 +323,7 @@ void World::_on_entity_removed( Entity* entity )
 	{
 		auto itr = std::find( _pawns.begin(), _pawns.end(), SafePtr<Pawn>( pawn ) );
 		ASSERT( itr != _pawns.end(), "A removed pawn couldn't be erased from the World pawns list!" );
-		
+
 		_pawns.erase( itr );
 
 		printf( "Pawn '%s' is being removed!\n", pawn->get_name().c_str() );

@@ -45,7 +45,7 @@ namespace eks
 
 	private:
 		World* _world;
-		SharedPtr<ModelRenderer> _renderer; 
+		SharedPtr<ModelRenderer> _renderer;
 
 		SafePtr<Pawn> _food_target;
 		SafePtr<Pawn> _partner_target;

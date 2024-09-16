@@ -9,7 +9,7 @@ namespace eks
 	class CameraController : public Component
 	{
 	public:
-		CameraController( 
+		CameraController(
 			float move_speed = 20.0f,
 			const Vec3& offset = Vec3::zero
 		);
@@ -18,7 +18,7 @@ namespace eks
 
 		void update( float dt ) override;
 		void update_arm_length( float dt );
-	
+
 	public:
 		float move_speed;
 
