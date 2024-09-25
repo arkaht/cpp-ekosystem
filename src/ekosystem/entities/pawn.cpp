@@ -53,6 +53,8 @@ void Pawn::tick( float dt )
 			1.0f 
 		);
 
+		auto curve_movement_y = Assets::get_curve( "hare/movement-height" );
+
 		Vec3 new_tile_pos = Vec3::lerp( 
 			_tile_pos,
 			next_tile,
@@ -71,7 +73,9 @@ void Pawn::tick( float dt )
 		}
 		//printf( "%s\n", new_tile_pos.to_string().c_str() );
 
-		transform->set_location( new_tile_pos * _world->TILE_SIZE );
+		Vec3 render_pos = new_tile_pos * _world->TILE_SIZE;
+		render_pos.z = curve_movement_y->evaluate_by_time( _move_progress );
+		transform->set_location( render_pos );
 	}
 
 	//  Hunger gain
