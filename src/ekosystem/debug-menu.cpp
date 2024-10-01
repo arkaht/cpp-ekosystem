@@ -287,9 +287,15 @@ void DebugMenu::populate()
 			}
 			ImGui::SetItemTooltip( "Color of the pawn" );
 
+			//  Model name
+			ImGui::InputText( "Model Name", &data->model_name );
+
 			//  Move speed
 			ImGui::DragFloat( "Move Speed", &data->move_speed, 0.01f, 0.0f );
 			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
+
+			//  Curves
+			ImGui::InputText( "Movement Height Curve Name", &data->movement_height_curve_name );
 
 			ImGui::TreePop();
 		}

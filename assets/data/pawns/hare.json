@@ -1,6 +1,7 @@
 {
     "model_name": "suprengine::cylinder",
     "modulate": "#646464FF",
+    "movement_height_curve_name": "hare/movement-height",
     "move_speed": 2.0,
     "min_child_spawn_count": 2,
     "max_child_spawn_count": 2,
@@ -10,5 +11,6 @@
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.05,
     "min_hunger_to_eat": 0.6,
+    "photosynthesis_gain": 0.0,
     "adjectives": 12
 }

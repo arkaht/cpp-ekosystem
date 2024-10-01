@@ -21,6 +21,11 @@ void Pawn::setup()
 		SHADER_LIT_MESH, 
 		data->modulate
 	);
+
+	if ( !data->movement_height_curve_name.empty() )
+	{
+		_movement_height_curve = Assets::get_curve( data->movement_height_curve_name );
+	}
 }
 
 void Pawn::update_this( float dt )
@@ -53,8 +58,6 @@ void Pawn::tick( float dt )
 			1.0f 
 		);
 
-		auto curve_movement_y = Assets::get_curve( "hare/movement-height" );
-
 		Vec3 new_tile_pos = Vec3::lerp( 
 			_tile_pos,
 			next_tile,
@@ -74,7 +77,10 @@ void Pawn::tick( float dt )
 		//printf( "%s\n", new_tile_pos.to_string().c_str() );
 
 		Vec3 render_pos = new_tile_pos * _world->TILE_SIZE;
-		render_pos.z = curve_movement_y->evaluate_by_time( _move_progress );
+		if ( _movement_height_curve )
+		{
+			render_pos.z = _movement_height_curve->evaluate_by_time( _move_progress );
+		}
 		transform->set_location( render_pos );
 	}
 

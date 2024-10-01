@@ -2,6 +2,7 @@
 
 #include <suprengine/entity.h>
 #include <suprengine/components/renderers/model-renderer.hpp>
+#include <suprengine/curve.h>
 
 #include <ekosystem/world.h>
 
@@ -49,6 +50,8 @@ namespace eks
 
 		SafePtr<Pawn> _food_target = nullptr;
 		SafePtr<Pawn> _partner_target = nullptr;
+
+		SharedPtr<Curve> _movement_height_curve = nullptr;
 
 		std::vector<Vec3> _move_path;
 
