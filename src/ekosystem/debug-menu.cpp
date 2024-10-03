@@ -24,12 +24,30 @@ DebugMenu::DebugMenu()
 			std::placeholders::_2
 		)
 	);
+
+	_refresh_assets_ids();
 }
 
 DebugMenu::~DebugMenu()
 {
 	auto& engine = Engine::instance();
 	engine.on_imgui_update.unlisten( "eks_debug_menu" );
+}
+
+template <typename VectorElementType, typename ElementType>
+int find_index_of_element( 
+	const std::vector<VectorElementType>& vector,
+	const ElementType& element,
+	int default_value = -1
+)
+{
+	auto begin_itr = vector.begin();
+	auto end_itr = vector.end();
+
+	auto found_itr = std::find( begin_itr, end_itr, element );
+	if ( found_itr == end_itr && default_value != -1 ) return default_value;
+
+	return static_cast<int>( found_itr - begin_itr );
 }
 
 void DebugMenu::populate()
@@ -290,21 +308,32 @@ void DebugMenu::populate()
 			ImGui::SetItemTooltip( "Color of the pawn" );
 
 			//  Model name
-			auto model_assets = Assets::get_assets_as_ids<Model, const char*>();
-			model_assets.emplace( model_assets.begin(), "None" );
-			int model_index = 0;
-			ImGui::Combo( "Model Name", &model_index, model_assets.data(), model_assets.size() );
-			//ImGui::InputText( "Model Name", &data->model_name );
+			int model_index = find_index_of_element( _model_assets_ids, data->model_name, 0 );
+			if ( 
+				ImGui::Combo(
+					"Model Name", &model_index,
+					_model_assets_ids.data(), static_cast<int>( _model_assets_ids.size() )
+				)
+			)
+			{
+				data->model_name = _model_assets_ids[model_index];
+			}
 
 			//  Move speed
 			ImGui::DragFloat( "Move Speed", &data->move_speed, 0.01f, 0.0f );
 			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
 
 			//  Curves
-			auto curve_assets = Assets::get_assets_as_ids<Curve, const char*>();
-			int curve_index = 0;
-			ImGui::Combo( "Movement Height Curve Name", &curve_index, curve_assets.data(), curve_assets.size() );
-			//ImGui::InputText( "Movement Height Curve Name", &data->movement_height_curve_name );
+			int curve_index = find_index_of_element( _curve_assets_ids, data->movement_height_curve_name, 0 );
+			if ( 
+				ImGui::Combo(
+					"Movement Height Curve Name", &curve_index,
+					_curve_assets_ids.data(), static_cast<int>( _curve_assets_ids.size() )
+				)
+			)
+			{
+				data->movement_height_curve_name = _curve_assets_ids[curve_index];
+			}
 
 			ImGui::TreePop();
 		}
@@ -394,6 +423,15 @@ void DebugMenu::populate()
 	}
 
 	ImGui::End();
+}
+
+void DebugMenu::_refresh_assets_ids()
+{
+	_model_assets_ids = Assets::get_assets_as_ids<Model, const char*>();
+	_model_assets_ids.emplace( _model_assets_ids.begin(), "none" );
+
+	_curve_assets_ids = Assets::get_assets_as_ids<Curve, const char*>();
+	_curve_assets_ids.emplace( _curve_assets_ids.begin(), "none" );
 }
 
 void DebugMenu::_refresh_pawn_datas_names(

@@ -30,6 +30,7 @@ namespace eks
 		SafePtr<CameraController> camera_controller;
 
 	private:
+		void _refresh_assets_ids();
 		void _refresh_pawn_datas_names(
 			const std::map<std::string, SharedPtr<PawnData>>& pawn_datas,
 			const std::string& auto_select_name = ""
@@ -61,6 +62,9 @@ namespace eks
 		Vec2 _next_window_pos { 0.0f, 0.0f };
 		bool _should_update_window = false;
 
-		std::vector<const char*> _pawn_datas_names;
+		std::vector<const char*> _model_assets_ids {};
+		std::vector<const char*> _curve_assets_ids {};
+
+		std::vector<const char*> _pawn_datas_names {};
 	};
 }
