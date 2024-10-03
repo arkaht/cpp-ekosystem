@@ -1,5 +1,7 @@
 #include "debug-menu.h"
 
+#include <suprengine/assets.h>
+
 #include <array>
 #include <filesystem>
 
@@ -288,14 +290,21 @@ void DebugMenu::populate()
 			ImGui::SetItemTooltip( "Color of the pawn" );
 
 			//  Model name
-			ImGui::InputText( "Model Name", &data->model_name );
+			auto model_assets = Assets::get_assets_as_ids<Model, const char*>();
+			model_assets.emplace( model_assets.begin(), "None" );
+			int model_index = 0;
+			ImGui::Combo( "Model Name", &model_index, model_assets.data(), model_assets.size() );
+			//ImGui::InputText( "Model Name", &data->model_name );
 
 			//  Move speed
 			ImGui::DragFloat( "Move Speed", &data->move_speed, 0.01f, 0.0f );
 			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
 
 			//  Curves
-			ImGui::InputText( "Movement Height Curve Name", &data->movement_height_curve_name );
+			auto curve_assets = Assets::get_assets_as_ids<Curve, const char*>();
+			int curve_index = 0;
+			ImGui::Combo( "Movement Height Curve Name", &curve_index, curve_assets.data(), curve_assets.size() );
+			//ImGui::InputText( "Movement Height Curve Name", &data->movement_height_curve_name );
 
 			ImGui::TreePop();
 		}
