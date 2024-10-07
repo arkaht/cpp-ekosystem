@@ -8,7 +8,11 @@ using namespace eks;
 
 void GameInstance::load_assets()
 {
-	Assets::load_curve( "hare/movement-height", "assets/ekosystem/curves/pawns/hare/movement-height.cvx" );
+	Assets::load_curves_in_folder(
+		"assets/ekosystem/curves/",
+		/* is_recurive */ true,
+		/* should_auto_reload */ true
+	);
 }
 
 void GameInstance::init()
