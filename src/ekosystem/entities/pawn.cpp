@@ -3,6 +3,8 @@
 #include <suprengine/assets.h>
 #include <suprengine/random.h>
 
+#include "states/pawn-chase-state.h"
+
 using namespace eks;
 
 Pawn::Pawn( World* world, SafePtr<PawnData> _data )
@@ -21,6 +23,9 @@ void Pawn::setup()
 		SHADER_LIT_MESH, 
 		data->modulate
 	);
+
+	_state_machine = create_component<StateMachine<Pawn>>();
+	_state_machine->switch_state( _state_machine->create_state<PawnChaseState>() );
 
 	if ( !data->movement_height_curve_name.empty() )
 	{

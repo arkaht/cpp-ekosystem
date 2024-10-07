@@ -5,6 +5,7 @@
 #include <suprengine/curve.h>
 
 #include <ekosystem/world.h>
+#include <ekosystem/components/state-machine.h>
 
 namespace eks
 {
@@ -47,6 +48,7 @@ namespace eks
 	private:
 		World* _world = nullptr;
 		SharedPtr<ModelRenderer> _renderer = nullptr;
+		SharedPtr<StateMachine<Pawn>> _state_machine = nullptr;
 
 		SafePtr<Pawn> _food_target = nullptr;
 		SafePtr<Pawn> _partner_target = nullptr;
