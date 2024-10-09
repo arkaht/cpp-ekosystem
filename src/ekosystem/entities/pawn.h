@@ -33,6 +33,7 @@ namespace eks
 		bool is_same_group( GroupID group_id ) const;
 
 		std::string get_name() const;
+		World* get_world() const;
 
 	public:
 		SafePtr<PawnData> data = nullptr;

@@ -229,6 +229,11 @@ std::string Pawn::get_name() const
 	return data->name + "#" + std::to_string( get_unique_id() );
 }
 
+World* Pawn::get_world() const
+{
+	return _world;
+}
+
 void Pawn::_find_food()
 {
 	if ( data->has_adjective( Adjectives::Herbivore ) )
