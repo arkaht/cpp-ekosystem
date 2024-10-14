@@ -41,6 +41,8 @@ namespace eks
 		GroupID group_id = 0;
 		float hunger = 1.0f;
 
+		SharedPtr<Curve> movement_height_curve = nullptr;
+
 	private:
 		void _find_food();
 		void _find_partner();
@@ -53,13 +55,6 @@ namespace eks
 
 		SafePtr<Pawn> _food_target = nullptr;
 		SafePtr<Pawn> _partner_target = nullptr;
-
-		SharedPtr<Curve> _movement_height_curve = nullptr;
-
-		std::vector<Vec3> _move_path;
-
-		float _move_progress = 1.0f;
-		Vec3 _move_to = Vec3::zero;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;
