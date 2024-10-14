@@ -38,6 +38,9 @@ namespace eks
 		Canceled,
 	};
 
+	/*
+	 * Templated class defining one of many actions that a state can have.
+	 */
 	template <typename OwnerType>
 	class StateTask
 	{
@@ -73,6 +76,14 @@ namespace eks
 		StateTaskResult last_result = StateTaskResult::None;
 	};
 
+	/*
+	 * Templated class defining one of many states that a state machine can have.
+	 * 
+	 * A state is composed of tasks in a specific and important order, defined as
+	 * states are created. The state's tasks are run one after another until one
+	 * fail or they all succeed. In any of these two cases, the state start again
+	 * at the first task in the order.
+	 */
 	template <typename OwnerType>
 	class State
 	{
@@ -109,8 +120,12 @@ namespace eks
 			return task->can_switch_from();
 		}
 
+		/*
+		 * Creates a task that the state owns and inserts it in its vector of tasks.
+		 * Returns the created task.
+		 */
 		template <typename TaskType, typename... Args>
-		std::enable_if_t<std::is_base_of<StateTask<OwnerType>, TaskType>::value, TaskType*> create_task( Args... args )
+		std::enable_if_t<std::is_base_of_v<StateTask<OwnerType>, TaskType>, TaskType*> create_task( Args... args )
 		{
 			TaskType* task = new TaskType( args... );
 			task->state = this;
@@ -163,6 +178,20 @@ namespace eks
 		std::vector<StateTask<OwnerType>*> _tasks {};
 	};
 
+	/*
+	 * Templated component handling all different states for an entity
+	 * of a given type. Designed for AI purposes.
+	 * 
+	 * The machine is composed of states which are, themselves, composed of tasks.
+	 * It is limited to run one state and task per update to avoid infinite looping.
+	 * 
+	 * It will also automatically select the first runnable state, defined by
+	 * State::can_switch_from. The order of states' creation is important as well,
+	 * as it defines the order of choice.
+	 * 
+	 * If you want a manual mode, you'll need to tweak a part of the code.
+	 * Look for the related note comment.
+	 */
 	template <typename OwnerType>
 	class StateMachine : public Component
 	{
@@ -246,6 +275,10 @@ namespace eks
 			}
 		}
 
+		/*
+		 * Creates a state that the machine owns and inserts it in its vector of states.
+		 * Returns the created state.
+		 */
 		template <typename StateType, typename... Args>
 		std::enable_if_t<std::is_base_of<State<OwnerType>, StateType>::value, StateType*> create_state( Args... args )
 		{
@@ -256,6 +289,10 @@ namespace eks
 			return state;
 		}
 
+		/*
+		 * Switches to a given state.
+		 * It handles last task's and state's ends.
+		 */
 		void switch_state( State<OwnerType>* state )
 		{
 			if ( _current_state != nullptr )
