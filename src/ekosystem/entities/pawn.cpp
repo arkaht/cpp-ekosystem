@@ -26,7 +26,9 @@ void Pawn::setup()
 
 	_state_machine = create_component<StateMachine<Pawn>>();
 	_state_machine->switch_state( _state_machine->create_state<PawnChaseState>() );
+	_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
 
+	//	Loading pawn's assets
 	if ( !data->movement_height_curve_name.empty() )
 	{
 		movement_height_curve = Assets::get_curve( data->movement_height_curve_name );
@@ -53,41 +55,9 @@ void Pawn::update_this( float dt )
 
 void Pawn::tick( float dt )
 {
-	//bool has_just_reached_tile = false;
-	//if ( _move_path.size() > 0 )
-	//{
-	//	const Vec3 next_tile = _move_path.at( 0 );
-
-	//	_move_progress = math::min( 
-	//		_move_progress + data->move_speed * dt, 
-	//		1.0f 
-	//	);
-
-	//	Vec3 new_tile_pos = Vec3::lerp( 
-	//		_tile_pos,
-	//		next_tile,
-	//		_move_progress
-	//	);
-	//	if ( _move_progress >= 1.0f )
-	//	{
-	//		_tile_pos = new_tile_pos;
-
-	//		_move_progress = 0.0f;
-	//		//  TODO: Refactor to erase from end
-	//		_move_path.erase( _move_path.begin() );
-
-	//		has_just_reached_tile = true;
-	//		//printf( "end node %d\n", (int)_move_path.size() );
-	//	}
-	//	//printf( "%s\n", new_tile_pos.to_string().c_str() );
-
-	//	Vec3 render_pos = new_tile_pos * _world->TILE_SIZE;
-	//	if ( _movement_height_curve )
-	//	{
-	//		render_pos.z = _movement_height_curve->evaluate_by_time( _move_progress );
-	//	}
-	//	transform->set_location( render_pos );
-	//}
+	//	Manually updating the state machine using the substepping tick
+	//	of the pawn
+	_state_machine->update( dt );
 
 	//  Hunger gain
 	hunger = math::max(
