@@ -66,13 +66,13 @@ namespace eks
 
 		void switch_task( int id )
 		{
-			assert( 0 <= id && id < _tasks.size() );
-
-			//  Prevent switching to the same task
-			if ( _current_task_id == id ) return;
+			ASSERT( 0 <= id && id < _tasks.size(), "Index 'id' is out-of-range" );
 
 			//  End previous task
-			_tasks[_current_task_id]->on_end();
+			if ( _current_task_id != -1 )
+			{
+				_tasks[_current_task_id]->on_end();
+			}
 
 			//  Start new task
 			_current_task_id = id;
@@ -91,11 +91,16 @@ namespace eks
 			return _tasks[_current_task_id];
 		}
 
+		int get_current_task_id() const
+		{
+			return _current_task_id;
+		}
+
 	public:
 		StateMachine<OwnerType>* machine = nullptr;
 
 	private:
-		int _current_task_id = 0;
+		int _current_task_id = -1;
 		std::vector<StateTask<OwnerType>*> _tasks {};
 	};
 
@@ -123,6 +128,16 @@ namespace eks
 		{
 			if ( _current_state == nullptr ) return;
 
+			//	Initialize the state to its first task
+			if ( _current_state->get_current_task_id() == -1 )
+			{
+				_current_state->switch_task( 0 );
+			}
+
+			//	Update the state
+			_current_state->on_update( dt );
+
+			//	Update the current state's task
 			auto current_task = _current_state->get_current_task();
 			if ( current_task != nullptr )
 			{
@@ -147,7 +162,6 @@ namespace eks
 						break;
 				}
 			}
-			_current_state->on_update( dt );
 		}
 
 		template <typename StateType, typename... Args>

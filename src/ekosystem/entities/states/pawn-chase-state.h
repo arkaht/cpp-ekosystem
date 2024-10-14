@@ -13,14 +13,20 @@ namespace eks
 			: target_key( target_key )
 		{};
 
+		void on_begin() override
+		{
+			Pawn* owner = state->machine->owner;
+
+			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) )
+			{
+				finish( StateTaskResult::Failed );
+			}
+		}
 		void on_update( float dt ) override
 		{
-			printf( "PawnFindPawnStateTask update\n" );
+			if ( !find_food() ) return;
 
-			if ( find_food() )
-			{
-				state->next_task();
-			}
+			finish( StateTaskResult::Succeed );
 		}
 
 		bool find_food()
@@ -79,15 +85,6 @@ namespace eks
 				printf(
 					"Carnivore '%s' wants to eat '%s'!\n",
 					owner->get_name().c_str(), target->get_name().c_str()
-				);
-				return true;
-			}
-			else if ( owner->data->has_adjective( Adjectives::Photosynthesis ) )
-			{
-				owner->hunger = owner->data->max_hunger;
-				printf(
-					"Photosynthesis '%s' wants to eat!\n",
-					owner->get_name().c_str()
 				);
 				return true;
 			}
@@ -243,7 +240,6 @@ namespace eks
 
 		void on_begin() override
 		{
-			Pawn* owner = state->machine->owner;
 			SafePtr<Pawn> target = *target_key;
 			if ( !target.is_valid() )
 			{
@@ -251,15 +247,15 @@ namespace eks
 				return;
 			}
 
+			Pawn* owner = state->machine->owner;
+
 			owner->hunger = math::min(
 				owner->hunger + target->data->food_amount,
 				owner->data->max_hunger
 			);
+			target->kill();
 
 			printf( "'%s' ate '%s'\n", owner->get_name().c_str(), target->get_name().c_str() );
-			
-			target->kill();
-			target_key->reset();
 
 			finish( StateTaskResult::Succeed );
 		}
