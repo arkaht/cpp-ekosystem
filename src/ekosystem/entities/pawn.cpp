@@ -3,7 +3,7 @@
 #include <suprengine/assets.h>
 #include <suprengine/random.h>
 
-#include "states/pawn-chase-state.h"
+#include "states/pawn-chase.h"
 
 using namespace eks;
 
