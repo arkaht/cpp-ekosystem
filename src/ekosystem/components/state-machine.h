@@ -11,11 +11,31 @@ namespace eks
 	template <typename OwnerType>
 	class StateMachine;
 
+	/*
+	 * Enum representing a StateTask's execution result.
+	 */
 	enum class StateTaskResult
 	{
+		/*
+		 * Result has not been evaluated yet.
+		 * The task could be pending or still running.
+		 */
 		None,
+		/*
+		 * Task succeed achieving its goal.
+		 */
 		Succeed,
+		/*
+		 * Task failed during execution.
+		 */
 		Failed,
+		/*
+		 * Task has been canceled by the state machine.
+		 * This can happen when switching states.
+		 * 
+		 * You should avoid using it yourself when finishing tasks.
+		 */
+		Canceled,
 	};
 
 	template <typename OwnerType>
@@ -28,8 +48,13 @@ namespace eks
 		virtual void on_update( float dt ) {};
 		virtual void on_end() {};
 
+		/*
+		 * Finishes the task with the given result.
+		 * It doesn't do anything if the task has already been finished.
+		 */
 		void finish( StateTaskResult result )
 		{
+			if ( last_result != StateTaskResult::None ) return;
 			last_result = result;
 		}
 
@@ -74,7 +99,7 @@ namespace eks
 			ASSERT( 0 <= id && id < _tasks.size(), "Index 'id' is out-of-range" );
 
 			//  End previous task
-			if ( _current_task_id != -1 )
+			if ( _current_task_id != invalid_id )
 			{
 				_tasks[_current_task_id]->on_end();
 			}
@@ -92,6 +117,7 @@ namespace eks
 
 		StateTask<OwnerType>* get_current_task()
 		{
+			if ( _current_task_id == invalid_id ) return nullptr;
 			if ( _tasks.size() == 0 ) return nullptr;
 			return _tasks[_current_task_id];
 		}
@@ -102,10 +128,13 @@ namespace eks
 		}
 
 	public:
+		static const int invalid_id = -1;
+
+	public:
 		StateMachine<OwnerType>* machine = nullptr;
 
 	private:
-		int _current_task_id = -1;
+		int _current_task_id = invalid_id;
 		std::vector<StateTask<OwnerType>*> _tasks {};
 	};
 
@@ -152,7 +181,7 @@ namespace eks
 			if ( _current_state == nullptr ) return;
 
 			//	Initialize the state to its first task
-			if ( _current_state->get_current_task_id() == -1 )
+			if ( _current_state->get_current_task_id() == State<OwnerType>::invalid_id )
 			{
 				_current_state->switch_task( 0 );
 			}
@@ -180,6 +209,7 @@ namespace eks
 					_current_state->next_task();
 					break;
 				case StateTaskResult::Failed:
+				case StateTaskResult::Canceled:
 					_current_state->switch_task( 0 );
 					break;
 			}
@@ -201,8 +231,7 @@ namespace eks
 			{
 				if ( auto task = _current_state->get_current_task() )
 				{
-					//	TODO: Add task result 'Canceled'
-					task->finish( StateTaskResult::Failed );
+					task->finish( StateTaskResult::Canceled );
 				}
 				_current_state->on_end();
 			}
