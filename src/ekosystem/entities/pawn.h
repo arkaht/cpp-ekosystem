@@ -11,6 +11,9 @@ namespace eks
 {
 	using namespace suprengine;
 
+	class PawnChaseState;
+	class PawnWanderState;
+
 	using GroupID = uint8_t;
 
 	class Pawn : public Entity
@@ -55,6 +58,9 @@ namespace eks
 
 		SafePtr<Pawn> _food_target = nullptr;
 		SafePtr<Pawn> _partner_target = nullptr;
+
+		PawnChaseState* _state_chase = nullptr;
+		PawnWanderState* _state_wander = nullptr;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;

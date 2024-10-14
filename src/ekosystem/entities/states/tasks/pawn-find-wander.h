@@ -1,0 +1,43 @@
+#pragma once
+
+#include <ekosystem/components/state-machine.h>
+
+#include "pawn.h"
+
+namespace eks
+{
+	class PawnFindWanderStateTask : public StateTask<Pawn>
+	{
+	public:
+		PawnFindWanderStateTask( Vec3* location_key )
+			: location_key( location_key )
+		{};
+
+		void on_begin() override
+		{
+			Pawn* owner = state->machine->owner;
+
+			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) )
+			{
+				finish( StateTaskResult::Failed );
+			}
+		}
+		void on_update( float dt ) override
+		{
+			const Vec3 spread = random::generate_location(
+				-radius, -radius, 0.0f,
+				 radius,  radius, 0.0f
+			);
+
+			Pawn* owner = state->machine->owner;
+			*location_key = Vec3::round( owner->get_tile_pos() + spread );
+			printf( "%s\n", *location_key->to_string() );
+
+			finish( StateTaskResult::Succeed );
+		}
+
+	public:
+		float radius = 2.0f;
+		Vec3* location_key = nullptr;
+	};
+}

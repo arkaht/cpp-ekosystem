@@ -3,6 +3,7 @@
 #include <suprengine/assets.h>
 #include <suprengine/random.h>
 
+#include "states/pawn-wander.h"
 #include "states/pawn-chase.h"
 
 using namespace eks;
@@ -25,7 +26,9 @@ void Pawn::setup()
 	);
 
 	_state_machine = create_component<StateMachine<Pawn>>();
-	_state_machine->switch_state( _state_machine->create_state<PawnChaseState>() );
+	_state_wander = _state_machine->create_state<PawnWanderState>();
+	_state_chase = _state_machine->create_state<PawnChaseState>();
+	_state_machine->switch_state( _state_wander );
 	_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
 
 	//	Loading pawn's assets

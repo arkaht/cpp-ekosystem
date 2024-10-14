@@ -12,6 +12,9 @@ namespace eks
 		PawnMoveStateTask( SafePtr<Pawn>* target_key )
 			: pawn_target_key( target_key )
 		{};
+		PawnMoveStateTask( Vec3* target_key )
+			: location_target_key( target_key )
+		{};
 
 		void on_begin() override
 		{
@@ -75,6 +78,7 @@ namespace eks
 
 	public:
 		SafePtr<Pawn>* pawn_target_key = nullptr;
+		Vec3* location_target_key = nullptr;
 
 	private:
 		bool _update_path()
@@ -91,11 +95,14 @@ namespace eks
 
 				return true;
 			}
-			else
+			else if ( location_target_key != nullptr )
 			{
-				//	No valid key was found to find a path; aborting.
-				return false;
+				_find_path_to( *location_target_key );
+				return true;
 			}
+
+			//	No valid key was found to find a path; aborting.
+			return false;
 		}
 		void _find_path_to( const Vec3& target )
 		{
