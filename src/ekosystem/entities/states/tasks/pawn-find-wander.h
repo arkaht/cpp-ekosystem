@@ -30,8 +30,11 @@ namespace eks
 			);
 
 			Pawn* owner = state->machine->owner;
-			*location_key = Vec3::round( owner->get_tile_pos() + spread );
-			printf( "%s\n", *location_key->to_string() );
+			*location_key = Vec3::clamp(
+				Vec3::round( owner->get_tile_pos() + spread ),
+				Vec3::zero,
+				Vec3( owner->get_world()->get_size() )
+			);
 
 			finish( StateTaskResult::Succeed );
 		}
