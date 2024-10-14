@@ -166,7 +166,6 @@ namespace eks
 			if ( _tasks.size() == 0 ) return nullptr;
 			return _tasks[_current_task_id];
 		}
-
 		int get_current_task_id() const
 		{
 			return _current_task_id;
@@ -285,7 +284,7 @@ namespace eks
 		 * Returns the created state.
 		 */
 		template <typename StateType, typename... Args>
-		std::enable_if_t<std::is_base_of<State<OwnerType>, StateType>::value, StateType*> create_state( Args... args )
+		std::enable_if_t<std::is_base_of_v<State<OwnerType>, StateType>, StateType*> create_state( Args... args )
 		{
 			StateType* state = new StateType( args... );
 			state->machine = this;
