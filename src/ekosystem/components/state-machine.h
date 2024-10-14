@@ -50,6 +50,11 @@ namespace eks
 			}
 		}
 
+		virtual bool can_run() const
+		{
+			return true;
+		}
+
 		virtual void on_begin() {};
 		virtual void on_update( float dt ) {};
 		virtual void on_end() {};
@@ -126,6 +131,24 @@ namespace eks
 		}
 		virtual void update( float dt ) override
 		{
+			//	Set the first available state as the next one
+			auto next_state = _current_state;
+			for ( int i = 0; i < _states.size(); i++ )
+			{
+				auto state = _states[i];
+				if ( state->can_run() )
+				{
+					next_state = state;
+					break;
+				}
+			}
+
+			//	Switch to the next state
+			if ( next_state != _current_state )
+			{
+				switch_state( next_state );
+			}
+
 			if ( _current_state == nullptr ) return;
 
 			//	Initialize the state to its first task
@@ -137,30 +160,28 @@ namespace eks
 			//	Update the state
 			_current_state->on_update( dt );
 
-			//	Update the current state's task
 			auto current_task = _current_state->get_current_task();
-			if ( current_task != nullptr )
-			{
-				//	Update only if there is no result yet
-				//	NOTE: This prevents running the update method when the result
-				//		  has been finished in the begin method.
-				if ( current_task->last_result == StateTaskResult::None )
-				{
-					current_task->on_update( dt );
-				}
+			if ( current_task == nullptr ) return;
 
-				//	Listen to task's result and decide which task should be run next
-				//	NOTE: This is done once per update to prevent infinite looping on tasks
-				//		  that may already finish in the begin method.
-				switch ( current_task->last_result )
-				{
-					case StateTaskResult::Succeed:
-						_current_state->next_task();
-						break;
-					case StateTaskResult::Failed:
-						_current_state->switch_task( 0 );
-						break;
-				}
+			//	Update the current task only if there is no result yet
+			//	NOTE: This prevents running the update method when the result
+			//		  has been finished in the begin method.
+			if ( current_task->last_result == StateTaskResult::None )
+			{
+				current_task->on_update( dt );
+			}
+
+			//	Listen to task's result and decide which task should be run next
+			//	NOTE: This is done once per update to prevent infinite looping on tasks
+			//		  that may already finish in the begin method.
+			switch ( current_task->last_result )
+			{
+				case StateTaskResult::Succeed:
+					_current_state->next_task();
+					break;
+				case StateTaskResult::Failed:
+					_current_state->switch_task( 0 );
+					break;
 			}
 		}
 
@@ -178,8 +199,12 @@ namespace eks
 		{
 			if ( _current_state != nullptr )
 			{
+				if ( auto task = _current_state->get_current_task() )
+				{
+					//	TODO: Add task result 'Canceled'
+					task->finish( StateTaskResult::Failed );
+				}
 				_current_state->on_end();
-				delete _current_state;
 			}
 
 			_current_state = state;

@@ -18,6 +18,16 @@ namespace eks
 			create_task<PawnWaitStateTask>( 1.0f, 0.5f );
 		}
 
+		bool can_run() const override
+		{
+			Pawn* owner = machine->owner;
+			if ( owner->data->move_speed <= 0.0f ) return false;
+			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) ) return false;
+			if ( owner->hunger >= owner->data->min_hunger_to_eat ) return false;
+
+			return true;
+		}
+
 	private:
 		SafePtr<Pawn> _target = nullptr;
 	};
