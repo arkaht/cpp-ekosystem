@@ -155,6 +155,11 @@ namespace eks
 			switch_task( next_id );
 		}
 
+		void invalidate_current_task()
+		{
+			_current_task_id = invalid_id;
+		}
+
 		StateTask<OwnerType>* get_current_task() const
 		{
 			if ( _current_task_id == invalid_id ) return nullptr;
@@ -300,8 +305,13 @@ namespace eks
 				//	Cancel current task if no result has already been set
 				if ( auto task = _current_state->get_current_task() )
 				{
-					task->finish( StateTaskResult::Canceled );
+					if ( task->last_result == StateTaskResult::None )
+					{
+						task->finish( StateTaskResult::Canceled );
+						task->on_end();
+					}
 				}
+				_current_state->invalidate_current_task();
 
 				_current_state->on_end();
 			}
