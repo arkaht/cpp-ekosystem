@@ -253,7 +253,7 @@ void World::_init_datas()
 		file.close();
 
 		//  Parse contents into JSON
-		json::document doc;
+		json::document doc {};
 		doc.Parse( content.c_str() );
 
 		//  Unserialize JSON to game data
@@ -262,59 +262,6 @@ void World::_init_datas()
 		data->unserialize( doc );
 		add_pawn_data( data );
 	}
-	/*
-	auto model = Assets::get_model( MESH_CUBE );
-
-	//  Hare
-	{
-		auto data = std::make_shared<PawnData>();
-		data->name = "hare";
-		data->model = model;
-		data->modulate = Color { 100, 100, 100, 255 };
-		data->move_speed = 2.0f;
-		data->food_amount = 1.0f;
-		data->max_hunger = 1.0f;
-		data->min_hunger_to_eat = 0.3f;
-		data->natural_hunger_consumption = 0.05f;
-		data->max_child_spawn_count = 2;
-		data->adjectives = Adjectives::Herbivore
-						 | Adjectives::Meat;
-		_add_pawn_data( data );
-	}
-
-	//  Wolf
-	{
-		auto data = std::make_shared<PawnData>();
-		data->name = "wolf";
-		data->model = model;
-		data->modulate = Color { 255, 10, 100, 255 };
-		data->move_speed = 1.5f;
-		data->food_amount = 1.0f;
-		data->max_hunger = 1.0f;
-		data->min_hunger_to_eat = 0.3f;
-		data->natural_hunger_consumption = 0.07f;
-		data->max_child_spawn_count = 1;
-		data->adjectives = Adjectives::Carnivore
-						 | Adjectives::Meat;
-		_add_pawn_data( data );
-	}
-
-	//  Grass
-	{
-		auto data = std::make_shared<PawnData>();
-		data->name = "grass";
-		data->model = model;
-		data->modulate = Color::green;
-		data->move_speed = 0.0f;
-		data->food_amount = 0.3f;
-		data->max_hunger = 1.0f;
-		data->natural_hunger_consumption = 0.05f;
-		data->max_child_spawn_count = 0;
-		data->adjectives = Adjectives::Photosynthesis
-						 | Adjectives::Vegetal;
-		_add_pawn_data( data );
-	}
-	*/
 }
 
 void World::_on_entity_removed( Entity* entity )
