@@ -49,6 +49,16 @@ namespace eks
 		virtual void on_end() {};
 
 		/*
+		 * Returns whenever the task is ready to end earlier.
+		 * This is used by the state machine to know if it can switch 
+		 * to a more appropriate state.
+		 */
+		virtual bool can_switch_from() const
+		{
+			return true;
+		}
+
+		/*
 		 * Finishes the task with the given result.
 		 * It doesn't do anything if the task has already been finished.
 		 */
@@ -75,14 +85,29 @@ namespace eks
 			}
 		}
 
-		virtual bool can_run() const
-		{
-			return true;
-		}
-
 		virtual void on_begin() {};
 		virtual void on_update( float dt ) {};
 		virtual void on_end() {};
+
+		/*
+		 * Returns whenever the state can be switched to.
+		 * This is used by the state machine to find an appropriate state.
+		 */
+		virtual bool can_switch_to() const
+		{
+			return true;
+		}
+		/*
+		 * Returns whenever the state is ready to end earlier.
+		 * This is used by the state machine to know if it can switch 
+		 * to a more appropriate state.
+		 */
+		virtual bool can_switch_from() const
+		{
+			auto task = get_current_task();
+			if ( task == nullptr ) return true;
+			return task->can_switch_from();
+		}
 
 		template <typename TaskType, typename... Args>
 		std::enable_if_t<std::is_base_of<StateTask<OwnerType>, TaskType>::value, TaskType*> create_task( Args... args )
@@ -115,7 +140,7 @@ namespace eks
 			switch_task( next_id );
 		}
 
-		StateTask<OwnerType>* get_current_task()
+		StateTask<OwnerType>* get_current_task() const
 		{
 			if ( _current_task_id == invalid_id ) return nullptr;
 			if ( _tasks.size() == 0 ) return nullptr;
@@ -160,13 +185,19 @@ namespace eks
 		}
 		virtual void update( float dt ) override
 		{
-			//	Set the first available state as the next one
 			auto next_state = _current_state;
-			for ( int i = 0; i < _states.size(); i++ )
+			if ( _current_state == nullptr || _current_state->can_switch_from() )
 			{
-				auto state = _states[i];
-				if ( state->can_run() )
+				//	Select the first runnable state
+				//	NOTE: This code prevents manual user control over the state
+				//		  that should run. An enum indicating the state machine
+				//		  mode could help to choose between manual and automatic
+				//		  modes, but that's not what I need right now.
+				for ( int i = 0; i < _states.size(); i++ )
 				{
+					auto state = _states[i];
+					if ( !state->can_switch_to() ) continue;
+		
 					next_state = state;
 					break;
 				}
@@ -194,7 +225,7 @@ namespace eks
 
 			//	Update the current task only if there is no result yet
 			//	NOTE: This prevents running the update method when the result
-			//		  has been finished in the begin method.
+			//		  has already been set in the begin method.
 			if ( current_task->last_result == StateTaskResult::None )
 			{
 				current_task->on_update( dt );
@@ -229,10 +260,12 @@ namespace eks
 		{
 			if ( _current_state != nullptr )
 			{
+				//	Cancel current task if no result has already been set
 				if ( auto task = _current_state->get_current_task() )
 				{
 					task->finish( StateTaskResult::Canceled );
 				}
+
 				_current_state->on_end();
 			}
 

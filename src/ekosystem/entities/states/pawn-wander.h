@@ -16,7 +16,7 @@ namespace eks
 			create_task<PawnWaitStateTask>( 3.0f, 1.5f );
 		}
 
-		bool can_run() const override
+		bool can_switch_to() const override
 		{
 			Pawn* owner = machine->owner;
 			if ( owner->data->move_speed <= 0.0f ) return false;

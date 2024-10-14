@@ -71,6 +71,12 @@ namespace eks
 			owner->transform->set_location( render_pos );
 		}
 
+		bool can_switch_from() const override
+		{
+			//	Delay switching state until the movement has ended
+			return !is_moving();
+		}
+
 		bool is_moving() const
 		{
 			return _move_progress > 0.0f;
