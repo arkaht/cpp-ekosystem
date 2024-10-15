@@ -11,9 +11,6 @@ namespace eks
 {
 	using namespace suprengine;
 
-	class PawnChaseState;
-	class PawnWanderState;
-
 	using GroupID = uint8_t;
 
 	class Pawn : public Entity
@@ -25,8 +22,7 @@ namespace eks
 		void update_this( float dt ) override;
 		void tick( float dt );
 
-		void move_to( const Vec3& target );
-		void reproduce();
+		void reproduce( SafePtr<Pawn> partner );
 
 		void set_tile_pos( const Vec3& tile_pos );
 		void update_tile_pos();
@@ -44,23 +40,14 @@ namespace eks
 		GroupID group_id = 0;
 		float hunger = 1.0f;
 
-		SharedPtr<Curve> movement_height_curve = nullptr;
+		bool wants_to_mate = false;
 
-	private:
-		void _find_food();
-		void _find_partner();
-		void _find_path_to( const Vec3& target );
+		SharedPtr<Curve> movement_height_curve = nullptr;
 
 	private:
 		World* _world = nullptr;
 		SharedPtr<ModelRenderer> _renderer = nullptr;
 		SharedPtr<StateMachine<Pawn>> _state_machine = nullptr;
-
-		SafePtr<Pawn> _food_target = nullptr;
-		SafePtr<Pawn> _partner_target = nullptr;
-
-		PawnChaseState* _state_chase = nullptr;
-		PawnWanderState* _state_wander = nullptr;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;

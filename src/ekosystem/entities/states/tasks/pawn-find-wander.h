@@ -2,7 +2,7 @@
 
 #include <ekosystem/components/state-machine.h>
 
-#include "pawn.h"
+#include <ekosystem/entities/pawn.h>
 
 namespace eks
 {

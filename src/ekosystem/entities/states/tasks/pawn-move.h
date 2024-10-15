@@ -2,7 +2,7 @@
 
 #include <ekosystem/components/state-machine.h>
 
-#include "pawn.h"
+#include <ekosystem/entities/pawn.h>
 
 namespace eks
 {
@@ -103,6 +103,7 @@ namespace eks
 			}
 			else if ( location_target_key != nullptr )
 			{
+				//	TODO: Check if computed each move
 				_find_path_to( *location_target_key );
 				return true;
 			}

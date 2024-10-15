@@ -4,6 +4,7 @@
 #include <suprengine/random.h>
 
 #include "states/pawn-wander.h"
+#include "states/pawn-reproduction.h"
 #include "states/pawn-chase.h"
 
 using namespace eks;
@@ -26,9 +27,9 @@ void Pawn::setup()
 	);
 
 	_state_machine = create_component<StateMachine<Pawn>>();
-	_state_chase = _state_machine->create_state<PawnChaseState>();
-	_state_wander = _state_machine->create_state<PawnWanderState>();
-	//_state_machine->switch_state( _state_wander );
+	_state_machine->create_state<PawnChaseState>();
+	_state_machine->create_state<PawnReproductionState>();
+	_state_machine->create_state<PawnWanderState>();
 	_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
 
 	//	Loading pawn's assets
@@ -77,62 +78,6 @@ void Pawn::tick( float dt )
 		);
 	}
 
-	//if ( !data->has_adjective( Adjectives::Photosynthesis )
-	//  && hunger < data->min_hunger_to_eat )
-	//{
-	//	if ( !_food_target.is_valid() )
-	//	{
-	//		_move_path.clear();
-	//		_find_food();
-	//	}
-	//	else if ( _food_target->get_tile_pos() == _tile_pos )
-	//	{
-	//		hunger = math::min(
-	//			hunger + _food_target->data->food_amount,
-	//			data->max_hunger
-	//		);
-	//		printf( "'%s' ate '%s'\n", 
-	//			get_name().c_str(), _food_target->get_name().c_str() );
-	//		
-	//		_food_target->kill();
-	//		_food_target.reset();
-	//	}
-	//	else if ( _move_path.size() == 0
-	//		  || ( has_just_reached_tile && _move_path.at( _move_path.size() - 1 ) != _food_target->get_tile_pos() ) )
-	//	{
-	//		move_to( _food_target->get_tile_pos() );
-	//	}
-	//	else
-	//	{
-	//		/*printf( "%s == %s (%s)\n", 
-	//			_food_target->get_tile_pos().to_string().c_str(),
-	//			_tile_pos.to_string().c_str(),
-	//			Vec3::world_to_grid( transform->location, _world->TILE_SIZE ).to_string().c_str() );*/
-	//	}
-	//}
-	//else if ( can_reproduce() )
-	//{
-	//	if ( !_partner_target.is_valid() )
-	//	{
-	//		_move_path.clear();
-	//		_find_partner();
-	//	}
-	//	else if ( _partner_target->hunger < _partner_target->data->min_hunger_for_reproduction )
-	//	{
-	//		_partner_target.reset();
-	//		_find_partner();
-	//	}
-	//	else if ( Vec3::distance2d( _partner_target->get_tile_pos(), _tile_pos ) <= 1.5f )
-	//	{
-	//		reproduce();
-	//	}
-	//	else if ( _move_path.size() == 0
-	//		  || ( has_just_reached_tile && _move_path.at( _move_path.size() - 1 ) != _partner_target->get_tile_pos() ) )
-	//	{
-	//		move_to( _partner_target->get_tile_pos() );
-	//	}
-	//}
-
 	//  Kill from hunger
 	if ( hunger <= 0.0f )
 	{
@@ -140,16 +85,9 @@ void Pawn::tick( float dt )
 	}
 }
 
-void Pawn::move_to( const Vec3& target )
+void Pawn::reproduce( SafePtr<Pawn> partner )
 {
-	_find_path_to( target );
-	/*_move_progress = 0.0f;
-
-	_move_to = target;*/
-}
-
-void Pawn::reproduce()
-{
+	//	Generate children around
 	int child_spawn_count = random::generate( data->min_child_spawn_count, data->max_child_spawn_count );
 	for ( int i = 0; i < child_spawn_count; i++ )
 	{
@@ -160,12 +98,13 @@ void Pawn::reproduce()
 		child->group_id = group_id;
 	}
 
+	//	Consume hunger
 	hunger -= data->hunger_consumption_on_reproduction;
 
-	if ( _partner_target.is_valid() )
+	//	Consume partner's hunger
+	if ( partner.is_valid() )
 	{
-		_partner_target->hunger -= _partner_target->data->hunger_consumption_on_reproduction;
-		_partner_target.reset();
+		partner->hunger -= partner->data->hunger_consumption_on_reproduction;
 	}
 }
 
@@ -178,7 +117,6 @@ void Pawn::set_tile_pos( const Vec3& tile_pos )
 void Pawn::update_tile_pos()
 {
 	_tile_pos = Vec3::world_to_grid( transform->location, _world->TILE_SIZE );
-	//_move_to = _tile_pos;
 }
 
 Vec3 Pawn::get_tile_pos() const
@@ -205,113 +143,4 @@ std::string Pawn::get_name() const
 World* Pawn::get_world() const
 {
 	return _world;
-}
-
-void Pawn::_find_food()
-{
-	if ( data->has_adjective( Adjectives::Herbivore ) )
-	{
-		auto target = _world->find_nearest_pawn(
-			_tile_pos,
-			[&]( auto pawn )
-			{
-				if ( pawn.get() == this ) return false;
-				if ( pawn->is_same_group( group_id ) ) return false;
-				return pawn->data->has_adjective( Adjectives::Vegetal );
-			}
-		);
-		if ( !target.is_valid() )
-		{
-			printf( "'%s' can't find any vegetal to eat!\n", 
-				get_name().c_str() );
-			return;
-		}
-
-		_food_target = target;
-		printf( "Herbivore '%s' wants to eat '%s'!\n",
-			get_name().c_str(), target->get_name().c_str() );
-
-	}
-	else if ( data->has_adjective( Adjectives::Carnivore ) )
-	{
-		auto target = _world->find_nearest_pawn(
-			_tile_pos,
-			[&]( auto pawn )
-			{
-				if ( pawn.get() == this ) return false;
-				if ( pawn->is_same_group( group_id ) ) return false;
-				return pawn->data->has_adjective( Adjectives::Meat );
-			}
-		);
-		if ( !target.is_valid() )
-		{
-			printf( "'%s' can't find any meat to eat!\n", 
-				get_name().c_str() );
-			return;
-		}
-
-		_food_target = target;
-		printf( "Carnivore '%s' wants to eat '%s'!\n",
-			get_name().c_str(), target->get_name().c_str() );
-	}
-	else if ( data->has_adjective( Adjectives::Photosynthesis ) )
-	{
-		hunger = data->max_hunger;
-		printf( "Photosynthesis '%s' wants to eat!\n", 
-			get_name().c_str() );
-	}
-}
-
-void Pawn::_find_partner()
-{
-	if ( data->has_adjective( Adjectives::Vegetal ) )
-	{
-		reproduce();
-	}
-	else
-	{
-		_partner_target = _world->find_nearest_pawn(
-			_tile_pos,
-			[&]( auto pawn )
-			{
-				if ( pawn.get() == this ) return false;
-				return pawn->data == data && pawn->can_reproduce();
-			}
-		);
-		if ( !_partner_target.is_valid() ) return;
-
-		printf( "'%s' will mate with '%s'\n", 
-			get_name().c_str(), 
-			_partner_target->get_name().c_str() 
-		);
-	}
-}
-
-void Pawn::_find_path_to( const Vec3& target )
-{
-	/*_move_path.clear();
-
-	const Vec3 location = _tile_pos;
-	const Vec3 diff = target - location;
-
-	const float x_sign = math::sign( diff.x );
-	const float y_sign = math::sign( diff.y );
-
-	for ( int off_x = 1; off_x <= (int)math::abs( diff.x ); off_x++ )
-	{
-		_move_path.push_back( Vec3 { 
-			location.x + off_x * x_sign,
-			location.y,
-			location.z
-		} );
-	}
-
-	for ( int off_y = 1; off_y <= (int)math::abs( diff.y ); off_y++ )
-	{
-		_move_path.push_back( Vec3 { 
-			target.x,
-			location.y + off_y * y_sign,
-			location.z
-		} );
-	}*/
 }
