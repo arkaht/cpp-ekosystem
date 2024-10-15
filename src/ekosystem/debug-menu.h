@@ -15,7 +15,34 @@ namespace eks
 	{
 		constexpr ImVec4 HUNGER_COLOR { 0.8f, 0.3f, 0.1f, 1.0f };
 		constexpr size_t SMALL_INPUT_BUFFER_SIZE = 32;
+		constexpr size_t HISTOGRAM_DATA_SIZE = 100;
 	}
+
+	struct ScrollingBuffer
+	{
+		ScrollingBuffer( int max_size )
+			: max_size( max_size )
+		{
+			data.reserve( max_size );
+		}
+
+		void add_point( const Vec2& point )
+		{
+			if ( data.size() < max_size )
+			{
+				data.emplace_back( point );
+			}
+			else
+			{
+				data[offset] = point;
+				offset = ( offset + 1 ) % max_size;
+			}
+		}
+
+		int max_size = 100;
+		int offset = 0;
+		std::vector<Vec2> data {};
+	};
 
 	class DebugMenu
 	{
@@ -24,10 +51,11 @@ namespace eks
 		~DebugMenu();
 
 		void populate();
+		void update_histogram();
 
 	public:
-		World* world { nullptr };
-		SafePtr<CameraController> camera_controller;
+		World* world = nullptr;
+		SafePtr<CameraController> camera_controller = nullptr;
 
 	private:
 		void _refresh_assets_ids();
@@ -61,6 +89,8 @@ namespace eks
 		Vec2 _next_window_size { 400.0f, 680.0f };
 		Vec2 _next_window_pos { 0.0f, 0.0f };
 		bool _should_update_window = false;
+
+		std::unordered_map<std::string, ScrollingBuffer> _pawn_histogram {};
 
 		std::vector<const char*> _model_assets_ids {};
 		std::vector<const char*> _curve_assets_ids {};

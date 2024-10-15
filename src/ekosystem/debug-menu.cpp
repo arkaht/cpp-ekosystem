@@ -27,6 +27,12 @@ DebugMenu::DebugMenu()
 		)
 	);
 
+	Timer timer {};
+	timer.max_time = 1.0f;
+	timer.repetitions = 0;
+	timer.callback = std::bind( &DebugMenu::update_histogram, this );
+	engine.add_timer( timer );
+
 	_refresh_assets_ids();
 }
 
@@ -201,19 +207,44 @@ void DebugMenu::populate()
 	}
 	if ( ImGui::CollapsingHeader( "Statistics", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
-		std::vector<float> histogram { 3, 3, 5, 6, 10, 2, 1, 1, 0 };
-
-		if ( ImPlot::BeginPlot( "Pawns" ) )
+		if ( ImPlot::BeginPlot( "Pawns Count", ImVec2 { -1.0f, 250.0f } ) )
 		{
-			ImPlot::SetupAxes( "Time (TBD)", "Count" );
-			ImPlot::SetupAxisLimitsConstraints( ImAxis_X1, 0.0, 100.0 );
-			ImPlot::SetupAxisLimits( ImAxis_Y1, 0.0, 10.0, ImPlotCond_Always );
+			float game_time = updater->get_accumulated_seconds();
 
-			ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
-			ImPlot::PlotShaded( "Hares", histogram.data(), histogram.size() );
-			ImPlot::PopStyleVar();
+			ImPlot::SetupAxes( "Game Time (seconds)", "Count" );
+			ImPlot::SetupAxesLimits( 0, settings::HISTOGRAM_DATA_SIZE, 0, 50 );
+			ImPlot::SetupAxisLimits(
+				ImAxis_X1,
+				math::max( 0.0f, game_time - settings::HISTOGRAM_DATA_SIZE ),
+				math::max( static_cast<float>( settings::HISTOGRAM_DATA_SIZE ), game_time ),
+				ImPlotCond_Always
+			);
+			ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
 
-			ImPlot::PlotLine( "Hares", histogram.data(), histogram.size() );
+			for ( auto& pair : _pawn_histogram )
+			{
+				auto& name = pair.first;
+				auto& histogram = pair.second;
+
+				ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
+				ImPlot::PlotShaded(
+					*name,
+					&histogram.data[0].x, &histogram.data[0].y,
+					histogram.data.size(),
+					0.0,
+					ImPlotLineFlags_None,
+					histogram.offset, sizeof( Vec2 )
+				);
+				ImPlot::PopStyleVar();
+
+				ImPlot::PlotLine(
+					*name,
+					&histogram.data[0].x, &histogram.data[0].y,
+					histogram.data.size(),
+					ImPlotLineFlags_None,
+					histogram.offset, sizeof( Vec2 )
+				);
+			}
 
 			ImPlot::EndPlot();
 		}
@@ -446,6 +477,46 @@ void DebugMenu::populate()
 	}
 
 	ImGui::End();
+}
+
+void DebugMenu::update_histogram()
+{
+	//	Create pawn counters
+	std::unordered_map<std::string, int> pawn_counters {};
+	pawn_counters.reserve( _pawn_datas_names.size() );
+	for ( const char* name : _pawn_datas_names )
+	{
+		pawn_counters.emplace( name, 0 );
+	}
+
+	//	Count number of pawns per data
+	auto& pawns = world->get_pawns();
+	for ( auto& pawn : pawns )
+	{
+		auto& key = pawn->data->name;
+		auto itr = pawn_counters.find( key );
+		if ( itr == pawn_counters.end() ) continue;
+
+		itr->second++;
+	}
+
+	float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
+	for ( auto& pair : pawn_counters )
+	{
+		auto& key = pair.first;
+		auto& counter = pair.second;
+
+		//	Create histogram for pawn's data
+		auto itr = _pawn_histogram.find( key );
+		if ( itr == _pawn_histogram.end() )
+		{
+			_pawn_histogram.emplace( key, ScrollingBuffer( settings::HISTOGRAM_DATA_SIZE ) );
+			itr = _pawn_histogram.find( key );
+		}
+
+		//	Insert counter
+		itr->second.add_point( Vec2 { game_time, static_cast<float>( counter ) } );
+	}
 }
 
 void DebugMenu::_refresh_assets_ids()
