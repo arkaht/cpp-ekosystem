@@ -84,10 +84,9 @@ namespace eks
 	/*
 	 * Templated class defining one of many states that a state machine can have.
 	 * 
-	 * A state is composed of tasks in a specific and important order, defined as
-	 * states are created. The state's tasks are run one after another until one
-	 * fail or they all succeed. In any of these two cases, the state start again
-	 * at the first task in the order.
+	 * A state is composed of tasks that have the same order as tasks are created.
+	 * The state's tasks are run one after another until one fail or they all succeed.
+	 * In any of these two cases, the state start again at the first task in the order.
 	 */
 	template <typename OwnerType>
 	class State
@@ -190,6 +189,16 @@ namespace eks
 	/*
 	 * Templated component handling all different states for an entity
 	 * of a given type. Designed for AI purposes.
+	 * 
+	 * It takes a lot from a behavior tree (e.g. Unreal) by mixing the simplicity of
+	 * design of a finite state machine. Meaning it is a small and simple implementation
+	 * of a behavior tree by having a fixed depth of 2 and focusing on only executing
+	 * one state at a time with a finite number of states but it also handles a task
+	 * system to subdivide the actions, allow for re-usable code and composable states.
+	 * However, the concept of state transitions is different from a FSM. In the regard
+	 * of a behavior tree, the root node would be a selector (or fallback) looking to run
+	 * the first state that it can use, and a state node is a sequence trying to run all
+	 * tasks until one fail or they all succeed.
 	 * 
 	 * The machine is composed of states which are, themselves, composed of tasks.
 	 * It is limited to run one state and task per update to avoid infinite looping.
