@@ -2,6 +2,8 @@
 
 #include <suprengine/assets.h>
 
+#include <implot.h>
+
 #include <array>
 #include <filesystem>
 
@@ -194,6 +196,27 @@ void DebugMenu::populate()
 		ImGui::DragFloat3( "Offset", &camera_controller->camera_offset.x, 1.0f, 0.0f, 1000.0f );
 		ImGui::DragFloat( "Arm Length", &camera_controller->target_arm_length, 1.0f, 1.0f, 500.0f );
 		ImGui::DragFloat( "Move Speed", &camera_controller->move_speed, 1.0f, 0.0f, 500.0f );
+
+		ImGui::Spacing();
+	}
+	if ( ImGui::CollapsingHeader( "Statistics", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		std::vector<float> histogram { 3, 3, 5, 6, 10, 2, 1, 1, 0 };
+
+		if ( ImPlot::BeginPlot( "Pawns" ) )
+		{
+			ImPlot::SetupAxes( "Time (TBD)", "Count" );
+			ImPlot::SetupAxisLimitsConstraints( ImAxis_X1, 0.0, 100.0 );
+			ImPlot::SetupAxisLimits( ImAxis_Y1, 0.0, 10.0, ImPlotCond_Always );
+
+			ImPlot::PushStyleVar( ImPlotStyleVar_FillAlpha, 0.25f );
+			ImPlot::PlotShaded( "Hares", histogram.data(), histogram.size() );
+			ImPlot::PopStyleVar();
+
+			ImPlot::PlotLine( "Hares", histogram.data(), histogram.size() );
+
+			ImPlot::EndPlot();
+		}
 
 		ImGui::Spacing();
 	}
