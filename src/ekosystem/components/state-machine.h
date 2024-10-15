@@ -67,8 +67,13 @@ namespace eks
 		 */
 		void finish( StateTaskResult result )
 		{
-			if ( last_result != StateTaskResult::None ) return;
+			if ( is_finished() ) return;
 			last_result = result;
+		}
+
+		bool is_finished() const
+		{
+			return last_result != StateTaskResult::None;
 		}
 
 	public:
@@ -256,10 +261,10 @@ namespace eks
 			auto current_task = _current_state->get_current_task();
 			if ( current_task == nullptr ) return;
 
-			//	Update the current task only if there is no result yet
+			//	Update the current task only if not finished yet
 			//	NOTE: This prevents running the update method when the result
 			//		  has already been set in the begin method.
-			if ( current_task->last_result == StateTaskResult::None )
+			if ( !current_task->is_finished() )
 			{
 				current_task->on_update( dt );
 			}
@@ -304,7 +309,7 @@ namespace eks
 				//	Cancel current task if no result has already been set
 				if ( auto task = _current_state->get_current_task() )
 				{
-					if ( task->last_result == StateTaskResult::None )
+					if ( !task->is_finished() )
 					{
 						task->finish( StateTaskResult::Canceled );
 						task->on_end();
