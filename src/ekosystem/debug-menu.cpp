@@ -71,8 +71,8 @@ void DebugMenu::populate()
 	//  Update window size and position if needed (auto-resize from application window sizes)
 	if ( _should_update_window )
 	{
-		ImGui::SetNextWindowPos( { _next_window_pos.x, _next_window_pos.y }, ImGuiCond_None );
-		ImGui::SetNextWindowSize( { _next_window_size.x, _next_window_size.y }, ImGuiCond_None );
+		ImGui::SetNextWindowPos( { _next_window_pos.x, _next_window_pos.y }, ImGuiCond_Always );
+		ImGui::SetNextWindowSize( { _next_window_size.x, _next_window_size.y }, ImGuiCond_Always );
 		_should_update_window = false;
 	}
 
@@ -137,7 +137,7 @@ void DebugMenu::populate()
 			}
 			else
 			{
-				sprintf_s( buffer, "x%d", (int)scale );
+				sprintf_s( buffer, "x%d", static_cast<int>( scale ) );
 			}
 
 			if ( ImGui::Button( buffer ) )
@@ -154,10 +154,10 @@ void DebugMenu::populate()
 		//  Window mode
 		auto window = engine.get_window();
 		const char* window_modes[3] = { "Windowed",	"Fullscreen", "Borderless Fullscreen" };
-		auto current_window_mode = (int)window->get_mode();
+		auto current_window_mode = static_cast<int>( window->get_mode() );
 		if ( ImGui::Combo( "Window Mode", &current_window_mode, window_modes, 3 ) )
 		{
-			window->set_mode( (WindowMode)current_window_mode );
+			window->set_mode( static_cast<WindowMode>( current_window_mode ) );
 		}
 
 		ImGui::Spacing();
@@ -230,7 +230,7 @@ void DebugMenu::populate()
 				ImPlot::PlotShaded(
 					*name,
 					&histogram.data[0].x, &histogram.data[0].y,
-					histogram.data.size(),
+					static_cast<int>( histogram.data.size() ),
 					0.0,
 					ImPlotLineFlags_None,
 					histogram.offset, sizeof( Vec2 )
@@ -240,7 +240,7 @@ void DebugMenu::populate()
 				ImPlot::PlotLine(
 					*name,
 					&histogram.data[0].x, &histogram.data[0].y,
-					histogram.data.size(),
+					static_cast<int>( histogram.data.size() ),
 					ImPlotLineFlags_None,
 					histogram.offset, sizeof( Vec2 )
 				);
@@ -286,7 +286,11 @@ void DebugMenu::populate()
 			ImGui::Text( "Choose an identifier for the new pawn data." );
 			ImGui::Separator();
 
-			ImGui::InputText( "Name", _small_input_buffer, settings::SMALL_INPUT_BUFFER_SIZE, ImGuiInputTextFlags_CharsNoBlank );
+			ImGui::InputText(
+				"Name",
+				_small_input_buffer, settings::SMALL_INPUT_BUFFER_SIZE,
+				ImGuiInputTextFlags_CharsNoBlank
+			);
 
 			ImGui::BeginDisabled( strlen( _small_input_buffer ) == 0 );
 			if ( ImGui::Button( "Create" ) )
@@ -337,7 +341,7 @@ void DebugMenu::populate()
 			{
 				file << buffer.GetString();
 				file.close();
-				Logger::info( "The pawn data '%s' has been saved to '%s'!", data->name.c_str(), file_path.c_str() );
+				Logger::info( "The pawn data '%s' has been saved to '%s'!", *data->name, *file_path );
 			}
 		}
 
@@ -355,9 +359,9 @@ void DebugMenu::populate()
 			};
 			if ( ImGui::ColorEdit3( "Modulate", modulate, ImGuiColorEditFlags_None ) )
 			{
-				data->modulate.r = (uint8_t)( modulate[0] * 255 );
-				data->modulate.g = (uint8_t)( modulate[1] * 255 );
-				data->modulate.b = (uint8_t)( modulate[2] * 255 );
+				data->modulate.r = static_cast<uint8_t>( modulate[0] * 255 );
+				data->modulate.g = static_cast<uint8_t>( modulate[1] * 255 );
+				data->modulate.b = static_cast<uint8_t>( modulate[2] * 255 );
 			}
 			ImGui::SetItemTooltip( "Color of the pawn" );
 
@@ -365,8 +369,10 @@ void DebugMenu::populate()
 			int model_index = find_index_of_element( _model_assets_ids, data->model_name, 0 );
 			if ( 
 				ImGui::Combo(
-					"Model Name", &model_index,
-					_model_assets_ids.data(), static_cast<int>( _model_assets_ids.size() )
+					"Model Name",
+					&model_index,
+					_model_assets_ids.data(),
+					static_cast<int>( _model_assets_ids.size() )
 				)
 			)
 			{
@@ -381,8 +387,10 @@ void DebugMenu::populate()
 			int curve_index = find_index_of_element( _curve_assets_ids, data->movement_height_curve_name, 0 );
 			if ( 
 				ImGui::Combo(
-					"Movement Height Curve Name", &curve_index,
-					_curve_assets_ids.data(), static_cast<int>( _curve_assets_ids.size() )
+					"Movement Height Curve Name",
+					&curve_index,
+					_curve_assets_ids.data(),
+					static_cast<int>( _curve_assets_ids.size() )
 				)
 			)
 			{
@@ -399,15 +407,31 @@ void DebugMenu::populate()
 			//  since they are stored aside.
 			if ( ImGui::DragInt2( "Child Spawn Count", &data->min_child_spawn_count, 1, 0, 10 ) )
 			{
-				data->min_child_spawn_count = math::min( data->min_child_spawn_count, data->max_child_spawn_count );
-				data->max_child_spawn_count = math::max( data->max_child_spawn_count, data->min_child_spawn_count );
+				data->min_child_spawn_count = math::min(
+					data->min_child_spawn_count,
+					data->max_child_spawn_count
+				);
+				data->max_child_spawn_count = math::max(
+					data->max_child_spawn_count,
+					data->min_child_spawn_count
+				);
 			}
 			ImGui::SetItemTooltip( "Amount of child to generate upon reproduction. Set to 0 to disable reproduction" );
 
-			ImGui::DragFloat( "Min Hunger for Reproduction", &data->min_hunger_for_reproduction, 0.001f, 0.0f );
+			ImGui::DragFloat(
+				"Min Hunger for Reproduction",
+				&data->min_hunger_for_reproduction,
+				0.001f,
+				0.0f
+			);
 			ImGui::SetItemTooltip( "Minimum amount of hunger this pawn needs before reproducing" );
 
-			ImGui::DragFloat( "Hunger Consumption on Reproduction", &data->hunger_consumption_on_reproduction, 0.001f, 0.0f );
+			ImGui::DragFloat(
+				"Hunger Consumption on Reproduction",
+				&data->hunger_consumption_on_reproduction,
+				0.001f,
+				0.0f
+			);
 			ImGui::SetItemTooltip( "Amount of hunger to consume after reproduction" );
 
 			ImGui::TreePop();
@@ -418,21 +442,40 @@ void DebugMenu::populate()
 		{
 			const char* hunger_format = "%.3f hunger/s";
 
-			ImGui::DragFloat( "Food Amount", &data->food_amount, 0.001f, 0.0f );
+			constexpr float MAX_HUNGER = 10.0f;
+
+			ImGui::DragFloat( "Food Amount", &data->food_amount, 0.001f, 0.0f, MAX_HUNGER );
 			ImGui::SetItemTooltip( "Amount of food this pawn provide when eaten" );
 
-			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f );
+			ImGui::DragFloat( "Max Hunger", &data->max_hunger, 0.001f, 0.0f, MAX_HUNGER );
 			ImGui::SetItemTooltip( "Maximum amount of hunger this pawn can hold" );
 
-			ImGui::DragFloat( "Natural Hunger Consumption", &data->natural_hunger_consumption, 0.001f, 0.0f, NULL, hunger_format );
+			ImGui::DragFloat(
+				"Natural Hunger Consumption",
+				&data->natural_hunger_consumption,
+				0.001f,
+				0.0f, MAX_HUNGER,
+				hunger_format
+			);
 			ImGui::SetItemTooltip( "Rate of decrease of hunger per second" );
 
-			ImGui::DragFloat( "Min Hunger to Eat", &data->min_hunger_to_eat, 0.001f, 0.0f );
+			ImGui::DragFloat(
+				"Min Hunger to Eat",
+				&data->min_hunger_to_eat,
+				0.001f,
+				0.0f, MAX_HUNGER
+			);
 			ImGui::SetItemTooltip( "Minimum amount of hunger to start eating" );
 
 			bool has_photosynthesis = data->has_adjective( Adjectives::Photosynthesis );
 			if ( !has_photosynthesis ) ImGui::BeginDisabled();
-			ImGui::DragFloat( "Photosynthesis Gain", &data->photosynthesis_gain, 0.001f, 0.0f, NULL, hunger_format );
+			ImGui::DragFloat(
+				"Photosynthesis Gain",
+				&data->photosynthesis_gain,
+				0.001f,
+				0.0f, MAX_HUNGER,
+				hunger_format
+			);
 			ImGui::SetItemTooltip( "Rate of increase of hunger per second by photosynthesis" );
 			if ( !has_photosynthesis ) ImGui::EndDisabled();
 
@@ -447,23 +490,43 @@ void DebugMenu::populate()
 				auto adjectives = reinterpret_cast<uint32_t*>( &data->adjectives );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Photosynthesis", adjectives, (uint32_t)Adjectives::Photosynthesis );
+				ImGui::CheckboxFlags(
+					"Photosynthesis",
+					adjectives,
+					static_cast<uint32_t>( Adjectives::Photosynthesis )
+				);
 				ImGui::SetItemTooltip( "Consume light as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Carnivore", adjectives, (uint32_t)Adjectives::Carnivore );
+				ImGui::CheckboxFlags(
+					"Carnivore",
+					adjectives,
+					static_cast<uint32_t>( Adjectives::Carnivore )
+				);
 				ImGui::SetItemTooltip( "Consume Meat as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Herbivore", adjectives, (uint32_t)Adjectives::Herbivore );
+				ImGui::CheckboxFlags(
+					"Herbivore",
+					adjectives,
+					static_cast<uint32_t>( Adjectives::Herbivore )
+				);
 				ImGui::SetItemTooltip( "Consume Vegetal as food" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Meat", adjectives, (uint32_t)Adjectives::Meat );
+				ImGui::CheckboxFlags(
+					"Meat",
+					adjectives,
+					static_cast<uint32_t>( Adjectives::Meat )
+				);
 				ImGui::SetItemTooltip( "Is eatable by Carnivore" );
 
 				ImGui::TableNextColumn();
-				ImGui::CheckboxFlags( "Vegetal", adjectives, (uint32_t)Adjectives::Vegetal );
+				ImGui::CheckboxFlags(
+					"Vegetal",
+					adjectives,
+					static_cast<uint32_t>( Adjectives::Vegetal )
+				);
 				ImGui::SetItemTooltip( "Is eatable by Herbivore" );
 
 				ImGui::EndTable();
@@ -694,7 +757,13 @@ void DebugMenu::_populate_pawn_factory(
 	int group_id = _group_id;
 	if ( ImGui::InputInt( "Group ID", &group_id, 1, 10 ) )
 	{
-		_group_id = (GroupID)math::clamp( group_id, 0, (int)std::numeric_limits<GroupID>::max() );
+		_group_id = static_cast<GroupID>( 
+			math::clamp(
+				group_id,
+				0,
+				static_cast<int>( std::numeric_limits<GroupID>::max() )
+			)
+		);
 	}
 	ImGui::SetItemTooltip(
 		"Group identifier for new pawns inherited to childs and preventing them from eating each other.\n"
@@ -718,7 +787,7 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 	auto& pawn = pawns[_selected_pawn_id];
 	if ( pawn.is_valid() )
 	{
-		ImGui::Text( ( "Name: " + pawn->get_name() ).c_str() );
+		ImGui::Text( *( "Name: " + pawn->get_name() ) );
 
 		//  Compute hunger
 		float hunger = pawn->hunger;
@@ -733,7 +802,7 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 		char buffer[32];
 		sprintf_s(
 			buffer, "%.03f/%.03f (%d%%)",
-			hunger, max_hunger, (int)( hunger_ratio * 100 )
+			hunger, max_hunger, static_cast<int>( hunger_ratio * 100 )
 		);
 
 		//  Display hunger
@@ -752,6 +821,8 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 
 void DebugMenu::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
 {
+	//	Compute ImGui window next size and position so it
+	//  automatically scale depending on the window size
 	float ratio = new_size.x / old_size.x;
 	_next_window_size *= ratio;
 	_next_window_pos *= ratio;

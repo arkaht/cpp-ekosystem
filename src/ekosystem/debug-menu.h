@@ -18,6 +18,10 @@ namespace eks
 		constexpr size_t HISTOGRAM_DATA_SIZE = 100;
 	}
 
+	/*
+	 * Struct storing points in a way that allows to create a scrolling histogram.
+	 * This code is took from implot_demo.cpp
+	 */
 	struct ScrollingBuffer
 	{
 		ScrollingBuffer( int max_size )
@@ -44,6 +48,9 @@ namespace eks
 		std::vector<Vec2> data {};
 	};
 
+	/*
+	 * Class handling the debug menu for game development purposes using ImGui and ImPlot.
+	 */
 	class DebugMenu
 	{
 	public:
@@ -82,13 +89,14 @@ namespace eks
 
 		int _spawn_count = 1;
 		float _hunger_ratio = 1.0f;
-		GroupID _group_id = 0;
 
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
 
 		Vec2 _next_window_size { 400.0f, 680.0f };
 		Vec2 _next_window_pos { 0.0f, 0.0f };
 		bool _should_update_window = false;
+
+		GroupID _group_id = 0;
 
 		std::unordered_map<std::string, ScrollingBuffer> _pawn_histogram {};
 
