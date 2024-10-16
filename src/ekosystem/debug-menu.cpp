@@ -169,15 +169,37 @@ void DebugMenu::populate()
 		ImGui::SeparatorText( "Projection" );
 
 		//  Projection settings
-		if ( ImGui::DragFloat( "FOV", &camera->projection_settings.fov, 1.0f, 20.0f, 120.0f ) )
+		if (
+			ImGui::DragFloat(
+				"FOV",
+				&camera->projection_settings.fov,
+				1.0f,
+				20.0f, 120.0f
+			)
+		)
 		{
 			camera->update_projection_from_settings();
 		}
-		if ( ImGui::DragFloat( "ZNear", &camera->projection_settings.znear, 1.0f, CAMERA_DEFAULT_ZNEAR, camera->projection_settings.zfar ) )
+		if (
+			ImGui::DragFloat(
+				"ZNear",
+				&camera->projection_settings.znear,
+				1.0f,
+				CAMERA_DEFAULT_ZNEAR, camera->projection_settings.zfar
+			)
+		)
 		{
 			camera->update_projection_from_settings();
 		}
-		if ( ImGui::DragFloat( "ZFar", &camera->projection_settings.zfar, 1.0f, camera->projection_settings.znear, CAMERA_DEFAULT_ZFAR ) )
+		if (
+			ImGui::DragFloat(
+				"ZFar",
+				&camera->projection_settings.zfar,
+				1.0f,
+				camera->projection_settings.znear,
+				CAMERA_DEFAULT_ZFAR
+			)
+		)
 		{
 			camera->update_projection_from_settings();
 		}
