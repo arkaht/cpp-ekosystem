@@ -16,12 +16,6 @@ namespace eks
 		void on_begin() override
 		{
 			SafePtr<Pawn> partner = *partner_key;
-			if ( !partner.is_valid() )
-			{
-				finish( StateTaskResult::Failed );
-				return;
-			}
-
 			Pawn* owner = state->machine->owner;
 			owner->reproduce( partner );
 

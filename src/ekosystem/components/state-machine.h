@@ -61,6 +61,11 @@ namespace eks
 			return true;
 		}
 
+		virtual bool can_ignore() const
+		{
+			return false;
+		}
+
 		/*
 		 * Finishes the task with the given result.
 		 * It doesn't do anything if the task has already been finished.
@@ -155,8 +160,35 @@ namespace eks
 		}
 		void next_task()
 		{
-			int next_id = ( _current_task_id + 1 ) % _tasks.size();
+			if ( _tasks.empty() )
+			{
+				invalidate_current_task();
+				return;
+			}
+
+			const int tasks_size = static_cast<int>( _tasks.size() );
+			int next_id = ( _current_task_id + 1 ) % tasks_size;
+
+			//	Find the first not ignorable task
+			int current_iteration = 0;
+			while ( _tasks[next_id]->can_ignore() )
+			{
+				//	Check maximum iterations
+				if ( ++current_iteration == tasks_size )
+				{
+					invalidate_current_task();
+					return;
+				}
+
+				next_id = ( next_id + 1 ) % tasks_size;
+			}
+
 			switch_task( next_id );
+		}
+		void reset_task()
+		{
+			invalidate_current_task();
+			next_task();
 		}
 
 		void invalidate_current_task()
@@ -235,6 +267,8 @@ namespace eks
 			auto next_state = _current_state;
 			if ( _current_state == nullptr || _current_state->can_switch_from() )
 			{
+				next_state = nullptr;
+
 				//	Select the first runnable state
 				//	NOTE: This code prevents manual user control over the state
 				//		  that should run. An enum indicating the state machine
@@ -261,7 +295,7 @@ namespace eks
 			//	Initialize the state to its first task
 			if ( _current_state->get_current_task_id() == State<OwnerType>::invalid_id )
 			{
-				_current_state->switch_task( 0 );
+				_current_state->reset_task();
 			}
 
 			//	Update the state
@@ -288,7 +322,7 @@ namespace eks
 					break;
 				case StateTaskResult::Failed:
 				case StateTaskResult::Canceled:
-					_current_state->switch_task( 0 );
+					_current_state->reset_task();
 					break;
 			}
 		}

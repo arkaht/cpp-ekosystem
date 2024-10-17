@@ -35,6 +35,14 @@ namespace eks
 			owner->wants_to_mate = false;
 		}
 
+		bool can_ignore() const override
+		{
+			const Pawn* owner = state->machine->owner;
+			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) ) return true;
+
+			return false;
+		}
+
 		bool find_mate()
 		{
 			Pawn* owner = state->machine->owner;

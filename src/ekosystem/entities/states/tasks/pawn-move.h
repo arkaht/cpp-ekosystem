@@ -77,6 +77,14 @@ namespace eks
 			return !is_moving();
 		}
 
+		bool can_ignore() const override
+		{
+			const Pawn* owner = state->machine->owner;
+			if ( owner->data->move_speed <= 0.0f ) return true;
+
+			return false;
+		}
+
 		bool is_moving() const
 		{
 			return _move_progress > 0.0f;
