@@ -211,7 +211,10 @@ void DebugMenu::populate()
 			char buffer[5];
 			if ( camera_controller->focus_target.is_valid() )
 			{
-				sprintf_s( buffer, "%04d", camera_controller->focus_target->get_owner()->get_unique_id() );
+				sprintf_s(
+					buffer, "%04d",
+					camera_controller->focus_target->get_owner()->get_unique_id()
+				);
 			}
 			else
 			{
@@ -381,9 +384,9 @@ void DebugMenu::populate()
 			};
 			if ( ImGui::ColorEdit3( "Modulate", modulate, ImGuiColorEditFlags_None ) )
 			{
-				data->modulate.r = static_cast<uint8_t>( modulate[0] * 255 );
-				data->modulate.g = static_cast<uint8_t>( modulate[1] * 255 );
-				data->modulate.b = static_cast<uint8_t>( modulate[2] * 255 );
+				data->modulate.r = static_cast<uint8>( modulate[0] * 255 );
+				data->modulate.g = static_cast<uint8>( modulate[1] * 255 );
+				data->modulate.b = static_cast<uint8>( modulate[2] * 255 );
 			}
 			ImGui::SetItemTooltip( "Color of the pawn" );
 
@@ -509,13 +512,13 @@ void DebugMenu::populate()
 		{
 			if ( ImGui::BeginTable( "adjectives", 3, ImGuiTableFlags_None ) )
 			{
-				auto adjectives = reinterpret_cast<uint32_t*>( &data->adjectives );
+				auto adjectives = reinterpret_cast<uint32*>( &data->adjectives );
 
 				ImGui::TableNextColumn();
 				ImGui::CheckboxFlags(
 					"Photosynthesis",
 					adjectives,
-					static_cast<uint32_t>( Adjectives::Photosynthesis )
+					static_cast<uint32>( Adjectives::Photosynthesis )
 				);
 				ImGui::SetItemTooltip( "Consume light as food" );
 
@@ -523,7 +526,7 @@ void DebugMenu::populate()
 				ImGui::CheckboxFlags(
 					"Carnivore",
 					adjectives,
-					static_cast<uint32_t>( Adjectives::Carnivore )
+					static_cast<uint32>( Adjectives::Carnivore )
 				);
 				ImGui::SetItemTooltip( "Consume Meat as food" );
 
@@ -531,7 +534,7 @@ void DebugMenu::populate()
 				ImGui::CheckboxFlags(
 					"Herbivore",
 					adjectives,
-					static_cast<uint32_t>( Adjectives::Herbivore )
+					static_cast<uint32>( Adjectives::Herbivore )
 				);
 				ImGui::SetItemTooltip( "Consume Vegetal as food" );
 
@@ -539,7 +542,7 @@ void DebugMenu::populate()
 				ImGui::CheckboxFlags(
 					"Meat",
 					adjectives,
-					static_cast<uint32_t>( Adjectives::Meat )
+					static_cast<uint32>( Adjectives::Meat )
 				);
 				ImGui::SetItemTooltip( "Is eatable by Carnivore" );
 
@@ -547,7 +550,7 @@ void DebugMenu::populate()
 				ImGui::CheckboxFlags(
 					"Vegetal",
 					adjectives,
-					static_cast<uint32_t>( Adjectives::Vegetal )
+					static_cast<uint32>( Adjectives::Vegetal )
 				);
 				ImGui::SetItemTooltip( "Is eatable by Herbivore" );
 
