@@ -44,16 +44,19 @@ void Pawn::update_this( float dt )
 	//  TODO: Debug build only
 	_renderer->modulate = data->modulate;
 
-	//  Substepping tick
-	//  NOTE: It fixes issues in behaviors when the time scale is 
-	//	really high (e.g. time scale set to 32). Reproduction could
-	//  not happen if the threshold was too thin.
-	auto& engine = Engine::instance();
-	int substeps = (int)math::ceil( engine.get_updater()->time_scale );
-	float subdelta = dt / substeps;
-	for ( int substep = 0; substep < substeps; substep++ )
+	if ( dt > 0.0f )
 	{
-		tick( subdelta );
+		//  Substepping tick
+		//  NOTE: It fixes issues in behaviors when the time scale is 
+		//	really high (e.g. time scale set to 32). Reproduction could
+		//  not happen if the threshold was too thin.
+		auto& engine = Engine::instance();
+		int substeps = (int)math::ceil( engine.get_updater()->time_scale );
+		float subdelta = dt / substeps;
+		for ( int substep = 0; substep < substeps; substep++ )
+		{
+			tick( subdelta );
+		}
 	}
 }
 
