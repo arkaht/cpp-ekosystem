@@ -844,100 +844,102 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 	ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
 	ImGui::Text( "Hunger" );
 
-	if ( ImGui::TreeNode( "State Machine" ) )
+	_populate_state_machine( pawn->get_state_machine() );
+
+	ImGui::TreePop();
+}
+
+void DebugMenu::_populate_state_machine( const SafePtr<StateMachine<Pawn>> machine )
+{
+	if ( !ImGui::TreeNode( "State Machine" ) ) return;
+	
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_SpanTextWidth;
+
+	constexpr ImVec4 DEFAULT_COLOR { 1.0f, 1.0f, 1.0f, 1.0f };
+	constexpr ImVec4 CURRENT_COLOR { 1.0f, 0.3f, 0.1f, 1.0f };
+	constexpr ImVec4 IGNORED_COLOR { 0.5f, 0.5f, 0.5f, 1.0f };
+
+	//	Show all states
+	auto& states = machine->get_states();
+	for ( int state_id = 0; state_id < states.size(); state_id++ )
 	{
-		ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_SpanTextWidth;
+		const State<Pawn>* state = states[state_id];
 
-		auto machine = pawn->get_state_machine();
-
-		constexpr ImVec4 DEFAULT_COLOR { 1.0f, 1.0f, 1.0f, 1.0f };
-		constexpr ImVec4 CURRENT_COLOR { 1.0f, 0.3f, 0.1f, 1.0f };
-		constexpr ImVec4 IGNORED_COLOR { 0.5f, 0.5f, 0.5f, 1.0f };
-
-		//	Show all states
-		auto& states = machine->get_states();
-		for ( int state_id = 0; state_id < states.size(); state_id++ )
+		//	Determine node's color and info
+		const char* node_info = "";
+		ImVec4 node_color = DEFAULT_COLOR;
+		ImGuiTreeNodeFlags node_flags = base_flags;
+		if ( machine->get_current_state() == state )
 		{
-			const State<Pawn>* state = states[state_id];
-			
-			//	Determine node's color and info
-			const char* node_info = "";
-			ImVec4 node_color = DEFAULT_COLOR;
-			ImGuiTreeNodeFlags node_flags = base_flags;
-			if ( machine->get_current_state() == state )
+			node_color = CURRENT_COLOR;
+			node_info = "[current]";
+			node_flags |= ImGuiTreeNodeFlags_Framed;
+		}
+		else if ( !state->can_switch_to() )
+		{
+			node_color = IGNORED_COLOR;
+			node_info = "[!can_switch_to]";
+		}
+
+		//	Open the entire tree for the first time
+		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
+
+		char state_label[64] {};
+		sprintf_s( state_label, "State %d: %s %s", state_id, *state->get_name(), node_info );
+		if ( !ImGui::Extra::ColoredTreeNode( state_label, node_flags, node_color ) ) continue;
+
+		//	Show all tasks
+		auto& tasks = state->get_tasks();
+		for ( int task_id = 0; task_id < tasks.size(); task_id++ )
+		{
+			const StateTask<Pawn>* task = tasks[task_id];
+
+			ImGuiTreeNodeFlags leaf_flags = 
+				base_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+			//	Determine leaf's color and info
+			if ( state->can_switch_to() )
 			{
-				node_color = CURRENT_COLOR;
-				node_info = "[current]";
-				node_flags |= ImGuiTreeNodeFlags_Framed;
-			}
-			else if ( !state->can_switch_to() )
-			{
-				node_color = IGNORED_COLOR;
-				node_info = "[!can_switch_to]";
-			}
-			
-			//	Open the entire tree for the first time
-			ImGui::SetNextItemOpen( true, ImGuiCond_Once );
-
-			char state_label[64] {};
-			sprintf_s( state_label, "State %d: %s %s", state_id, *state->get_name(), node_info );
-			if ( !ImGui::Extra::ColoredTreeNode( state_label, node_flags, node_color ) ) continue;
-
-			//	Show all tasks
-			auto& tasks = state->get_tasks();
-			for ( int task_id = 0; task_id < tasks.size(); task_id++ )
-			{
-				const StateTask<Pawn>* task = tasks[task_id];
-
-				ImGuiTreeNodeFlags leaf_flags = 
-					base_flags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-				//	Determine leaf's color and info
-				if ( state->can_switch_to() )
+				if ( state->get_current_task() == task )
 				{
-					if ( state->get_current_task() == task )
-					{
-						node_color = CURRENT_COLOR;
-						node_info = "[current]";
-						leaf_flags |= ImGuiTreeNodeFlags_Framed;
-					}
-					else if ( task->can_ignore() )
-					{
-						node_color = IGNORED_COLOR;
-						node_info = "[can_ignore]";
-					}
-					else
-					{
-						node_color = DEFAULT_COLOR;
-						node_info = "";
-					}
+					node_color = CURRENT_COLOR;
+					node_info = "[current]";
+					leaf_flags |= ImGuiTreeNodeFlags_Framed;
 				}
-
-				//	Get last result as a text
-				const char* result_name = "none";
-				switch ( task->last_result )
+				else if ( task->can_ignore() )
 				{
-					case StateTaskResult::Succeed:
-						result_name = "succeed";
-						break;
-					case StateTaskResult::Failed:
-						result_name = "failed";
-						break;
-					case StateTaskResult::Canceled:
-						result_name = "canceled";
-						break;
+					node_color = IGNORED_COLOR;
+					node_info = "[can_ignore]";
 				}
-
-				char task_label[64] {};
-				sprintf_s(
-					task_label,
-					"Task %d: %s %s [%s]",
-					task_id, *task->get_name(), node_info, result_name
-				);
-				ImGui::Extra::ColoredTreeNode( task_label, leaf_flags, node_color );
+				else
+				{
+					node_color = DEFAULT_COLOR;
+					node_info = "";
+				}
 			}
 
-			ImGui::TreePop();
+			//	Get last result as a text
+			const char* result_name = "none";
+			switch ( task->last_result )
+			{
+				case StateTaskResult::Succeed:
+					result_name = "succeed";
+					break;
+				case StateTaskResult::Failed:
+					result_name = "failed";
+					break;
+				case StateTaskResult::Canceled:
+					result_name = "canceled";
+					break;
+			}
+
+			char task_label[64] {};
+			sprintf_s(
+				task_label,
+				"Task %d: %s %s [%s]",
+				task_id, *task->get_name(), node_info, result_name
+			);
+			ImGui::Extra::ColoredTreeNode( task_label, leaf_flags, node_color );
 		}
 
 		ImGui::TreePop();
