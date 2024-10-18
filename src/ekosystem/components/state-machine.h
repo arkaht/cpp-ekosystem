@@ -162,12 +162,12 @@ namespace eks
 			_tasks[_current_task_id]->last_result = StateTaskResult::None;
 			_tasks[_current_task_id]->on_begin();
 		}
-		void next_task()
+		bool next_task()
 		{
 			if ( _tasks.empty() )
 			{
 				invalidate_current_task();
-				return;
+				return false;
 			}
 
 			const int tasks_size = static_cast<int>( _tasks.size() );
@@ -181,13 +181,14 @@ namespace eks
 				if ( ++current_iteration == tasks_size )
 				{
 					invalidate_current_task();
-					return;
+					return false;
 				}
 
 				next_id = ( next_id + 1 ) % tasks_size;
 			}
 
 			switch_task( next_id );
+			return true;
 		}
 		void reset_task()
 		{
