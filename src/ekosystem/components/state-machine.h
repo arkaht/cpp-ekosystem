@@ -98,6 +98,10 @@ namespace eks
 			last_result = result;
 		}
 
+		/*
+		 * Returns whenever a result has already been set to the task
+		 * to finish it during the next update.
+		 */
 		bool is_finished() const
 		{
 			return last_result != StateTaskResult::None;
