@@ -20,7 +20,7 @@ namespace eks
 		{
 			Pawn* owner = machine->owner;
 			if ( owner->data->max_child_spawn_count <= 0 ) return false;
-			if ( owner->data->min_hunger_for_reproduction < owner->hunger ) return false;
+			if ( owner->hunger < owner->data->min_hunger_for_reproduction ) return false;
 
 			return true;
 		}
