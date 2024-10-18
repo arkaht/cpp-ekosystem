@@ -66,6 +66,8 @@ namespace eks
 			return false;
 		}
 
+		virtual std::string get_name() const = 0;
+
 		/*
 		 * Finishes the task with the given result.
 		 * It doesn't do anything if the task has already been finished.
@@ -128,6 +130,8 @@ namespace eks
 			if ( task == nullptr ) return true;
 			return task->can_switch_from();
 		}
+
+		virtual std::string get_name() const = 0;
 
 		/*
 		 * Creates a task that the state owns and inserts it in its vector of tasks.
@@ -205,6 +209,10 @@ namespace eks
 		int get_current_task_id() const
 		{
 			return _current_task_id;
+		}
+		const std::vector<StateTask<OwnerType>*>& get_tasks() const
+		{
+			return _tasks;
 		}
 
 	public:
@@ -369,6 +377,15 @@ namespace eks
 			{
 				_current_state->on_begin();
 			}
+		}
+
+		State<OwnerType>* get_current_state() const
+		{
+			return _current_state;
+		}
+		const std::vector<State<OwnerType>*>& get_states() const
+		{
+			return _states;
 		}
 
 	public:

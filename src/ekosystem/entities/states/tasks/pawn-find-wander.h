@@ -39,6 +39,11 @@ namespace eks
 			finish( StateTaskResult::Succeed );
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnFindWanderStateTask";
+		}
+
 	public:
 		float radius = 2.0f;
 		Vec3* location_key = nullptr;

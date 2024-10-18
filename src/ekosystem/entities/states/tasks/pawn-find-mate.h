@@ -43,6 +43,11 @@ namespace eks
 			return false;
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnFindMateStateTask";
+		}
+
 		bool find_mate()
 		{
 			Pawn* owner = state->machine->owner;

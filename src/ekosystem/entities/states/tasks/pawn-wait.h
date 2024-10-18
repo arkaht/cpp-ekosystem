@@ -13,7 +13,7 @@ namespace eks
 			: wait_time( wait_time ), random_deviation( random_deviation )
 		{}
 
-		void on_begin()
+		void on_begin() override
 		{
 			_current_time = 0.0f;
 
@@ -28,11 +28,16 @@ namespace eks
 				);
 			}
 		}
-		void on_update( float dt )
+		void on_update( float dt ) override
 		{
 			if ( ( _current_time += dt ) < _max_time ) return;
 
 			finish( StateTaskResult::Succeed );
+		}
+
+		std::string get_name() const override
+		{
+			return "PawnWaitStateTask";
 		}
 
 	public:

@@ -85,6 +85,11 @@ namespace eks
 			return false;
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnMoveStateTask";
+		}
+
 		bool is_moving() const
 		{
 			return _move_progress > 0.0f;

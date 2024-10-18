@@ -38,6 +38,11 @@ namespace eks
 			finish( StateTaskResult::Succeed );
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnEatStateTask";
+		}
+
 	public:
 		SafePtr<Pawn>* target_key = nullptr;
 	};

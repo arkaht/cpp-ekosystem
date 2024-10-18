@@ -22,6 +22,11 @@ namespace eks
 			finish( StateTaskResult::Succeed );
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnMateStateTask";
+		}
+
 	public:
 		SafePtr<Pawn>* partner_key = nullptr;
 	};

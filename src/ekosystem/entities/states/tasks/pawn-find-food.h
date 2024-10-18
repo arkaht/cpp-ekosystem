@@ -29,6 +29,11 @@ namespace eks
 			finish( StateTaskResult::Succeed );
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnFindFoodStateTask";
+		}
+
 		bool find_food()
 		{
 			Pawn* owner = state->machine->owner;

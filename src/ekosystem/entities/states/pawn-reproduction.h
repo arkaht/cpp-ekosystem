@@ -25,6 +25,11 @@ namespace eks
 			return true;
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnReproductionState";
+		}
+
 	private:
 		SafePtr<Pawn> _target;
 	};

@@ -25,6 +25,11 @@ namespace eks
 			return true;
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnWanderState";
+		}
+
 	private:
 		Vec3 _location = Vec3::zero;
 	};

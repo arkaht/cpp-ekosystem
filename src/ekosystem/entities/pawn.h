@@ -34,6 +34,8 @@ namespace eks
 		std::string get_name() const;
 		World* get_world() const;
 
+		SafePtr<StateMachine<Pawn>> get_state_machine() const;
+
 	public:
 		SafePtr<PawnData> data = nullptr;
 

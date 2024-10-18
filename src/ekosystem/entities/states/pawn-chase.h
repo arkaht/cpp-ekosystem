@@ -28,6 +28,11 @@ namespace eks
 			return true;
 		}
 
+		std::string get_name() const override
+		{
+			return "PawnChaseState";
+		}
+
 	private:
 		SafePtr<Pawn> _target = nullptr;
 	};

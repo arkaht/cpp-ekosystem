@@ -147,3 +147,8 @@ World* Pawn::get_world() const
 {
 	return _world;
 }
+
+SafePtr<StateMachine<Pawn>> Pawn::get_state_machine() const
+{
+	return _state_machine;
+}
