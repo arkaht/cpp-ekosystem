@@ -162,6 +162,98 @@ void DebugMenu::populate()
 
 		ImGui::Spacing();
 	}
+	if ( ImGui::CollapsingHeader( "Profiler", ImGuiTreeNodeFlags_DefaultOpen ) )
+	{
+		Profiler* profiler = engine.get_profiler();
+		const auto& results = profiler->get_results();
+		float profile_time = profiler->get_profile_time();
+
+		//	TODO: Add sorting
+		ImGuiTableFlags table_flags = ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY;
+		table_flags |= ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+		table_flags |= ImGuiTableFlags_Resizable;
+
+		ImGui::SeparatorText( "Results" );
+		constexpr int COLUMNS_AMOUNT = 7;
+		constexpr ImVec2 TABLE_SIZE { 0.0f, 200.0f };
+		if ( ImGui::BeginTable( "suprengine_profiler_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
+		{
+			ImGui::TableSetupColumn( "Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Name", ImGuiTableColumnFlags_None );
+			ImGui::TableSetupColumn( "Min. Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Avr. Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Max. Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Total Calls", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Usage", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupScrollFreeze( 0, 1 );
+			ImGui::TableHeadersRow();
+
+			//ImGui::Text( "%.3fms %s [calls: %d]", result.time, name, result.total_calls );
+			int row_id = 0;
+			for ( const auto& result_pair : results )
+			{
+				const char* name = result_pair.first;
+				const ProfileResult& result = result_pair.second;
+
+				ImGui::PushID( row_id );
+				ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+				//	Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.time );
+				
+				//	Name
+				ImGui::TableNextColumn();
+				ImGui::TextUnformatted( name );
+
+				//	Min. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.min_time );
+				
+				//	Avr. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.total_time / result.total_calls );
+
+				//	Max. Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.max_time );
+
+				//	Total Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.total_calls );
+
+				//	Usage
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.1f%%", result.total_time / profile_time * 100.0f );
+
+				ImGui::PopID();
+			}
+
+			ImGui::EndTable();
+		}
+
+		const char* toggle_text = profiler->is_profiling() ? "Stop" : "Start";
+		if ( ImGui::Button( toggle_text ) )
+		{
+			if ( profiler->is_profiling() )
+			{
+				profiler->stop();
+			}
+			else
+			{
+				profiler->start();
+			}
+		}
+		ImGui::SameLine();
+		if ( ImGui::Button( "Clear" ) )
+		{
+			profiler->clear();
+		}
+		ImGui::SameLine();
+		ImGui::Text( "Time: %.1fs", profile_time * 0.001f );
+
+		ImGui::Spacing();
+	}
 	if ( ImGui::CollapsingHeader( "Camera" ) )
 	{
 		Camera* camera = engine.camera;
