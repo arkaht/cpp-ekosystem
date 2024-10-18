@@ -162,7 +162,7 @@ void DebugMenu::populate()
 
 		ImGui::Spacing();
 	}
-	if ( ImGui::CollapsingHeader( "Camera", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ImGui::CollapsingHeader( "Camera" ) )
 	{
 		Camera* camera = engine.camera;
 
@@ -230,7 +230,7 @@ void DebugMenu::populate()
 
 		ImGui::Spacing();
 	}
-	if ( ImGui::CollapsingHeader( "Statistics", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ImGui::CollapsingHeader( "Statistics" ) )
 	{
 		if ( ImPlot::BeginPlot( "Pawns Count", ImVec2 { -1.0f, 250.0f } ) )
 		{
