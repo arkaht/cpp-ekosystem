@@ -47,8 +47,20 @@ namespace eks
 	public:
 		virtual ~StateTask() {}
 
+		/*
+		 * Called when the task is switched to by the state.
+		 * It is called only if it is the current task and after its state's begin method.
+		 */
 		virtual void on_begin() {};
+		/*
+		 * Called when the task is updated by the state.
+		 * It is called only if it is the current task and after its state's update method.
+		 */
 		virtual void on_update( float dt ) {};
+		/*
+		 * Called when the task is switched from by the state.
+		 * It is called only if it is the current task and after its state's end method.
+		 */
 		virtual void on_end() {};
 
 		/*
@@ -61,11 +73,19 @@ namespace eks
 			return true;
 		}
 
+		/*
+		 * Returns whenever the task can be ignored by the state machine, 
+		 * meaning it should consider it as if it doesn't exist.
+		 * This is called to find the next task for the state machine to execute.
+		 */
 		virtual bool can_ignore() const
 		{
 			return false;
 		}
 
+		/*
+		 * Returns the name of the task for debug purposes. 
+		 */
 		virtual std::string get_name() const = 0;
 
 		/*
@@ -107,8 +127,23 @@ namespace eks
 			}
 		}
 
+		/*
+		 * Called when the state is switched to by the state machine.
+		 * It is called only if it is the current state and before
+		 * its current task's begin method.
+		 */
 		virtual void on_begin() {};
+		/*
+		 * Called when the state is updated by the state machine.
+		 * It is called only if it is the current state and before
+		 * its current task's update method.
+		 */
 		virtual void on_update( float dt ) {};
+		/*
+		 * Called when the state is switched from by the state machine.
+		 * It is called only if it is the current state and before
+		 * its current task's end method.
+		 */
 		virtual void on_end() {};
 
 		/*
@@ -131,6 +166,9 @@ namespace eks
 			return task->can_switch_from();
 		}
 
+		/*
+		 * Returns the name of the state for debug purposes. 
+		 */
 		virtual std::string get_name() const = 0;
 
 		/*
@@ -147,6 +185,10 @@ namespace eks
 			return task;
 		}
 
+		/*
+		 * Switches to the given task by index without checking if it can be executed or not.
+		 * It ends the previous task, if it existed at that time.
+		 */
 		void switch_task( int id )
 		{
 			ASSERT( 0 <= id && id < _tasks.size(), "Index 'id' is out-of-range" );
@@ -162,6 +204,11 @@ namespace eks
 			_tasks[_current_task_id]->last_result = StateTaskResult::None;
 			_tasks[_current_task_id]->on_begin();
 		}
+		/*
+		 * Finds the next task to execute and switches to it if found.
+		 * Returns whenever a task has been found and switched to.
+		 * If not found, the current task index is invalidated.
+		 */
 		bool next_task()
 		{
 			if ( _tasks.empty() )
@@ -190,12 +237,18 @@ namespace eks
 			switch_task( next_id );
 			return true;
 		}
+		/*
+		 * Finds and switches to the very first task that can be executed.
+		 */
 		void reset_task()
 		{
 			invalidate_current_task();
 			next_task();
 		}
 
+		/*
+		 * Sets the current task index to an invalid one.
+		 */
 		void invalidate_current_task()
 		{
 			_current_task_id = invalid_id;
