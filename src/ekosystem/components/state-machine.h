@@ -358,6 +358,8 @@ namespace eks
 		{
 			if ( _current_state != nullptr )
 			{
+				_current_state->on_end();
+
 				//	Cancel current task if no result has already been set
 				if ( auto task = _current_state->get_current_task() )
 				{
@@ -368,8 +370,6 @@ namespace eks
 					}
 				}
 				_current_state->invalidate_current_task();
-
-				_current_state->on_end();
 			}
 
 			_current_state = state;
