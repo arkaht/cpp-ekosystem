@@ -19,36 +19,6 @@ namespace eks
 	}
 
 	/*
-	 * Struct storing points in a way that allows to create a scrolling histogram.
-	 * This code is took from implot_demo.cpp
-	 */
-	struct ScrollingBuffer
-	{
-		ScrollingBuffer( int max_size )
-			: max_size( max_size )
-		{
-			data.reserve( max_size );
-		}
-
-		void add_point( const Vec2& point )
-		{
-			if ( data.size() < max_size )
-			{
-				data.emplace_back( point );
-			}
-			else
-			{
-				data[offset] = point;
-				offset = ( offset + 1 ) % max_size;
-			}
-		}
-
-		int max_size = 100;
-		int offset = 0;
-		std::vector<Vec2> data {};
-	};
-
-	/*
 	 * Class handling the debug menu for game development purposes using ImGui and ImPlot.
 	 */
 	class DebugMenu
@@ -95,7 +65,7 @@ namespace eks
 
 		GroupID _group_id = 0;
 
-		std::unordered_map<std::string, ScrollingBuffer> _pawn_histogram {};
+		std::unordered_map<std::string, ImGui::Extra::ScrollingBuffer<Vec2>> _pawn_histogram {};
 
 		std::vector<const char*> _model_assets_ids {};
 		std::vector<const char*> _curve_assets_ids {};

@@ -103,7 +103,8 @@ void DebugMenu::populate()
 	{
 		if ( ImGui::BeginMenu( "Development" ) )
 		{
-			ImGui::MenuItem( "Show Demo Menu", NULL, &show_demo_menu );
+			ImGui::MenuItem( "ImGui Demo", NULL, &show_imgui_demo );
+			ImGui::MenuItem( "ImPlot Demo", NULL, &show_implot_demo );
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
@@ -266,7 +267,7 @@ void DebugMenu::populate()
 					&histogram.data[0].x, &histogram.data[0].y,
 					static_cast<int>( histogram.data.size() ),
 					0.0,
-					ImPlotLineFlags_None,
+					ImPlotShadedFlags_None,
 					histogram.offset, sizeof( Vec2 )
 				);
 				ImPlot::PopStyleVar();
@@ -607,7 +608,7 @@ void DebugMenu::update_histogram()
 		auto itr = _pawn_histogram.find( key );
 		if ( itr == _pawn_histogram.end() )
 		{
-			_pawn_histogram.emplace( key, ScrollingBuffer( settings::HISTOGRAM_DATA_SIZE ) );
+			_pawn_histogram.emplace( key, ImGui::Extra::ScrollingBuffer<Vec2>( settings::HISTOGRAM_DATA_SIZE ) );
 			itr = _pawn_histogram.find( key );
 		}
 
