@@ -174,7 +174,7 @@ void DebugMenu::populate()
 		table_flags |= ImGuiTableFlags_Resizable;
 
 		ImGui::SeparatorText( "Results" );
-		constexpr int COLUMNS_AMOUNT = 7;
+		constexpr int COLUMNS_AMOUNT = 9;
 		constexpr ImVec2 TABLE_SIZE { 0.0f, 200.0f };
 		if ( ImGui::BeginTable( "suprengine_profiler_results", COLUMNS_AMOUNT, table_flags, TABLE_SIZE ) )
 		{
@@ -183,6 +183,8 @@ void DebugMenu::populate()
 			ImGui::TableSetupColumn( "Min. Time", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Avr. Time", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Max. Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Frame Time", ImGuiTableColumnFlags_WidthFixed );
+			ImGui::TableSetupColumn( "Frame Calls", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Total Calls", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupColumn( "Usage", ImGuiTableColumnFlags_WidthFixed );
 			ImGui::TableSetupScrollFreeze( 0, 1 );
@@ -218,6 +220,14 @@ void DebugMenu::populate()
 				ImGui::TableNextColumn();
 				ImGui::Text( "%.3fms", result.max_time );
 
+				//	Frame Time
+				ImGui::TableNextColumn();
+				ImGui::Text( "%.3fms", result.non_consumed_time );
+				
+				//	Frame Calls
+				ImGui::TableNextColumn();
+				ImGui::Text( "%d", result.non_consumed_calls );
+
 				//	Total Calls
 				ImGui::TableNextColumn();
 				ImGui::Text( "%d", result.total_calls );
@@ -251,6 +261,11 @@ void DebugMenu::populate()
 		}
 		ImGui::SameLine();
 		ImGui::Text( "Time: %.1fs", profile_time * 0.001f );
+
+		if ( profiler->is_profiling() )
+		{
+			profiler->consume_results();
+		}
 
 		ImGui::Spacing();
 	}
