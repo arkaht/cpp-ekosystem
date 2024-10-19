@@ -95,8 +95,12 @@ void DebugMenu::populate()
 	_refresh_pawn_datas_names( pawn_datas );
 
 	//  Show ImGui demo window
-	static bool show_demo_menu = false;
-	if ( show_demo_menu ) ImGui::ShowDemoWindow( &show_demo_menu );
+	static bool show_imgui_demo = false;
+	if ( show_imgui_demo ) ImGui::ShowDemoWindow( &show_imgui_demo );
+
+	//  Show ImPlot demo window
+	static bool show_implot_demo = false;
+	if ( show_implot_demo ) ImPlot::ShowDemoWindow( &show_implot_demo );
 
 	//  Populate menu bar
 	if ( ImGui::BeginMenuBar() )
