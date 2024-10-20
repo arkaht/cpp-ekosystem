@@ -157,12 +157,46 @@ void DebugMenu::populate()
 		}
 
 		//  Window mode
-		auto window = engine.get_window();
-		const char* window_modes[3] = { "Windowed",	"Fullscreen", "Borderless Fullscreen" };
-		auto current_window_mode = static_cast<int>( window->get_mode() );
+		Window* window = engine.get_window();
+		const char* window_modes[] { "Windowed", "Fullscreen", "Borderless Fullscreen" };
+		int current_window_mode = static_cast<int>( window->get_mode() );
 		if ( ImGui::Combo( "Window Mode", &current_window_mode, window_modes, 3 ) )
 		{
 			window->set_mode( static_cast<WindowMode>( current_window_mode ) );
+		}
+
+		//	Vsync mode
+		RenderBatch* render_batch = engine.get_render_batch();
+		constexpr const char* VSYNC_MODES_NAMES[] { "Disabled", "Enabled", "Adaptative" };
+		constexpr int VSYNC_MODES_COUNT = IM_ARRAYSIZE( VSYNC_MODES_NAMES );
+
+		int current_vsync_mode = static_cast<int>( render_batch->get_vsync_mode() );
+		if ( ImGui::Combo( "VSync", &current_vsync_mode, VSYNC_MODES_NAMES, VSYNC_MODES_COUNT ) )
+		{
+			render_batch->set_vsync( static_cast<VSyncMode>( current_vsync_mode ) );
+		}
+
+		//	Cap FPS
+		ImGui::Checkbox( "Cap FPS", &updater->is_fps_capped );
+		ImGui::SameLine();
+
+		constexpr const int FPS_TARGETS[] { 30, 60, 144 };
+		constexpr const char* FPS_TARGETS_NAMES[] { "30 FPS", "60 FPS", "144 FPS" };
+		constexpr const int FPS_TARGETS_COUNT = IM_ARRAYSIZE( FPS_TARGETS );
+		
+		//	Find current FPS target
+		int current_target_id = 0;
+		for ( int id = 0; id < FPS_TARGETS_COUNT; id++ )
+		{
+			int fps_target = FPS_TARGETS[id];
+			if ( !math::near_value( fps_target, updater->target_fps ) ) continue;
+			current_target_id = id;
+		}
+
+		//	FPS Target
+		if ( ImGui::Combo( "Target", &current_target_id, FPS_TARGETS_NAMES, FPS_TARGETS_COUNT ) )
+		{
+			updater->target_fps = FPS_TARGETS[current_target_id];
 		}
 
 		ImGui::Spacing();
