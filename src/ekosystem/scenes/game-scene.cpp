@@ -54,7 +54,7 @@ void GameScene::init()
 
 void GameScene::setup_world()
 {
-	_world = new World( Vec2 { 10.0f, 10.0f } );
+	_world = new World( Vec2 { 20.0f, 20.0f } );
 
 	auto hare_data  = _world->get_pawn_data( "hare" );
 	auto grass_data = _world->get_pawn_data( "grass" );

@@ -115,7 +115,7 @@ void DebugMenu::populate()
 	}
 
 	//  Populate Engine header
-	if ( ImGui::CollapsingHeader( "Engine", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ImGui::CollapsingHeader( "Engine" ) )
 	{
 		auto fps = engine.get_updater()->get_fps();
 		ImGui::TextColored( ImVec4 { 1.0f, 1.0f, 1.0f, 1.0f }, "FPS: %d", fps );
@@ -201,7 +201,7 @@ void DebugMenu::populate()
 
 		ImGui::Spacing();
 	}
-	if ( ImGui::CollapsingHeader( "Profiler", ImGuiTreeNodeFlags_DefaultOpen ) )
+	if ( ImGui::CollapsingHeader( "Profiler" ) )
 	{
 		Profiler* profiler = engine.get_profiler();
 		profiler->populate_imgui();
@@ -326,6 +326,14 @@ void DebugMenu::populate()
 	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
+		ImGui::SeparatorText( "World" );
+		const Vec2 current_world_size = world->get_size();
+		int world_size[2] { current_world_size.x, current_world_size.y };
+		if ( ImGui::DragInt2( "World Size", world_size, 1.0f, 8, 256 ) )
+		{
+			world->resize( Vec2 { static_cast<float>( world_size[0] ), static_cast<float>( world_size[1] ) } );
+		}
+
 		_populate_pawns_table( pawns );
 		_populate_selected_pawn( pawns );
 

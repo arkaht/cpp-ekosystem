@@ -30,10 +30,10 @@ namespace eks
 			);
 
 			Pawn* owner = state->machine->owner;
+			const Box world_bounds = owner->get_world()->get_bounds();
 			*location_key = Vec3::clamp(
 				Vec3::round( owner->get_tile_pos() + spread ),
-				Vec3::zero,
-				Vec3( owner->get_world()->get_size() )
+				world_bounds.min, world_bounds.max
 			);
 
 			finish( StateTaskResult::Succeed );

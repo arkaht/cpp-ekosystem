@@ -13,25 +13,17 @@
 using namespace eks;
 
 World::World( const Vec2& size )
-	: _size( size )
 {
 	auto& engine = Engine::instance();
 	auto model = Assets::get_model( MESH_CUBE );
 
-	//  setup ground
+	//  Setup ground
 	_ground = engine.create_entity<Entity>();
-	_ground->transform->location = Vec3 {
-		_size.x * TILE_SIZE * 0.5f,
-		_size.y * TILE_SIZE * 0.5f,
-		-TILE_SIZE * 0.5f
-	};
-	_ground->transform->scale = Vec3 {
-		_size.x * TILE_SIZE * 0.5f,
-		_size.y * TILE_SIZE * 0.5f,
-		1.0f
-	};
+	_ground->transform->location = Vec3 { 0.0f, 0.0f, -TILE_SIZE * 0.5f };
 	_ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
 	_ground->create_component<BoxCollider>( Box::HALF );
+	
+	resize( size );
 
 	_init_datas();
 
@@ -71,19 +63,36 @@ void World::add_pawn_data( SharedPtr<PawnData> data )
 {
 	if ( _pawn_datas.find( data->name ) != _pawn_datas.end() )
 	{
-		Logger::critical( "A pawn data with 'name' property equals to '%s' already exists! Please ensure they all are unique!",
-			data->name.c_str() );
+		Logger::critical(
+			"A pawn data with 'name' property equals to '%s' already exists! Please ensure they all are unique!",
+			*data->name
+		);
 		return;
 	}
 
 	_pawn_datas[data->name] = data;
-	Logger::info( "A pawn data has been registered as '%s'",
-		data->name.c_str() );
+	Logger::info(
+		"A pawn data has been registered as '%s'",
+		*data->name
+	);
 }
 
 SafePtr<PawnData> World::get_pawn_data( rconst_str name ) const
 {
 	return _pawn_datas.at( name );
+}
+
+void World::resize( const Vec2& size )
+{
+	_size = size;
+
+	_ground->transform->set_scale(
+		Vec3 {
+			_size.x * TILE_SIZE * 0.5f,
+			_size.y * TILE_SIZE * 0.5f,
+			1.0f
+		}
+	);
 }
 
 void World::clear()
@@ -103,6 +112,7 @@ bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
 	int random_sign_x = random::generate_sign();
 	int random_sign_y = random::generate_sign();
 
+	const Box bounds = get_bounds();
 	for ( int x = -1; x <= 1; x++ )
 	{
 		for ( int y = -1; y <= 1; y++ )
@@ -114,8 +124,8 @@ bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
 			out->y = pos.y + y * random_sign_y;
 
 			//  Filter out any out-of-bounds positions
-			if ( out->x < 0 || out->x > _size.x ) continue;
-			if ( out->y < 0 || out->y > _size.y ) continue;
+			if ( out->x < bounds.min.x || out->x > bounds.max.x ) continue;
+			if ( out->y < bounds.min.y || out->y > bounds.max.y ) continue;
 
 			//  Filter out position already containing a pawn
 			auto pawn = find_pawn_at( Adjectives::None, *out );
@@ -130,13 +140,8 @@ bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
 
 Vec3 World::find_random_tile_pos() const
 {
-	return Vec3::snap_to_grid(
-		random::generate_location(
-			0.0f, 0.0f, 0.0f,
-			_size.x, _size.y, 0.0f
-		),
-		1.0f
-	);
+	const Box bounds = get_bounds();
+	return Vec3::snap_to_grid( random::generate_location( bounds ), 1.0f );
 }
 
 SafePtr<Pawn> World::find_pawn_with(
@@ -231,6 +236,12 @@ std::map<std::string, SharedPtr<PawnData>>& World::get_pawn_datas()
 Vec2 World::get_size() const
 {
 	return _size;
+}
+
+Box World::get_bounds() const
+{
+	const Vec3 half_size( _size * 0.5f, 0.0f );
+	return Box { -half_size, half_size };
 }
 
 void World::_init_datas()

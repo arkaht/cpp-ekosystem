@@ -3,6 +3,7 @@
 #include <map>
 
 #include <suprengine/entity.h>
+#include <suprengine/box.h>
 
 #include <ekosystem/data/pawn-data.h>
 
@@ -26,6 +27,7 @@ namespace eks
 		void add_pawn_data( SharedPtr<PawnData> data );
 		SafePtr<PawnData> get_pawn_data( rconst_str name ) const;
 
+		void resize( const Vec2& size );
 		void clear();
 
 		bool find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const;
@@ -49,8 +51,9 @@ namespace eks
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
 		std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas();
 		const std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas() const;
-
+		
 		Vec2 get_size() const;
+		Box get_bounds() const;
 
 	public:
 		const float TILE_SIZE = 10.0f;
