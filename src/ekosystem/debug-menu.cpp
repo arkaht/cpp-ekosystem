@@ -189,8 +189,10 @@ void DebugMenu::populate()
 		for ( int id = 0; id < FPS_TARGETS_COUNT; id++ )
 		{
 			int fps_target = FPS_TARGETS[id];
-			if ( !math::near_value( fps_target, updater->target_fps ) ) continue;
+			if ( fps_target != updater->target_fps ) continue;
+
 			current_target_id = id;
+			break;
 		}
 
 		//	FPS Target
@@ -329,10 +331,18 @@ void DebugMenu::populate()
 	{
 		ImGui::SeparatorText( "World" );
 		const Vec2 current_world_size = world->get_size();
-		int world_size[2] { current_world_size.x, current_world_size.y };
+		int world_size[2] {
+			static_cast<int>( current_world_size.x ),
+			static_cast<int>( current_world_size.y )
+		};
 		if ( ImGui::DragInt2( "World Size", world_size, 1.0f, 8, 256 ) )
 		{
-			world->resize( Vec2 { static_cast<float>( world_size[0] ), static_cast<float>( world_size[1] ) } );
+			world->resize(
+				Vec2 {
+					static_cast<float>( world_size[0] ),
+					static_cast<float>( world_size[1] )
+				}
+			);
 		}
 
 		_populate_pawns_table( pawns );
