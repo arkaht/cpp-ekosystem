@@ -282,7 +282,8 @@ void DebugMenu::populate()
 
 		if ( ImPlot::BeginPlot( "Pawns Count", ImVec2 { -1.0f, 250.0f } ) )
 		{
-			float game_time = updater->get_accumulated_seconds();
+			const float game_time = updater->get_accumulated_seconds();
+			const Vec2 size = world->get_size();
 
 			ImPlot::SetupAxes( "Game Time (seconds)", "Count" );
 			ImPlot::SetupAxesLimits( 0, settings::HISTOGRAM_DATA_SIZE, 0, 50 );
@@ -292,7 +293,7 @@ void DebugMenu::populate()
 				math::max( static_cast<float>( settings::HISTOGRAM_DATA_SIZE ), game_time ),
 				ImPlotCond_Always
 			);
-			ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, 200.0 );
+			ImPlot::SetupAxisLimitsConstraints( ImAxis_Y1, 0.0, size.x * size.y );
 
 			for ( auto& pair : _pawn_histogram )
 			{
