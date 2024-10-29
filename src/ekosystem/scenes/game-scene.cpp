@@ -28,7 +28,7 @@ void GameScene::init()
 	setup_world();
 
 	//  setup camera
-	const float CAMERA_SPEED = 50.0f;
+	constexpr float CAMERA_SPEED = 100.0f;
 
 	auto camera_owner = engine.create_entity<Entity>();
 	camera_owner->transform->location = Vec3 { _world->get_size() * 0.5f * _world->TILE_SIZE, 0.4f };
