@@ -77,6 +77,24 @@ void GameScene::update( float dt )
 
 	auto inputs = engine->get_inputs();
 
+	if ( inputs->is_mouse_button_just_pressed( MouseButton::Left ) )
+	{
+		auto physics = engine->get_physics();
+
+		engine->camera;
+
+		Ray ray(
+			_camera_controller->get_owner()->transform->location,
+			_camera_controller->get_owner()->transform->get_forward(),
+			1000.0f
+		);
+		RayParams params {};
+
+		RayHit hit {};
+		physics->raycast( ray, &hit, params );
+		printf( "Hit: %s\n", *hit.point.to_string() );
+	}
+
 	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
 	{
 		if ( _camera_controller->focus_target.lock() )
