@@ -52,18 +52,18 @@ namespace eks
 				);
 				if ( !target.is_valid() )
 				{
-					printf(
+					/*printf(
 						"'%s' can't find any vegetal to eat!\n",
 						*owner->get_name()
-					);
+					);*/
 					return false;
 				}
 
 				*target_key = target;
-				printf(
+				/*printf(
 					"Herbivore '%s' wants to eat '%s'!\n",
 					*owner->get_name(), *target->get_name()
-				);
+				);*/
 				return true;
 			}
 			else if ( owner->data->has_adjective( Adjectives::Carnivore ) )
@@ -79,18 +79,18 @@ namespace eks
 				);
 				if ( !target.is_valid() )
 				{
-					printf(
+					/*printf(
 						"'%s' can't find any meat to eat!\n",
 						*owner->get_name()
-					);
+					);*/
 					return false;
 				}
 
 				*target_key = target;
-				printf(
+				/*printf(
 					"Carnivore '%s' wants to eat '%s'!\n",
 					*owner->get_name(), *target->get_name()
-				);
+				);*/
 				return true;
 			}
 
