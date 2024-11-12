@@ -81,10 +81,11 @@ void GameScene::update( float dt )
 	{
 		auto physics = engine->get_physics();
 
-		engine->camera;
+		Vec3 mouse_world_location = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
+		printf( "Mouse: %s\n", *mouse_world_location.to_string() );
 
 		Ray ray(
-			_camera_controller->get_owner()->transform->location,
+			mouse_world_location,
 			_camera_controller->get_owner()->transform->get_forward(),
 			1000.0f
 		);
@@ -92,13 +93,14 @@ void GameScene::update( float dt )
 
 		RayHit hit {};
 		bool has_hit = physics->raycast( ray, &hit, params );
-		if ( has_hit )
-		{
+		/*if ( has_hit )
+		{*/
 			_world->create_pawn(
 				_world->get_pawn_data( "hare" ),
-				_world->world_to_grid( hit.point )
+				//_world->world_to_grid( hit.point )
+				_world->world_to_grid( mouse_world_location )
 			);
-		}
+		/*}*/
 		printf( "Hit: %s\n", *hit.point.to_string() );
 	}
 
