@@ -48,6 +48,8 @@ namespace eks
 			std::function<bool( SafePtr<Pawn> )> callback
 		) const;
 
+		Vec3 world_to_grid( const Vec3& world_pos );
+
 		const std::vector<SafePtr<Pawn>>& get_pawns() const;
 		std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas();
 		const std::map<std::string, SharedPtr<PawnData>>& get_pawn_datas() const;

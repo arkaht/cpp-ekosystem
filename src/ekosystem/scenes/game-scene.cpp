@@ -91,7 +91,14 @@ void GameScene::update( float dt )
 		RayParams params {};
 
 		RayHit hit {};
-		physics->raycast( ray, &hit, params );
+		bool has_hit = physics->raycast( ray, &hit, params );
+		if ( has_hit )
+		{
+			_world->create_pawn(
+				_world->get_pawn_data( "hare" ),
+				_world->world_to_grid( hit.point )
+			);
+		}
 		printf( "Hit: %s\n", *hit.point.to_string() );
 	}
 

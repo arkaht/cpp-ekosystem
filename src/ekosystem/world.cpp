@@ -21,7 +21,7 @@ World::World( const Vec2& size )
 	_ground = engine.create_entity<Entity>();
 	_ground->transform->location = Vec3 { 0.0f, 0.0f, -TILE_SIZE * 0.5f };
 	_ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
-	_ground->create_component<BoxCollider>( Box::HALF );
+	_ground->create_component<BoxCollider>( Box::ONE );
 	
 	resize( size );
 
@@ -216,6 +216,13 @@ SafePtr<Pawn> World::find_pawn( std::function<bool( SafePtr<Pawn> )> callback ) 
 	}
 
 	return nullptr;
+}
+
+Vec3 World::world_to_grid( const Vec3& world_pos )
+{
+	Vec3 grid_pos = Vec3::world_to_grid( world_pos, TILE_SIZE );
+	grid_pos.z = 0.0f;
+	return grid_pos;
 }
 
 const std::vector<SafePtr<Pawn>>& World::get_pawns() const
