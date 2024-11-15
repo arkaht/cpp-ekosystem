@@ -81,27 +81,34 @@ void GameScene::update( float dt )
 	{
 		auto physics = engine->get_physics();
 
-		Vec3 mouse_world_location = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
-		printf( "Mouse: %s\n", *mouse_world_location.to_string() );
+		Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
+		//printf( "Mouse: %s\n", *ray.origin.to_string() );
 
-		Ray ray(
+		/*Ray ray(
 			mouse_world_location,
 			_camera_controller->get_owner()->transform->get_forward(),
 			1000.0f
-		);
+		);*/
 		RayParams params {};
 
 		RayHit hit {};
 		bool has_hit = physics->raycast( ray, &hit, params );
 		/*if ( has_hit )
 		{*/
-			_world->create_pawn(
-				_world->get_pawn_data( "hare" ),
-				//_world->world_to_grid( hit.point )
-				_world->world_to_grid( mouse_world_location )
-			);
+			//_world->create_pawn(
+			//	_world->get_pawn_data( "hare" ),
+			//	//_world->world_to_grid( hit.point )
+			//	ray.origin
+			//);
 		/*}*/
-		printf( "Hit: %s\n", *hit.point.to_string() );
+
+		printf( "Near %s\nFar %s\n", *ray.origin.to_string(), *ray.get_end_point().to_string() );
+
+		auto ent = engine->create_entity<Entity>();
+		ent->transform->location = ray.origin;
+		ent->create_component<ModelRenderer>( Assets::get_model( MESH_CUBE ) );
+
+		//printf( "Hit: %s\n", *hit.point.to_string() );
 	}
 
 	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
