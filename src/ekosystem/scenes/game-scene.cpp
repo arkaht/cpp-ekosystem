@@ -4,6 +4,8 @@
 #include <suprengine/assets.h>
 #include <suprengine/random.h>
 
+#include <suprengine/vis-debug.h>
+
 using namespace eks;
 
 GameScene::GameScene()
@@ -82,6 +84,7 @@ void GameScene::update( float dt )
 		auto physics = engine->get_physics();
 
 		Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
+		VisDebug::add_line( ray.origin, ray.get_end_point(), Color::red, 5.0f );
 		//printf( "Mouse: %s\n", *ray.origin.to_string() );
 
 		/*Ray ray(
@@ -104,9 +107,9 @@ void GameScene::update( float dt )
 
 		printf( "Near %s\nFar %s\n", *ray.origin.to_string(), *ray.get_end_point().to_string() );
 
-		auto ent = engine->create_entity<Entity>();
+		/*auto ent = engine->create_entity<Entity>();
 		ent->transform->location = ray.origin;
-		ent->create_component<ModelRenderer>( Assets::get_model( MESH_CUBE ) );
+		ent->create_component<ModelRenderer>( Assets::get_model( MESH_CUBE ) );*/
 
 		//printf( "Hit: %s\n", *hit.point.to_string() );
 	}
