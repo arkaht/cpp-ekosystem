@@ -84,34 +84,24 @@ void GameScene::update( float dt )
 		auto physics = engine->get_physics();
 
 		Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
-		VisDebug::add_line( ray.origin, ray.get_end_point(), Color::red, 5.0f );
-		//printf( "Mouse: %s\n", *ray.origin.to_string() );
 
-		/*Ray ray(
-			mouse_world_location,
-			_camera_controller->get_owner()->transform->get_forward(),
-			1000.0f
-		);*/
 		RayParams params {};
 
 		RayHit hit {};
 		bool has_hit = physics->raycast( ray, &hit, params );
-		/*if ( has_hit )
-		{*/
-			//_world->create_pawn(
-			//	_world->get_pawn_data( "hare" ),
-			//	//_world->world_to_grid( hit.point )
-			//	ray.origin
-			//);
-		/*}*/
+		if ( has_hit )
+		{
+			_world->create_pawn(
+				_world->get_pawn_data( "hare" ),
+				_world->world_to_grid( hit.point )
+			);
 
-		printf( "Near %s\nFar %s\n", *ray.origin.to_string(), *ray.get_end_point().to_string() );
-
-		/*auto ent = engine->create_entity<Entity>();
-		ent->transform->location = ray.origin;
-		ent->create_component<ModelRenderer>( Assets::get_model( MESH_CUBE ) );*/
-
-		//printf( "Hit: %s\n", *hit.point.to_string() );
+			VisDebug::add_line( ray.origin, hit.point, Color::green, 5.0f );
+		}
+		else
+		{
+			VisDebug::add_line( ray.origin, ray.get_end_point(), Color::red, 5.0f );
+		}
 	}
 
 	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
