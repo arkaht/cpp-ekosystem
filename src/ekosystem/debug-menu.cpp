@@ -674,6 +674,24 @@ void DebugMenu::update_histogram()
 	}
 }
 
+SharedPtr<Pawn> DebugMenu::create_pawn( SafePtr<PawnData> data, const Vec3& pos )
+{
+	auto pawn = world->create_pawn( data, pos );
+	pawn->group_id = _group_id;
+	
+	if ( _is_overriding_hunger )
+	{
+		pawn->hunger = _hunger_ratio * data->max_hunger;
+	}
+	
+	return pawn;
+}
+
+const char* DebugMenu::get_selected_pawn_data_name() const
+{
+	return _pawn_datas_names[_selected_pawn_data_id];
+}
+
 void DebugMenu::_refresh_assets_ids()
 {
 	_model_assets_ids = Assets::get_assets_as_ids<Model, const char*>();
@@ -827,9 +845,7 @@ void DebugMenu::_populate_pawn_factory(
 		for ( int i = 0; i < _spawn_count; i++ )
 		{
 			Vec3 pos = world->find_random_tile_pos();
-			auto pawn = world->create_pawn( data, pos );
-			pawn->hunger = _hunger_ratio * data->max_hunger;
-			pawn->group_id = _group_id;
+			create_pawn( data, pos );
 		}
 	}
 
@@ -842,8 +858,15 @@ void DebugMenu::_populate_pawn_factory(
 	}
 
 	//  Hunger ratio
+	ImGui::Checkbox( "##OverrideHunger", &_is_overriding_hunger );
+	ImGui::SetItemTooltip( "Specify whether the custom hunger ratio should be applied" );
+	if ( !_is_overriding_hunger ) ImGui::BeginDisabled( true );
+	
+	ImGui::SameLine();
 	ImGui::Extra::DragPercent( "Hunger Ratio", &_hunger_ratio, 0.01f, 0.0f, 1.0f );
 	ImGui::SetItemTooltip( "Start hunger ratio (computed using max hunger) for new pawns" );
+
+	if ( !_is_overriding_hunger ) ImGui::EndDisabled();
 
 	//  Group ID
 	int group_id = _group_id;

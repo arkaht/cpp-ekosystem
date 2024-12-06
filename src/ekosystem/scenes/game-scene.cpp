@@ -91,8 +91,8 @@ void GameScene::update( float dt )
 		bool has_hit = physics->raycast( ray, &hit, params );
 		if ( has_hit )
 		{
-			_world->create_pawn(
-				_world->get_pawn_data( "hare" ),
+			_debug_menu.create_pawn(
+				_world->get_pawn_data( _debug_menu.get_selected_pawn_data_name() ),
 				_world->world_to_grid( hit.point )
 			);
 

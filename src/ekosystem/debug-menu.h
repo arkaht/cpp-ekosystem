@@ -30,6 +30,13 @@ namespace eks
 		void populate();
 		void update_histogram();
 
+		/*
+		 * Create a pawn in the world and assign debug menu's values to it.
+		 */
+		SharedPtr<Pawn> create_pawn( SafePtr<PawnData> data, const Vec3& pos );
+
+		const char* get_selected_pawn_data_name() const;
+
 	public:
 		World* world = nullptr;
 		SafePtr<CameraController> camera_controller = nullptr;
@@ -55,6 +62,7 @@ namespace eks
 		int _selected_pawn_data_id = 0;
 
 		int _spawn_count = 1;
+		bool _is_overriding_hunger = false;
 		float _hunger_ratio = 1.0f;
 
 		char _small_input_buffer[settings::SMALL_INPUT_BUFFER_SIZE] = "";
