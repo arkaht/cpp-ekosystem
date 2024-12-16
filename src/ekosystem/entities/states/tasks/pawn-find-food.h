@@ -41,6 +41,8 @@ namespace eks
 
 			if ( owner->data->has_adjective( Adjectives::Herbivore ) )
 			{
+				//  Make herbivore pawns find vegetal pawns as a meal
+
 				auto target = world->find_nearest_pawn(
 					owner->get_tile_pos(),
 					[&]( auto pawn )
@@ -50,24 +52,15 @@ namespace eks
 						return pawn->data->has_adjective( Adjectives::Vegetal );
 					}
 				);
-				if ( !target.is_valid() )
-				{
-					/*printf(
-						"'%s' can't find any vegetal to eat!\n",
-						*owner->get_name()
-					);*/
-					return false;
-				}
+				if ( !target.is_valid() ) return false;
 
 				*target_key = target;
-				/*printf(
-					"Herbivore '%s' wants to eat '%s'!\n",
-					*owner->get_name(), *target->get_name()
-				);*/
 				return true;
 			}
 			else if ( owner->data->has_adjective( Adjectives::Carnivore ) )
 			{
+				//  Make carnivore pawns find meat pawns as a meal
+
 				auto target = world->find_nearest_pawn(
 					owner->get_tile_pos(),
 					[&]( auto pawn )
@@ -77,20 +70,9 @@ namespace eks
 						return pawn->data->has_adjective( Adjectives::Meat );
 					}
 				);
-				if ( !target.is_valid() )
-				{
-					/*printf(
-						"'%s' can't find any meat to eat!\n",
-						*owner->get_name()
-					);*/
-					return false;
-				}
+				if ( !target.is_valid() ) return false;
 
 				*target_key = target;
-				/*printf(
-					"Carnivore '%s' wants to eat '%s'!\n",
-					*owner->get_name(), *target->get_name()
-				);*/
 				return true;
 			}
 

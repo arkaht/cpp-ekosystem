@@ -29,7 +29,7 @@ void GameScene::init()
 
 	setup_world();
 
-	//  setup camera
+	//  Setup camera
 	constexpr float CAMERA_SPEED = 100.0f;
 
 	auto camera_owner = engine.create_entity<Entity>();
@@ -74,14 +74,15 @@ void GameScene::setup_world()
 
 void GameScene::update( float dt )
 {
-	auto engine = _game->get_engine();
+	Engine* engine = _game->get_engine();
 	float time = engine->get_updater()->get_accumulated_seconds();
 
-	auto inputs = engine->get_inputs();
+	InputManager* inputs = engine->get_inputs();
 
+	//  Left Click: Spawn a pawn where we click in the world via a raycast
 	if ( inputs->is_mouse_button_just_pressed( MouseButton::Left ) )
 	{
-		auto physics = engine->get_physics();
+		Physics* physics = engine->get_physics();
 
 		Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
 
@@ -110,44 +111,5 @@ void GameScene::update( float dt )
 				5.0f
 			);
 		}
-	}
-
-	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_F ) )
-	{
-		if ( _camera_controller->focus_target.lock() )
-		{
-			_camera_controller->focus_target.reset();
-		}
-		else if ( _test_pawn.is_valid() )
-		{
-			_camera_controller->focus_target = _test_pawn->transform;
-		}
-	}*/
-
-	/*if ( inputs->is_key_just_pressed( SDL_SCANCODE_C ) )
-	{
-		if ( _world != nullptr )
-		{
-			delete _world;
-			_world = nullptr;
-			printf( "Delete world!\n" );
-		}
-
-		setup_world();
-	}
-	if ( inputs->is_key_just_pressed( SDL_SCANCODE_X ) )
-	{
-		if ( _world != nullptr )
-		{
-			delete _world;
-			_world = nullptr;
-			printf( "Delete world!\n" );
-		}
-	}*/
-
-	if ( _camera_controller->focus_target.is_valid() )
-	{
-		printf( "Target Location: %s\n",
-			_camera_controller->focus_target->location.to_string().c_str() );
 	}
 }

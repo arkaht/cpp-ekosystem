@@ -77,7 +77,7 @@ void DebugMenu::populate()
 	}
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
-		| ImGuiWindowFlags_NoSavedSettings; // Disable saved settings to avoid weird sizes caused by window modes
+		| ImGuiWindowFlags_NoSavedSettings; //  Disable saved settings to avoid weird sizes caused by window modes
 
 	if ( !ImGui::Begin( "Ekosystem Debug Menu", nullptr, window_flags ) )
 	{
@@ -495,8 +495,7 @@ void DebugMenu::populate()
 		ImGui::SetNextItemOpen( true, ImGuiCond_Once );
 		if ( ImGui::TreeNode( "Reproduction" ) )
 		{
-			//  NOTE: Using pointer to 'min_child_spawn_count' 
-			//  since they are stored aside.
+			//  NOTE: Using pointer to 'min_child_spawn_count' since they are stored aside.
 			if ( ImGui::DragInt2( "Child Spawn Count", &data->min_child_spawn_count, 1, 0, 10 ) )
 			{
 				data->min_child_spawn_count = math::min(
@@ -1040,8 +1039,8 @@ void DebugMenu::_populate_state_machine( const SafePtr<StateMachine<Pawn>> machi
 
 void DebugMenu::_on_window_resized( const Vec2& new_size, const Vec2& old_size )
 {
-	//	Compute ImGui window next size and position so it
-	//  automatically scale depending on the window size
+	//	Compute ImGui window next size and position so it automatically scale
+	//	depending on the window size.
 	float ratio = new_size.x / old_size.x;
 	_next_window_size *= ratio;
 	_next_window_pos *= ratio;

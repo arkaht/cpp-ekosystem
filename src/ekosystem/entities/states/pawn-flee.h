@@ -24,7 +24,7 @@ namespace eks
 		{
 			Pawn* owner = machine->owner;
 			if ( owner->data->move_speed <= 0.0f ) return false;
-			// TODO: Flee condition
+			//  TODO: Flee condition
 			//if ( !owner->flee_target.is_valid() ) return false;
 
 			return true;
