@@ -27,12 +27,7 @@ World::World( const Vec2& size )
 
 	_init_datas();
 
-	engine.on_entity_removed.listen( "eks_world",
-		std::bind(
-			&World::_on_entity_removed, this,
-			std::placeholders::_1
-		)
-	);
+	engine.on_entity_removed.listen( &World::_on_entity_removed, this );
 }
 
 World::~World()
@@ -287,7 +282,7 @@ void World::_on_entity_removed( Entity* entity )
 	if ( auto pawn = entity->cast<Pawn>() )
 	{
 		auto itr = std::find( _pawns.begin(), _pawns.end(), SafePtr<Pawn>( pawn ) );
-		ASSERT( itr != _pawns.end(), "A removed pawn couldn't be erased from the World pawns list!" );
+		ASSERT_MSG( itr != _pawns.end(), "A removed pawn couldn't be erased from the World pawns list!" );
 
 		_pawns.erase( itr );
 

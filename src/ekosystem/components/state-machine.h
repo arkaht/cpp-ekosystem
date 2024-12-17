@@ -195,7 +195,7 @@ namespace eks
 		 */
 		void switch_task( int id )
 		{
-			ASSERT( 0 <= id && id < _tasks.size(), "Index 'id' is out-of-range" );
+			ASSERT_MSG( 0 <= id && id < _tasks.size(), "Index 'id' is out-of-range" );
 
 			//  End previous task
 			if ( _current_task_id != invalid_id )
@@ -323,7 +323,7 @@ namespace eks
 		virtual void setup() override
 		{
 			owner = dynamic_cast<OwnerType*>( get_owner().get() );
-			ASSERT(
+			ASSERT_MSG(
 				owner != nullptr,
 				"This state machine component is attached to an incorrect owner type!"
 			);

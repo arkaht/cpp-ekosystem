@@ -12,20 +12,8 @@ using namespace eks;
 DebugMenu::DebugMenu()
 {
 	auto& engine = Engine::instance();
-	engine.on_imgui_update.listen( "eks_debug_menu",
-		std::bind(
-			&DebugMenu::populate,
-			this
-		)
-	);
-	engine.get_window()->on_size_changed.listen( "eks_debug_menu",
-		std::bind(
-			&DebugMenu::_on_window_resized,
-			this,
-			std::placeholders::_1,
-			std::placeholders::_2
-		)
-	);
+	engine.on_imgui_update.listen( &DebugMenu::populate, this );
+	engine.get_window()->on_size_changed.listen( &DebugMenu::_on_window_resized, this );
 
 	Timer timer {};
 	timer.max_time = 1.0f;
@@ -39,7 +27,7 @@ DebugMenu::DebugMenu()
 DebugMenu::~DebugMenu()
 {
 	auto& engine = Engine::instance();
-	engine.on_imgui_update.unlisten( "eks_debug_menu" );
+	engine.on_imgui_update.unlisten( &DebugMenu::populate, this );
 }
 
 template <typename VectorElementType, typename ElementType>
@@ -112,6 +100,11 @@ void DebugMenu::populate()
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
+	}
+
+	if ( ImGui::Button( "Hey" ) )
+	{
+		engine.on_imgui_update.unlisten( &DebugMenu::populate, this );
 	}
 
 	//  Populate Engine header
