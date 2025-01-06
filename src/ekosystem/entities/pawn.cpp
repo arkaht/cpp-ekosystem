@@ -119,7 +119,7 @@ void Pawn::set_tile_pos( const Vec3& tile_pos )
 
 void Pawn::update_tile_pos()
 {
-	_tile_pos = Vec3::world_to_grid( transform->location, _world->TILE_SIZE );
+	_tile_pos = _world->world_to_grid( transform->location );
 }
 
 Vec3 Pawn::get_tile_pos() const

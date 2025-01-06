@@ -45,9 +45,10 @@ namespace eks
 			);
 
 			//  Compute this frame position
+			const Vec3 current_tile = owner->get_tile_pos();
 			const Vec3 next_tile = _move_path.at( 0 );
-			Vec3 new_tile_pos = Vec3::lerp( 
-				owner->get_tile_pos(),
+			const Vec3 new_tile_pos = Vec3::lerp( 
+				current_tile,
 				next_tile,
 				_move_progress
 			);
@@ -60,6 +61,18 @@ namespace eks
 				_move_progress = 0.0f;
 				//  TODO: Refactor to erase from end
 				_move_path.erase( _move_path.begin() );
+			}
+			else
+			{
+				//	Update render rotation
+				const Quaternion target_rotation = Quaternion::look_at( current_tile, next_tile, Vec3::up );
+				owner->transform->set_rotation( 
+					Quaternion::slerp(
+						owner->transform->rotation,
+						target_rotation,
+						dt * 15.0f
+					)
+				);
 			}
 
 			//	Apply render position
