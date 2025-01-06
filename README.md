@@ -57,3 +57,7 @@ If running the git submodule update command didn't work for any reasons, replace
 
 TODO
 </details>
+
+### Credits
++ Wolf model by [Ezgarth](https://sketchfab.com/Ezgarth) from [Sketchfab](https://skfb.ly/698Sv)
++ Hare model by [616](https://sketchfab.com/Hangry_Cat) from [Sketchfab](https://skfb.ly/o9PB6)

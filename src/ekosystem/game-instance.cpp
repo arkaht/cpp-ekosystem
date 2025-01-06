@@ -8,6 +8,17 @@ using namespace eks;
 
 void GameInstance::load_assets()
 {
+	Assets::load_model(
+		"ekosystem::pawn.wolf",
+		"assets/ekosystem/models/pawns/wolf.fbx",
+		SHADER_LIT_MESH
+	);
+	Assets::load_model(
+		"ekosystem::pawn.hare",
+		"assets/ekosystem/models/pawns/hare.fbx",
+		SHADER_LIT_MESH
+	);
+
 	Assets::load_curves_in_folder(
 		"assets/ekosystem/curves/",
 		/* is_recurive */ true,

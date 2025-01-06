@@ -1,5 +1,5 @@
 {
-    "model_name": "suprengine::cylinder",
+    "model_name": "ekosystem::pawn.hare",
     "modulate": "#646464FF",
     "movement_height_curve_name": "pawns/hare/movement-height",
     "move_speed": 2.0,

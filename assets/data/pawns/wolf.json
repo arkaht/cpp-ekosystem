@@ -1,5 +1,5 @@
 {
-    "model_name": "suprengine::sphere",
+    "model_name": "ekosystem::pawn.wolf",
     "modulate": "#FF0A64FF",
     "move_speed": 1.5,
     "min_child_spawn_count": 1,
