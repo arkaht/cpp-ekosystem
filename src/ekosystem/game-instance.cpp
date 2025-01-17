@@ -8,16 +8,21 @@ using namespace eks;
 
 void GameInstance::load_assets()
 {
-	Assets::load_model(
+	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
+
+	SharedPtr<Model> wolf_model = Assets::load_model(
 		"ekosystem::pawn.wolf",
 		"assets/ekosystem/models/pawns/wolf.fbx",
 		SHADER_LIT_MESH
 	);
-	Assets::load_model(
+	wolf_model->get_mesh( 0 )->add_texture( texture );
+
+	SharedPtr<Model> hare_model = Assets::load_model(
 		"ekosystem::pawn.hare",
 		"assets/ekosystem/models/pawns/hare.fbx",
 		SHADER_LIT_MESH
 	);
+	hare_model->get_mesh( 0 )->add_texture( texture );
 
 	Assets::load_curves_in_folder(
 		"assets/ekosystem/curves/",
