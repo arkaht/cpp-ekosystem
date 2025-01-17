@@ -469,17 +469,30 @@ void DebugMenu::populate()
 			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
 
 			//  Curves
-			int curve_index = find_index_of_element( _curve_assets_ids, data->movement_height_curve_name, 0 );
+			int height_curve_index = find_index_of_element( _curve_assets_ids, data->movement_height_curve_name, 0 );
 			if ( 
 				ImGui::Combo(
 					"Movement Height Curve Name",
-					&curve_index,
+					&height_curve_index,
 					_curve_assets_ids.data(),
 					static_cast<int>( _curve_assets_ids.size() )
 				)
 			)
 			{
-				data->movement_height_curve_name = _curve_assets_ids[curve_index];
+				data->movement_height_curve_name = _curve_assets_ids[height_curve_index];
+			}
+
+			int scale_y_curve_index = find_index_of_element( _curve_assets_ids, data->movement_scale_y_curve_name, 0 );
+			if ( 
+				ImGui::Combo(
+					"Movement Scale Y Curve Name",
+					&scale_y_curve_index,
+					_curve_assets_ids.data(),
+					static_cast<int>( _curve_assets_ids.size() )
+				)
+				)
+			{
+				data->movement_scale_y_curve_name = _curve_assets_ids[scale_y_curve_index];
 			}
 
 			ImGui::TreePop();

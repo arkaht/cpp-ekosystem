@@ -45,6 +45,7 @@ namespace eks
 		bool wants_to_mate = false;
 
 		SharedPtr<Curve> movement_height_curve = nullptr;
+		SharedPtr<Curve> movement_scale_y_curve = nullptr;
 
 	private:
 		World* _world = nullptr;

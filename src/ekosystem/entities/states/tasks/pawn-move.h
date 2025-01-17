@@ -81,7 +81,19 @@ namespace eks
 			{
 				render_pos.z = owner->movement_height_curve->evaluate_by_time( _move_progress );
 			}
+			if ( owner->movement_scale_y_curve )
+			{
+				Vec3 render_scale = Vec3::one;
+				render_scale.z = owner->movement_scale_y_curve->evaluate_by_time( _move_progress );
+
+				owner->transform->set_scale( render_scale );
+			}
 			owner->transform->set_location( render_pos );
+		}
+		void on_end() override
+		{
+			Pawn* owner = state->machine->owner;
+			owner->transform->set_scale( Vec3::one );
 		}
 
 		bool can_switch_from() const override

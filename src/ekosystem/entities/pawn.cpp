@@ -37,6 +37,10 @@ void Pawn::setup()
 	{
 		movement_height_curve = Assets::get_curve( data->movement_height_curve_name );
 	}
+	if ( !data->movement_scale_y_curve_name.empty() )
+	{
+		movement_scale_y_curve = Assets::get_curve( data->movement_scale_y_curve_name );
+	}
 }
 
 void Pawn::update_this( float dt )
