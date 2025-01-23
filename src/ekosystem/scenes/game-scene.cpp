@@ -97,18 +97,19 @@ void GameScene::update( float dt )
 				_world->world_to_grid( hit.point )
 			);
 
-			VisDebug::add_line( ray.origin, hit.point, Color::green, 5.0f );
-			VisDebug::add_sphere( hit.point, 0.5f, Color::red, 5.0f );
+			VisDebug::add_line( ray.origin, hit.point, Color::green, 5.0f, DebugChannel::Camera );
+			VisDebug::add_sphere( hit.point, 0.5f, Color::red, 5.0f, DebugChannel::Camera );
 		}
 		else
 		{
-			VisDebug::add_line( ray.origin, ray.get_end_point(), Color::red, 5.0f );
+			VisDebug::add_line( ray.origin, ray.get_end_point(), Color::red, 5.0f, DebugChannel::Camera );
 			VisDebug::add_box(
 				ray.origin + ray.direction * 10.0f,
 				Quaternion::look_at( ray.direction, Vec3::up ),
 				Box::one * 0.1f,
 				Color::red,
-				5.0f
+				5.0f,
+				DebugChannel::Camera
 			);
 		}
 	}

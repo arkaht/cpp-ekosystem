@@ -4,6 +4,8 @@
 
 #include <ekosystem/entities/pawn.h>
 
+#include <suprengine/vis-debug.h>
+
 namespace eks
 {
 	class PawnMoveStateTask : public StateTask<Pawn>
@@ -89,6 +91,32 @@ namespace eks
 				owner->transform->set_scale( render_scale );
 			}
 			owner->transform->set_location( render_pos );
+
+			//	Visual debug for pathfinding
+			if ( VisDebug::is_channel_active( DebugChannel::Pathfinding ) )
+			{
+				Vec3 last_world_pos = owner->transform->location;
+				for ( int i = 0; i < _move_path.size(); i++ )
+				{
+					const Vec3& point = _move_path[i];
+					const Vec3& world_pos = world->grid_to_world( point );
+
+					VisDebug::add_box(
+						world_pos,
+						Quaternion::identity,
+						Box::half,
+						Color::red
+					);
+					VisDebug::add_line(
+						last_world_pos,
+						world_pos,
+						Color::red,
+						0.0f
+					);
+
+					last_world_pos = world_pos;
+				}
+			}
 		}
 		void on_end() override
 		{
@@ -127,37 +155,42 @@ namespace eks
 	private:
 		bool _update_path()
 		{
-			if ( pawn_target_key != nullptr && pawn_target_key->is_valid() )
+			Vec3 target_pos = Vec3::zero;
+			if ( pawn_target_key != nullptr )
 			{
-				const Vec3 tile_pos = ( *pawn_target_key )->get_tile_pos();
+				if ( !pawn_target_key->is_valid() ) return false;
 
-				//	Update path only if different
-				if ( tile_pos != _target_pos )
-				{
-					_find_path_to( tile_pos );
-				}
-
-				return true;
+				target_pos = ( *pawn_target_key )->get_tile_pos();
 			}
 			else if ( location_target_key != nullptr )
 			{
-				//	TODO: Check if computed each move
-				_find_path_to( *location_target_key );
-				return true;
+				target_pos = *location_target_key;
+			}
+			else
+			{
+				//	No valid key was found to find a path; aborting.
+				return false;
 			}
 
-			//	No valid key was found to find a path; aborting.
-			return false;
+			//	Check that new position is different
+			if ( target_pos == _target_pos ) return true;
+			
+			_find_path_to( target_pos );
+			return true;
 		}
 		void _find_path_to( const Vec3& target )
 		{
-			const Pawn* owner = state->machine->owner;
+			//	NOTE: Since we don't have obstacles yet, a simple algorithm
+			//	is enough for pathfinding. We're just adding all points in
+			//	line with both axes.
 
 			_move_path.clear();
 
+			const Pawn* owner = state->machine->owner;
 			const Vec3 location = owner->get_tile_pos();
 			const Vec3 diff = target - location;
 
+			//	Moving on X-axis
 			const float x_sign = math::sign( diff.x );
 			const int max_off_x = static_cast<int>( math::abs( diff.x ) ) + 1;
 			for ( int off_x = 1; off_x < max_off_x; off_x++ )
@@ -171,6 +204,7 @@ namespace eks
 				);
 			}
 
+			//	Moving on Y-axis
 			const float y_sign = math::sign( diff.y );
 			const int max_off_y = static_cast<int>( math::abs( diff.y ) ) + 1;
 			for ( int off_y = 1; off_y < max_off_y; off_y++ )
@@ -183,6 +217,10 @@ namespace eks
 					}
 				);
 			}
+
+			_target_pos = target;
+
+			printf( "Update path for %d points\n", _move_path.size() );
 		}
 
 	private:

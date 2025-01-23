@@ -1,6 +1,7 @@
 #include "debug-menu.h"
 
 #include <suprengine/assets.h>
+#include <suprengine/vis-debug.h>
 
 #include <implot.h>
 
@@ -102,7 +103,7 @@ void DebugMenu::populate()
 		ImGui::EndMenuBar();
 	}
 
-	if ( ImGui::Button( "Hey" ) )
+	if ( ImGui::Button( "Don't touch" ) )
 	{
 		engine.on_imgui_update.unlisten( &DebugMenu::populate, this );
 	}
@@ -112,6 +113,8 @@ void DebugMenu::populate()
 	{
 		auto fps = engine.get_updater()->get_fps();
 		ImGui::TextColored( ImVec4 { 1.0f, 1.0f, 1.0f, 1.0f }, "FPS: %d", fps );
+
+		ImGui::SeparatorText( "Time" );
 
 		//  Pause & time scale
 		ImGui::Checkbox( "Pause Game", &engine.is_game_paused );
@@ -148,6 +151,9 @@ void DebugMenu::populate()
 				ImGui::SameLine();
 			}
 		}
+
+		ImGui::Spacing();
+		ImGui::SeparatorText( "Window" );
 
 		//  Window mode
 		Window* window = engine.get_window();
@@ -195,12 +201,65 @@ void DebugMenu::populate()
 		}
 
 		ImGui::Spacing();
+		ImGui::SeparatorText( "Debug" );
+
+		if ( ImGui::BeginTable( "debug_channels", 3, ImGuiTableFlags_None ) )
+			{
+				uint32 channels = static_cast<uint32>( VisDebug::active_channels );
+				bool has_changed = false;
+
+				ImGui::TableNextColumn();
+				has_changed |= ImGui::CheckboxFlags(
+					"Entity",
+					&channels,
+					static_cast<uint32>( DebugChannel::Entity )
+				);
+
+				ImGui::TableNextColumn();
+				has_changed |= ImGui::CheckboxFlags(
+					"Collider",
+					&channels,
+					static_cast<uint32>( DebugChannel::Collider )
+				);
+
+				ImGui::TableNextColumn();
+				has_changed |= ImGui::CheckboxFlags(
+					"Camera",
+					&channels,
+					static_cast<uint32>( DebugChannel::Camera )
+				);
+
+				ImGui::TableNextColumn();
+				has_changed |= ImGui::CheckboxFlags(
+					"AI",
+					&channels,
+					static_cast<uint32>( DebugChannel::AI )
+				);
+
+				ImGui::TableNextColumn();
+				has_changed |= ImGui::CheckboxFlags(
+					"Pathfinding",
+					&channels,
+					static_cast<uint32>( DebugChannel::Pathfinding )
+				);
+
+				if ( has_changed )
+				{
+					VisDebug::active_channels = static_cast<DebugChannel>( channels );
+				}
+
+				ImGui::EndTable();
+			}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Profiler" ) )
 	{
 		Profiler* profiler = engine.get_profiler();
 		profiler->populate_imgui();
 
+		ImGui::Spacing();
 		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Camera" ) )
@@ -245,6 +304,7 @@ void DebugMenu::populate()
 			camera->update_projection_from_settings();
 		}
 
+		ImGui::Spacing();
 		ImGui::SeparatorText( "Controller" );
 
 		//  Show focused target UID or NULL
@@ -269,6 +329,7 @@ void DebugMenu::populate()
 		ImGui::DragFloat( "Arm Length", &camera_controller->target_arm_length, 1.0f, 1.0f, 500.0f );
 		ImGui::DragFloat( "Move Speed", &camera_controller->move_speed, 1.0f, 0.0f, 500.0f );
 
+		ImGui::Spacing();
 		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Statistics" ) )
@@ -319,6 +380,7 @@ void DebugMenu::populate()
 		}
 
 		ImGui::Spacing();
+		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
@@ -338,11 +400,14 @@ void DebugMenu::populate()
 			);
 		}
 
+		ImGui::Spacing();
+
 		_populate_pawns_table( pawns );
 		_populate_selected_pawn( pawns );
 
 		_populate_pawn_factory( pawn_datas );
 
+		ImGui::Spacing();
 		ImGui::Spacing();
 	}
 	if ( ImGui::CollapsingHeader( "Data Assets", ImGuiTreeNodeFlags_DefaultOpen ) )
@@ -633,6 +698,7 @@ void DebugMenu::populate()
 		}
 
 		ImGui::PopID();
+		ImGui::Spacing();
 		ImGui::Spacing();
 	}
 
