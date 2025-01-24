@@ -104,7 +104,7 @@ namespace eks
 					VisDebug::add_box(
 						world_pos,
 						Quaternion::identity,
-						Box::half,
+						i == _move_path.size() - 1 ? Box::half : Box::half * 0.5f,
 						Color::red
 					);
 					VisDebug::add_line(
@@ -219,8 +219,6 @@ namespace eks
 			}
 
 			_target_pos = target;
-
-			printf( "Update path for %d points\n", _move_path.size() );
 		}
 
 	private:
