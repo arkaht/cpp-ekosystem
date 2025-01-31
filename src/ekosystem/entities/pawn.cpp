@@ -14,7 +14,7 @@ Pawn::Pawn( World* world, SafePtr<PawnData> _data )
 	: _world( world ), data( _data )
 {
 	//  Avoid immediate reproduction upon creation
-	hunger = 1.0f - data->hunger_consumption_on_reproduction;
+	hunger = 1.0f - data->min_hunger_for_reproduction;
 }
 
 void Pawn::setup()
