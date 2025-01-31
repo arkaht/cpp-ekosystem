@@ -1,8 +1,10 @@
 #pragma once
 
-#include <suprengine/entity.h>
+#include <suprengine/core/entity.h>
+
 #include <suprengine/components/renderers/model-renderer.hpp>
-#include <suprengine/curve.h>
+
+#include <suprengine/utils/curve.h>
 
 #include <ekosystem/world.h>
 #include <ekosystem/components/state-machine.h>

@@ -1,7 +1,8 @@
 #include "debug-menu.h"
 
-#include <suprengine/assets.h>
-#include <suprengine/vis-debug.h>
+#include <suprengine/core/assets.h>
+
+#include <suprengine/tools/vis-debug.h>
 
 #include <implot.h>
 

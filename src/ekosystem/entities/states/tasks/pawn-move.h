@@ -4,7 +4,7 @@
 
 #include <ekosystem/entities/pawn.h>
 
-#include <suprengine/vis-debug.h>
+#include <suprengine/tools/vis-debug.h>
 
 namespace eks
 {

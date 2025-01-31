@@ -1,7 +1,8 @@
 #include "pawn.h"
 
-#include <suprengine/assets.h>
-#include <suprengine/random.h>
+#include <suprengine/core/engine.h>
+#include <suprengine/core/assets.h>
+#include <suprengine/utils/random.h>
 
 #include "states/pawn-wander.h"
 #include "states/pawn-reproduction.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <suprengine/engine.h>
+#include <suprengine/core/engine.h>
 
 #include "world.h"
 #include "entities/pawn.h"

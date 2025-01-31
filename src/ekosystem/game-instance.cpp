@@ -1,6 +1,6 @@
 #include "game-instance.h"
 
-#include <suprengine/assets.h>
+#include <suprengine/core/assets.h>
 
 #include <ekosystem/scenes/game-scene.h>
 

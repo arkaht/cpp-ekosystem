@@ -1,6 +1,8 @@
 #pragma once
 
-#include <suprengine/component.h>
+#include <suprengine/core/component.h>
+
+#include <suprengine/utils/assert.h>
 
 namespace eks
 {

@@ -2,8 +2,9 @@
 
 #include <map>
 
-#include <suprengine/entity.h>
-#include <suprengine/box.h>
+#include <suprengine/core/entity.h>
+
+#include <suprengine/math/box.h>
 
 #include <ekosystem/data/pawn-data.h>
 

@@ -1,10 +1,12 @@
 #pragma once
 
-#include <suprengine/usings.h>
-#include <suprengine/model.h>
-#include <suprengine/enum-flags.hpp>
-#include <suprengine/json.h>
-#include <suprengine/render-batch.h>
+#include <suprengine/core/render-batch.h>
+
+#include <suprengine/rendering/model.h>
+
+#include <suprengine/utils/enum-flags.h>
+#include <suprengine/utils/json.h>
+#include <suprengine/utils/usings.h>
 
 namespace eks
 {

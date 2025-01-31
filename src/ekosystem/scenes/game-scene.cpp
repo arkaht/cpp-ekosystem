@@ -1,10 +1,12 @@
 #include "game-scene.h"
 
-#include <suprengine/opengl/opengl-render-batch.h>
-#include <suprengine/assets.h>
-#include <suprengine/random.h>
+#include <suprengine/core/assets.h>
 
-#include <suprengine/vis-debug.h>
+#include <suprengine/rendering/opengl/opengl-render-batch.h>
+
+#include <suprengine/utils/random.h>
+
+#include <suprengine/tools/vis-debug.h>
 
 using namespace eks;
 

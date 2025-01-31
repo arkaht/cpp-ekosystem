@@ -1,10 +1,13 @@
 #include "world.h"
 
-#include <suprengine/assert.hpp>
-#include <suprengine/assets.h>
+#include <suprengine/core/assets.h>
+#include <suprengine/core/engine.h>
+
 #include <suprengine/components/colliders/box-collider.h>
-#include <suprengine/random.h>
-#include <suprengine/json.h>
+
+#include <suprengine/utils/assert.h>
+#include <suprengine/utils/random.h>
+#include <suprengine/utils/json.h>
 
 #include "entities/pawn.h"
 

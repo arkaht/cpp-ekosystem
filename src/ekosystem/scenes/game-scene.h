@@ -1,6 +1,7 @@
 #pragma once
 
-#include <suprengine/scene.h>
+#include <suprengine/core/scene.h>
+
 #include <suprengine/components/colliders/box-collider.h>
 
 #include <ekosystem/entities/pawn.h>

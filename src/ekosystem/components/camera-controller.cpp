@@ -1,6 +1,7 @@
 #include "camera-controller.h"
 
-#include <suprengine/entity.h>
+#include <suprengine/core/engine.h>
+#include <suprengine/core/entity.h>
 
 using namespace eks;
 
