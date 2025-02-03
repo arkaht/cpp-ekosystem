@@ -105,13 +105,16 @@ namespace eks
 						world_pos,
 						Quaternion::identity,
 						i == _move_path.size() - 1 ? Box::half : Box::half * 0.5f,
-						Color::red
+						Color::red,
+						0.0f,
+						DebugChannel::Pathfinding
 					);
 					VisDebug::add_line(
 						last_world_pos,
 						world_pos,
 						Color::red,
-						0.0f
+						0.0f,
+						DebugChannel::Pathfinding
 					);
 
 					last_world_pos = world_pos;
