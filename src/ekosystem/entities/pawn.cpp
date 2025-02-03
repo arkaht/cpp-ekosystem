@@ -4,14 +4,15 @@
 #include <suprengine/core/assets.h>
 #include <suprengine/utils/random.h>
 
-#include "states/pawn-wander.h"
-#include "states/pawn-reproduction.h"
+#include "states/pawn-flee.h"
 #include "states/pawn-chase.h"
+#include "states/pawn-reproduction.h"
+#include "states/pawn-wander.h"
 
 using namespace eks;
 
-Pawn::Pawn( World* world, SafePtr<PawnData> _data )
-	: _world( world ), data( _data )
+Pawn::Pawn( World* world, SafePtr<PawnData> data )
+	: _world( world ), data( data )
 {
 	//  Avoid immediate reproduction upon creation
 	hunger = 1.0f - data->min_hunger_for_reproduction;
@@ -28,6 +29,7 @@ void Pawn::setup()
 	);
 
 	_state_machine = create_component<StateMachine<Pawn>>();
+	_state_machine->create_state<PawnFleeState>( 4.0f );
 	_state_machine->create_state<PawnChaseState>();
 	_state_machine->create_state<PawnReproductionState>();
 	_state_machine->create_state<PawnWanderState>();

@@ -21,6 +21,7 @@ namespace eks
 		void on_begin() override
 		{
 			_move_progress = 0.0f;
+			_target_pos = Vec3::zero;
 		}
 		void on_update( float dt ) override
 		{
