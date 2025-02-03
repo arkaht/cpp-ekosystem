@@ -156,6 +156,10 @@ namespace eks
 		Vec3* location_target_key = nullptr;
 
 	private:
+		/*
+		 * Try to update the path using the appropriate target key as the goal.
+		 * Returns whenever the path to the goal is valid.
+		 */
 		bool _update_path()
 		{
 			Vec3 target_pos = Vec3::zero;

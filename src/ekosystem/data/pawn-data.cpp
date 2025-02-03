@@ -30,7 +30,7 @@ bool PawnData::serialize( json::document& doc ) const
 
 	json::add( doc, JSON_KEY( photosynthesis_gain ) );
 
-	json::add( doc, "adjectives", (uint32_t)adjectives );
+	json::add( doc, "adjectives", static_cast<uint32_t>( adjectives ) );
 
 	return true;
 }
@@ -57,7 +57,7 @@ bool PawnData::unserialize( const json::document& doc )
 
 	json::get( doc, JSON_KEY_REF( photosynthesis_gain ) );
 
-	adjectives = (Adjectives)json::get( doc, "adjectives", 0Ui32 );
+	adjectives = static_cast<Adjectives>( json::get( doc, "adjectives", 0Ui32 ) );
 
 	return true;
 }
