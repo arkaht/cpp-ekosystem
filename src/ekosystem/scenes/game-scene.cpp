@@ -64,14 +64,24 @@ void GameScene::setup_world()
 	auto grass_data = _world->get_pawn_data( "grass" );
 	auto wolf_data  = _world->get_pawn_data( "wolf" );
 
-	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
-	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
-	_world->create_pawn( hare_data, _world->find_random_tile_pos() );
-	_world->create_pawn( wolf_data, _world->find_random_tile_pos() );
-	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
-	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
-	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
-	_world->create_pawn( grass_data, _world->find_random_tile_pos() );
+	//	Spawn grass
+	for ( int i = 0; i < 8; i++ )
+	{
+		_world->create_pawn( grass_data, _world->find_random_tile_pos() );
+	}
+
+	//	Spawn hares
+	for ( int i = 0; i < 6; i++ )
+	{
+		_world->create_pawn( hare_data, _world->find_random_tile_pos() );
+	}
+
+	//	Spawn wolves
+	for ( int i = 0; i < 2; i++ )
+	{
+		auto wolf = _world->create_pawn( wolf_data, _world->find_random_tile_pos() );
+		wolf->group_id = 1; //	Prevent wolves from eating each other
+	}
 }
 
 void GameScene::update( float dt )

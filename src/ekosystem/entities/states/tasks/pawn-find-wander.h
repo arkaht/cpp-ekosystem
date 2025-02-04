@@ -15,7 +15,7 @@ namespace eks
 
 		void on_begin() override
 		{
-			Pawn* owner = state->machine->owner;
+			const Pawn* owner = state->machine->owner;
 
 			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) )
 			{
@@ -29,7 +29,7 @@ namespace eks
 				 radius,  radius, 0.0f
 			);
 
-			Pawn* owner = state->machine->owner;
+			const Pawn* owner = state->machine->owner;
 			const Box world_bounds = owner->get_world()->get_bounds();
 			*location_key = Vec3::clamp(
 				Vec3::round( owner->get_tile_pos() + spread ),
