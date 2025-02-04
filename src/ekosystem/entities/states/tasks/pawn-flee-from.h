@@ -27,7 +27,13 @@ namespace eks
 		{
 			if ( !_flee_target_key->is_valid() )
 			{
-				finish( StateTaskResult::Succeed );
+				if ( !is_moving() )
+				{
+					finish( StateTaskResult::Succeed );
+					return;
+				}
+
+				PawnMoveStateTask::on_update( dt );
 				return;
 			}
 
@@ -106,7 +112,7 @@ namespace eks
 			);
 		#endif
 
-			_flee_location = Vec3::snap_to_grid( owner_location + flee_direction, 1.0f );
+			_flee_location = Vec3::round( owner_location + flee_direction );
 
 			VisDebug::add_box( world->grid_to_world( _flee_location ), Quaternion::identity, Box::half, Color::purple, 1.0f, DebugChannel::AI );
 
