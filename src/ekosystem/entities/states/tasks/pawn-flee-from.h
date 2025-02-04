@@ -88,22 +88,24 @@ namespace eks
 		{
 			const Pawn* owner = state->machine->owner;
 			const Vec3 owner_location = owner->get_tile_pos();
-			const Box bounds = owner->get_world()->get_bounds();
+			const World* world = owner->get_world();
+			const Box bounds = world->get_bounds();
 
 			_last_target_location = ( *_flee_target_key )->get_tile_pos();
 
 			//	Compute flee direction
 			Vec3 flee_direction = Vec3::direction2d( _last_target_location, owner_location );
 
-			//	Flee perpendicular from the original flee direction when the target is near enough
-			//	TODO: Find a way to handle out-of-bounds fleeing
-			if ( Vec3::distance2d_sqr( _last_target_location, owner_location ) <= 1.0f )
+			//	Flee perpendicular from the original flee direction when near world edges
+			bool is_on_world_edge = owner_location.x == bounds.min.x || owner_location.x == bounds.max.x
+								 || owner_location.y == bounds.min.y || owner_location.y == bounds.max.y;
+			if ( is_on_world_edge )
 			{
 				flee_direction = Vec3::cross( flee_direction, Vec3::up );
 			}
 
 		#ifdef ENABLE_VISDEBUG
-			const World* world = owner->get_world();
+			//	Draw flee location
 			VisDebug::add_line(
 				world->grid_to_world( owner_location ),
 				world->grid_to_world( owner_location ) + world->grid_to_world( flee_direction ),
@@ -112,9 +114,13 @@ namespace eks
 			);
 		#endif
 
+			//	Round to a valid tile location
 			_flee_location = Vec3::round( owner_location + flee_direction );
 
+		#ifdef ENABLE_VISDEBUG
+			//	Draw un-clamped flee location
 			VisDebug::add_box( world->grid_to_world( _flee_location ), Quaternion::identity, Box::half, Color::purple, 1.0f, DebugChannel::AI );
+		#endif
 
 			_flee_location = Vec3::clamp( _flee_location, bounds.min, bounds.max );
 		}

@@ -44,7 +44,8 @@ namespace eks
 			const Pawn* owner = machine->owner;
 			const World* world = owner->get_world();
 
-			return world->find_pawn(
+			return world->find_nearest_pawn(
+				owner->get_tile_pos(),
 				[&]( const SafePtr<Pawn> pawn ) {
 					if ( pawn.get() == owner ) return false;
 					if ( pawn->data == owner->data ) return false;

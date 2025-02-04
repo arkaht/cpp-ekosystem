@@ -18,7 +18,7 @@ namespace eks
 
 		bool can_switch_to() const override
 		{
-			Pawn* owner = machine->owner;
+			const Pawn* owner = machine->owner;
 			if ( owner->data->max_child_spawn_count <= 0 ) return false;
 			if ( owner->hunger < owner->data->min_hunger_for_reproduction ) return false;
 
