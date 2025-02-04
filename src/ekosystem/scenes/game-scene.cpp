@@ -80,16 +80,36 @@ void GameScene::update( float dt )
 
 	const InputManager* inputs = engine->get_inputs();
 
+	Physics* physics = engine->get_physics();
+	const Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
+	const RayParams params {};
+
+	RayHit hit {};
+	bool has_hit = physics->raycast( ray, &hit, params );
+#ifdef ENABLE_VISDEBUG
+	if ( has_hit )
+	{
+		const Vec3 box_bounds {
+			_world->TILE_SIZE * 0.25f,
+			_world->TILE_SIZE * 0.25f,
+			0.0f
+		};
+
+		const Vec3 hit_grid_location = _world->world_to_grid( hit.point );
+		VisDebug::add_box(
+			_world->grid_to_world( hit_grid_location ),
+			Quaternion::identity,
+			Box { -box_bounds, box_bounds },
+			Color::white,
+			0.0f,
+			DebugChannel::Entity
+		);
+	}
+#endif
+
 	//  Left Click: Spawn a pawn where we click in the world via a raycast
 	if ( inputs->is_mouse_button_just_pressed( MouseButton::Left ) )
 	{
-		Physics* physics = engine->get_physics();
-
-		const Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
-		const RayParams params {};
-
-		RayHit hit {};
-		bool has_hit = physics->raycast( ray, &hit, params );
 		if ( has_hit )
 		{
 			_debug_menu.create_pawn(
