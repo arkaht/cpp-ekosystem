@@ -92,6 +92,7 @@ namespace eks
 				flee_direction = Vec3::cross( flee_direction, Vec3::up );
 			}
 
+		#ifdef ENABLE_VISDEBUG
 			const World* world = owner->get_world();
 			VisDebug::add_line(
 				world->grid_to_world( owner_location ),
@@ -99,6 +100,7 @@ namespace eks
 				Color::purple, 1.0f,
 				DebugChannel::AI
 			);
+		#endif
 
 			_flee_location = Vec3::snap_to_grid( owner_location + flee_direction, 1.0f );
 

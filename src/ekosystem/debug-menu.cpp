@@ -201,56 +201,58 @@ void DebugMenu::populate()
 			updater->target_fps = FPS_TARGETS[current_target_id];
 		}
 
+	#ifdef ENABLE_VISDEBUG
 		ImGui::Spacing();
 		ImGui::SeparatorText( "Debug" );
 
 		if ( ImGui::BeginTable( "debug_channels", 3, ImGuiTableFlags_None ) )
+		{
+			uint32 channels = static_cast<uint32>( VisDebug::active_channels );
+			bool has_changed = false;
+
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"Entity",
+				&channels,
+				static_cast<uint32>( DebugChannel::Entity )
+			);
+
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"Collider",
+				&channels,
+				static_cast<uint32>( DebugChannel::Collider )
+			);
+
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"Camera",
+				&channels,
+				static_cast<uint32>( DebugChannel::Camera )
+			);
+
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"AI",
+				&channels,
+				static_cast<uint32>( DebugChannel::AI )
+			);
+
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"Pathfinding",
+				&channels,
+				static_cast<uint32>( DebugChannel::Pathfinding )
+			);
+
+			if ( has_changed )
 			{
-				uint32 channels = static_cast<uint32>( VisDebug::active_channels );
-				bool has_changed = false;
-
-				ImGui::TableNextColumn();
-				has_changed |= ImGui::CheckboxFlags(
-					"Entity",
-					&channels,
-					static_cast<uint32>( DebugChannel::Entity )
-				);
-
-				ImGui::TableNextColumn();
-				has_changed |= ImGui::CheckboxFlags(
-					"Collider",
-					&channels,
-					static_cast<uint32>( DebugChannel::Collider )
-				);
-
-				ImGui::TableNextColumn();
-				has_changed |= ImGui::CheckboxFlags(
-					"Camera",
-					&channels,
-					static_cast<uint32>( DebugChannel::Camera )
-				);
-
-				ImGui::TableNextColumn();
-				has_changed |= ImGui::CheckboxFlags(
-					"AI",
-					&channels,
-					static_cast<uint32>( DebugChannel::AI )
-				);
-
-				ImGui::TableNextColumn();
-				has_changed |= ImGui::CheckboxFlags(
-					"Pathfinding",
-					&channels,
-					static_cast<uint32>( DebugChannel::Pathfinding )
-				);
-
-				if ( has_changed )
-				{
-					VisDebug::active_channels = static_cast<DebugChannel>( channels );
-				}
-
-				ImGui::EndTable();
+				VisDebug::active_channels = static_cast<DebugChannel>( channels );
 			}
+
+			ImGui::EndTable();
+		}
+	#endif
 
 		ImGui::Spacing();
 		ImGui::Spacing();

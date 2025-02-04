@@ -93,6 +93,7 @@ namespace eks
 			}
 			owner->transform->set_location( render_pos );
 
+		#ifdef ENABLE_VISDEBUG
 			//	Visual debug for pathfinding
 			if ( VisDebug::is_channel_active( DebugChannel::Pathfinding ) )
 			{
@@ -121,6 +122,7 @@ namespace eks
 					last_world_pos = world_pos;
 				}
 			}
+		#endif
 		}
 		void on_end() override
 		{
