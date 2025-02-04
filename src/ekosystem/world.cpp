@@ -218,7 +218,13 @@ SafePtr<Pawn> World::find_pawn( std::function<bool( SafePtr<Pawn> )> callback ) 
 
 Vec3 World::world_to_grid( const Vec3& world_pos ) const
 {
-	Vec3 grid_pos = Vec3::world_to_grid( world_pos, TILE_SIZE );
+	const Vec3 offset = Vec3 {
+		TILE_SIZE * 0.5f,
+		TILE_SIZE * 0.5f,
+		0.0f
+	};
+
+	Vec3 grid_pos = Vec3::world_to_grid( world_pos + offset, TILE_SIZE );
 	grid_pos.z = 0.0f;
 	return grid_pos;
 }
