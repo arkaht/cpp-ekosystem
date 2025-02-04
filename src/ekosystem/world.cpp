@@ -22,7 +22,7 @@ World::World( const Vec2& size )
 
 	//  Setup ground
 	_ground = engine.create_entity<Entity>();
-	_ground->transform->location = Vec3 { 0.0f, 0.0f, -TILE_SIZE * 0.5f };
+	_ground->transform->location = Vec3 { 0.0f, 0.0f, -1.0f };
 	_ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
 	_ground->create_component<BoxCollider>( Box::one );
 	
