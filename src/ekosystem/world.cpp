@@ -256,6 +256,7 @@ Vec2 World::get_size() const
 
 Box World::get_bounds() const
 {
+	//	TODO: Fix the callers using this function giving weird results with an odd-sized world
 	const Vec3 half_size( _size * 0.5f, 0.0f );
 	return Box { -half_size, half_size };
 }
