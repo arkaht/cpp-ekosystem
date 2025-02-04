@@ -12,7 +12,7 @@ namespace eks
 	public:
 		PawnChaseState()
 		{
-			create_task<PawnFindFoodStateTask>( &_target );
+			_find_food_task = create_task<PawnFindFoodStateTask>( &_target );
 			create_task<PawnMoveStateTask>( &_target );
 			create_task<PawnEatStateTask>( &_target );
 			create_task<PawnWaitStateTask>( 1.0f, 0.5f );
@@ -25,6 +25,9 @@ namespace eks
 			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) ) return false;
 			if ( owner->hunger >= owner->data->min_hunger_to_eat ) return false;
 
+			//	Check for food first
+			if ( !_find_food_task->find_food().is_valid() ) return false;
+
 			return true;
 		}
 
@@ -35,5 +38,7 @@ namespace eks
 
 	private:
 		SafePtr<Pawn> _target = nullptr;
+
+		PawnFindFoodStateTask* _find_food_task = nullptr;
 	};
 }

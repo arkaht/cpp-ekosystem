@@ -15,17 +15,25 @@ namespace eks
 
 		void on_begin() override
 		{
-			Pawn* owner = state->machine->owner;
+			const Pawn* owner = state->machine->owner;
 
+			//	Photosynthesis pawns can't eat other pawns
 			if ( owner->data->has_adjective( Adjectives::Photosynthesis ) )
 			{
 				finish( StateTaskResult::Failed );
+				return;
 			}
-		}
-		void on_update( float dt ) override
-		{
-			if ( !find_food() ) return;
 
+			//	Check for food
+			SafePtr<Pawn> target = find_food();
+			if ( target == nullptr )
+			{
+				finish( StateTaskResult::Failed );
+				return;
+			}
+
+			//	Assign target
+			*target_key = target;
 			finish( StateTaskResult::Succeed );
 		}
 
@@ -34,9 +42,9 @@ namespace eks
 			return "PawnFindFoodStateTask";
 		}
 
-		bool find_food()
+		SafePtr<Pawn> find_food() const
 		{
-			Pawn* owner = state->machine->owner;
+			const Pawn* owner = state->machine->owner;
 			const World* world = owner->get_world();
 
 			if ( owner->data->has_adjective( Adjectives::Herbivore ) )
@@ -52,10 +60,9 @@ namespace eks
 						return pawn->data->has_adjective( Adjectives::Vegetal );
 					}
 				);
-				if ( !target.is_valid() ) return false;
+				if ( !target.is_valid() ) return nullptr;
 
-				*target_key = target;
-				return true;
+				return target;
 			}
 			else if ( owner->data->has_adjective( Adjectives::Carnivore ) )
 			{
@@ -70,13 +77,12 @@ namespace eks
 						return pawn->data->has_adjective( Adjectives::Meat );
 					}
 				);
-				if ( !target.is_valid() ) return false;
+				if ( !target.is_valid() ) return nullptr;
 
-				*target_key = target;
-				return true;
+				return target;
 			}
 
-			return false;
+			return nullptr;
 		}
 
 	public:
