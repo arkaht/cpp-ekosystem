@@ -76,19 +76,17 @@ void GameScene::setup_world()
 
 void GameScene::update( float dt )
 {
-	Engine* engine = _game->get_engine();
-	float time = engine->get_updater()->get_accumulated_seconds();
+	const Engine* engine = _game->get_engine();
 
-	InputManager* inputs = engine->get_inputs();
+	const InputManager* inputs = engine->get_inputs();
 
 	//  Left Click: Spawn a pawn where we click in the world via a raycast
 	if ( inputs->is_mouse_button_just_pressed( MouseButton::Left ) )
 	{
 		Physics* physics = engine->get_physics();
 
-		Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
-
-		RayParams params {};
+		const Ray ray = engine->camera->viewport_to_world( inputs->get_mouse_pos() );
+		const RayParams params {};
 
 		RayHit hit {};
 		bool has_hit = physics->raycast( ray, &hit, params );

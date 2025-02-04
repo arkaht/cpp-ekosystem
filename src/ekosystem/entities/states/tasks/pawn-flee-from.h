@@ -86,7 +86,11 @@ namespace eks
 
 			_last_target_location = ( *_flee_target_key )->get_tile_pos();
 
+			//	Compute flee direction
 			Vec3 flee_direction = Vec3::direction2d( _last_target_location, owner_location );
+
+			//	Flee perpendicular from the original flee direction when the target is near enough
+			//	TODO: Find a way to handle out-of-bounds fleeing
 			if ( Vec3::distance2d_sqr( _last_target_location, owner_location ) <= 1.0f )
 			{
 				flee_direction = Vec3::cross( flee_direction, Vec3::up );
