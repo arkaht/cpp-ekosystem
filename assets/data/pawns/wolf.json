@@ -1,14 +1,17 @@
 {
     "model_name": "ekosystem::pawn.wolf",
     "modulate": "#FF0A64FF",
-    "move_speed": 1.5,
+    "movement_height_curve_name": "",
+    "movement_scale_y_curve_name": "",
+    "move_speed": 2.5,
     "min_child_spawn_count": 1,
-    "max_child_spawn_count": 1,
+    "max_child_spawn_count": 2,
     "min_hunger_for_reproduction": 0.8,
     "hunger_consumption_on_reproduction": 0.4,
     "food_amount": 1.0,
     "max_hunger": 1.0,
-    "natural_hunger_consumption": 0.07,
+    "natural_hunger_consumption": 0.029,
     "min_hunger_to_eat": 0.5,
+    "photosynthesis_gain": 0.0,
     "adjectives": 10
 }
