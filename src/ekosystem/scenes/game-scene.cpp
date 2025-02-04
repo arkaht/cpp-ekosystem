@@ -116,7 +116,7 @@ void GameScene::update( float dt )
 				5.0f,
 				DebugChannel::Camera
 			);
-		}
 		#endif
+		}
 	}
 }
