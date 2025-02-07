@@ -4,6 +4,8 @@
 
 #include <suprengine/utils/assert.h>
 
+#include <suprengine/tools/memory-profiler.h>
+
 namespace eks
 {
 	using namespace suprengine;
@@ -16,7 +18,7 @@ namespace eks
 	/*
 	 * Enum representing a StateTask's execution result.
 	 */
-	enum class StateTaskResult
+	enum class StateTaskResult : uint8
 	{
 		/*
 		 * Result has not been evaluated yet.
@@ -110,6 +112,12 @@ namespace eks
 		}
 
 	public:
+		void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "StateMachine::Task", bytes );
+		}
+
+	public:
 		State<OwnerType>* state = nullptr;
 		StateTaskResult last_result = StateTaskResult::None;
 	};
@@ -182,7 +190,10 @@ namespace eks
 		 * Returns the created task.
 		 */
 		template <typename TaskType, typename... Args>
-		std::enable_if_t<std::is_base_of_v<StateTask<OwnerType>, TaskType>, TaskType*> create_task( Args... args )
+		std::enable_if_t<
+			std::is_base_of_v<StateTask<OwnerType>, TaskType>,
+			TaskType*
+		> create_task( Args&& ...args )
 		{
 			TaskType* task = new TaskType( args... );
 			task->state = this;
@@ -273,6 +284,12 @@ namespace eks
 		const std::vector<StateTask<OwnerType>*>& get_tasks() const
 		{
 			return _tasks;
+		}
+
+	public:
+		void* operator new( std::size_t bytes )
+		{
+			return MemoryProfiler::allocate( "StateMachine::State", bytes );
 		}
 
 	public:
@@ -400,7 +417,10 @@ namespace eks
 		 * Returns the created state.
 		 */
 		template <typename StateType, typename... Args>
-		std::enable_if_t<std::is_base_of_v<State<OwnerType>, StateType>, StateType*> create_state( Args... args )
+		std::enable_if_t<
+			std::is_base_of_v<State<OwnerType>, StateType>,
+			StateType*
+		> create_state( Args&& ...args )
 		{
 			StateType* state = new StateType( args... );
 			state->machine = this;
