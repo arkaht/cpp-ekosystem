@@ -28,12 +28,19 @@ void Pawn::setup()
 		data->modulate
 	);
 
-	_state_machine = create_component<StateMachine<Pawn>>();
-	_state_machine->create_state<PawnFleeState>( 4.0f );
-	_state_machine->create_state<PawnChaseState>();
-	_state_machine->create_state<PawnReproductionState>();
-	_state_machine->create_state<PawnWanderState>();
-	_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
+	//	Do not create a state machine for pawns with no ability to move.
+	//	It greatly helps to optimize memory usage and CPU time (e.g. I have
+	//	reduced over 700KiB of RAM by not creating 1 state machine component,
+	//	4 states and 11 tasks for each Grass pawn) since they do not use it.
+	if ( data->move_speed > 0.0f )
+	{
+		_state_machine = create_component<StateMachine<Pawn>>();
+		_state_machine->create_state<PawnFleeState>( 4.0f );
+		_state_machine->create_state<PawnChaseState>();
+		_state_machine->create_state<PawnReproductionState>();
+		_state_machine->create_state<PawnWanderState>();
+		_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
+	}
 
 	//	Loading pawn's assets
 	if ( !data->movement_height_curve_name.empty() )
@@ -69,9 +76,12 @@ void Pawn::update_this( float dt )
 
 void Pawn::tick( float dt )
 {
-	//	Manually updating the state machine using the substepping tick
+	//	Manually update the state machine using the substepping tick
 	//	of the pawn
-	_state_machine->update( dt );
+	if ( _state_machine != nullptr )
+	{
+		_state_machine->update( dt );
+	}
 
 	//  Hunger gain
 	hunger = math::max(
@@ -86,6 +96,12 @@ void Pawn::tick( float dt )
 			hunger + data->photosynthesis_gain * dt,
 			data->max_hunger
 		);
+
+		//	Manual reproduction for photosynthesis pawns without a state machine
+		if ( _state_machine == nullptr && hunger >= data->min_hunger_for_reproduction )
+		{
+			reproduce( nullptr );
+		}
 	}
 
 	//  Kill from hunger

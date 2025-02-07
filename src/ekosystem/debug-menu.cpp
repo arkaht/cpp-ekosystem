@@ -1008,7 +1008,10 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 	ImGui::SameLine( 0.0f, ImGui::GetStyle().ItemInnerSpacing.x );
 	ImGui::Text( "Hunger" );
 
-	_populate_state_machine( pawn->get_state_machine() );
+	if ( auto state_machine = pawn->get_state_machine() )
+	{
+		_populate_state_machine( state_machine );
+	}
 
 	ImGui::TreePop();
 }
