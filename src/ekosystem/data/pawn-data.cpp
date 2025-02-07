@@ -37,7 +37,7 @@ bool PawnData::serialize( json::document& doc ) const
 
 bool PawnData::unserialize( const json::document& doc )
 {
-	json::get( doc, JSON_KEY_REF( model_name ), MESH_CUBE );
+	json::get( doc, JSON_KEY_REF( model_name ), std::string( MESH_CUBE ) );
 	json::get( doc, JSON_KEY_REF( modulate ), Color::white );
 
 	json::get( doc, JSON_KEY_REF( movement_height_curve_name ) );
