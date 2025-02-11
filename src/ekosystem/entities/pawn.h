@@ -33,7 +33,7 @@ namespace eks
 		bool can_reproduce() const;
 		bool is_same_group( GroupID group_id ) const;
 
-		std::string get_name() const;
+		const std::string& get_name() const;
 		World* get_world() const;
 
 		SafePtr<StateMachine<Pawn>> get_state_machine() const;
@@ -56,5 +56,7 @@ namespace eks
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;
+
+		std::string _name = "";
 	};
 }

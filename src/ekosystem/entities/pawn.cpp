@@ -12,7 +12,7 @@
 using namespace eks;
 
 Pawn::Pawn( World* world, SafePtr<PawnData> data )
-	: _world( world ), data( data )
+	: _world( world ), data( data ), _name( data->name + "#" + std::to_string( get_unique_id() ) )
 {
 	//  Avoid immediate reproduction upon creation
 	hunger = 1.0f - data->min_hunger_for_reproduction;
@@ -161,9 +161,9 @@ bool Pawn::is_same_group( GroupID target_group_id ) const
 	return group_id > 0 && group_id == target_group_id;
 }
 
-std::string Pawn::get_name() const
+const std::string& Pawn::get_name() const
 {
-	return data->name + "#" + std::to_string( get_unique_id() );
+	return _name;
 }
 
 World* Pawn::get_world() const
