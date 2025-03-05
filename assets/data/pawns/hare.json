@@ -6,12 +6,12 @@
     "move_speed": 2.0,
     "min_child_spawn_count": 2,
     "max_child_spawn_count": 2,
-    "min_hunger_for_reproduction": 0.8,
+    "min_hunger_for_reproduction": 0.6,
     "hunger_consumption_on_reproduction": 0.2,
     "food_amount": 1.0,
     "max_hunger": 1.0,
     "natural_hunger_consumption": 0.01,
-    "min_hunger_to_eat": 0.3,
+    "min_hunger_to_eat": 0.5,
     "photosynthesis_gain": 0.0,
     "adjectives": 12
 }
