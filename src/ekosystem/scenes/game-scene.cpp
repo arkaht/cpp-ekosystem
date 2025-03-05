@@ -73,7 +73,8 @@ void GameScene::setup_world()
 	//	Spawn hares
 	for ( int i = 0; i < 6; i++ )
 	{
-		_world->create_pawn( hare_data, _world->find_random_tile_pos() );
+		auto hare = _world->create_pawn( hare_data, _world->find_random_tile_pos() );
+		hare->group_id = 2;
 	}
 
 	//	Spawn wolves

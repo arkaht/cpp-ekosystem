@@ -14,6 +14,9 @@ namespace eks
 
 	class Pawn;
 
+	using GroupID = uint8_t;
+	enum { MAX_PAWN_GROUP_ID = 10 };
+
 	class World
 	{
 	public:
@@ -27,6 +30,11 @@ namespace eks
 
 		void add_pawn_data( SharedPtr<PawnData> data );
 		SafePtr<PawnData> get_pawn_data( rconst_str name ) const;
+
+		void set_group_limit( GroupID group_id, uint8 limit );
+		int get_group_limit( GroupID group_id ) const;
+
+		int get_pawns_count_in_group( GroupID group_id ) const;
 
 		void resize( const Vec2& size );
 		void clear();
@@ -74,5 +82,7 @@ namespace eks
 		std::vector<SafePtr<Pawn>> _pawns {};
 
 		std::map<std::string, SharedPtr<PawnData>> _pawn_datas {};
+
+		uint8 _group_limits[MAX_PAWN_GROUP_ID + 1] {};
 	};
 }

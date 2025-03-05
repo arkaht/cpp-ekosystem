@@ -13,8 +13,6 @@ namespace eks
 {
 	using namespace suprengine;
 
-	using GroupID = uint8_t;
-
 	class Pawn : public Entity
 	{
 	public:

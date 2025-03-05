@@ -80,6 +80,33 @@ SafePtr<PawnData> World::get_pawn_data( rconst_str name ) const
 	return _pawn_datas.at( name );
 }
 
+void World::set_group_limit( GroupID group_id, uint8 limit )
+{
+	ASSERT( group_id >= 0 && group_id <= MAX_PAWN_GROUP_ID );
+	_group_limits[group_id] = limit;
+}
+
+int World::get_group_limit( GroupID group_id ) const
+{
+	ASSERT( group_id >= 0 && group_id <= MAX_PAWN_GROUP_ID );
+	return _group_limits[group_id];
+}
+
+int World::get_pawns_count_in_group( GroupID group_id ) const
+{
+	int count = 0;
+
+	for ( const SafePtr<Pawn>& pawn : _pawns )
+	{
+		if ( pawn->group_id == group_id )
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
+
 void World::resize( const Vec2& size )
 {
 	_size = size;
