@@ -42,6 +42,7 @@ namespace eks
 				_update_flee_location();
 			}
 
+		#ifdef ENABLE_VISDEBUG
 			//	Visual debug
 			if ( VisDebug::is_channel_active( DebugChannel::AI ) )
 			{
@@ -58,6 +59,7 @@ namespace eks
 				VisDebug::add_sphere( target_world_location, 0.5f, Color::duckblue, 0.0f, DebugChannel::AI );
 				VisDebug::add_line( owner_world_location, target_world_location, Color::duckblue, 0.0f, DebugChannel::AI );
 			}
+		#endif
 
 			PawnMoveStateTask::on_update( dt );
 		}

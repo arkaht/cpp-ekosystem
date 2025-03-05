@@ -7,6 +7,8 @@ set(EKOSYSTEM_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(EKOSYSTEM_SOURCE "${EKOSYSTEM_INCLUDE}/ekosystem")
 set(EKOSYSTEM_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
+add_compile_definitions(ENABLE_VISDEBUG)
+
 #  Require Suprengine
 set(SUPRENGINE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cpp-suprengine/" CACHE FILEPATH "Path to the suprengine project")
 add_subdirectory("${SUPRENGINE_PATH}" "suprengine")
@@ -14,7 +16,7 @@ add_subdirectory("${SUPRENGINE_PATH}" "suprengine")
 #  Find source files
 file(GLOB_RECURSE EKOSYSTEM_SOURCES CONFIGURE_DEPENDS "${EKOSYSTEM_SOURCE}/*.cpp")
 
-#  Declare test project
+#  Declare Ekosystem project
 add_executable(EKOSYSTEM)
 set_target_properties(EKOSYSTEM PROPERTIES OUTPUT_NAME "ekosystem")
 target_include_directories(EKOSYSTEM PRIVATE "${EKOSYSTEM_INCLUDE}")
