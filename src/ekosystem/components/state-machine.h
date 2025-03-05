@@ -112,10 +112,12 @@ namespace eks
 		}
 
 	public:
-		void* operator new( std::size_t bytes )
+	#ifdef ENABLE_MEMORY_PROFILER
+		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "StateMachine::Task", bytes );
 		}
+	#endif
 
 	public:
 		State<OwnerType>* state = nullptr;
@@ -287,10 +289,12 @@ namespace eks
 		}
 
 	public:
-		void* operator new( std::size_t bytes )
+	#ifdef ENABLE_MEMORY_PROFILER
+		static void* operator new( std::size_t bytes )
 		{
 			return MemoryProfiler::allocate( "StateMachine::State", bytes );
 		}
+	#endif
 
 	public:
 		static const int invalid_id = -1;

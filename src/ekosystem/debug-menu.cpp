@@ -201,10 +201,10 @@ void DebugMenu::populate()
 			updater->target_fps = FPS_TARGETS[current_target_id];
 		}
 
-	#ifdef ENABLE_VISDEBUG
 		ImGui::Spacing();
 		ImGui::SeparatorText( "Debug" );
 
+	#ifdef ENABLE_VISDEBUG
 		if ( ImGui::BeginTable( "debug_channels", 3, ImGuiTableFlags_None ) )
 		{
 			uint32 channels = static_cast<uint32>( VisDebug::active_channels );
@@ -252,6 +252,8 @@ void DebugMenu::populate()
 
 			ImGui::EndTable();
 		}
+	#else
+		ImGui::TextWrapped( "Compile with ENABLE_VISDEBUG to access this feature." );
 	#endif
 
 		ImGui::Spacing();

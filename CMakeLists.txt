@@ -8,6 +8,7 @@ set(EKOSYSTEM_SOURCE "${EKOSYSTEM_INCLUDE}/ekosystem")
 set(EKOSYSTEM_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
 add_compile_definitions(ENABLE_VISDEBUG)
+add_compile_definitions(ENABLE_MEMORY_PROFILER)
 
 #  Require Suprengine
 set(SUPRENGINE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cpp-suprengine/" CACHE FILEPATH "Path to the suprengine project")
