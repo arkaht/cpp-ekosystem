@@ -59,7 +59,7 @@ namespace eks
 		void _on_window_resized( const Vec2& new_size, const Vec2& old_size );
 
 	private:
-		int _selected_pawn_id = 0;
+		SafePtr<Pawn> _selected_pawn = nullptr;
 		int _selected_pawn_data_id = 0;
 
 		int _spawn_count = 1;

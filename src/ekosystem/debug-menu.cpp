@@ -830,64 +830,45 @@ void DebugMenu::_populate_pawns_table(
 			ImGui::TableNextRow( ImGuiTableRowFlags_None );
 
 			auto& pawn = pawns[i];
-			if ( pawn.is_valid() )
+			if ( !pawn.is_valid() ) continue;
+
+			//  Column 0: ID
+			ImGui::TableSetColumnIndex( 0 );
+			char buffer[5];
+			sprintf_s( buffer, "%04d", pawn->get_unique_id() );
+			if ( ImGui::Selectable( buffer, _selected_pawn == pawn, selectable_flags ) )
 			{
-				//  Column 0: ID
-				ImGui::TableSetColumnIndex( 0 );
-				char buffer[5];
-				sprintf_s( buffer, "%04d", pawn->get_unique_id() );
-				if ( ImGui::Selectable(
-					buffer,
-					_selected_pawn_id == i,
-					selectable_flags
-				) )
-				{
-					_selected_pawn_id = i;
-				}
-
-				//  Column 1: Name
-				ImGui::TableSetColumnIndex( 1 );
-				ImGui::Text( pawn->get_name().c_str() );
-
-				//  Column 2: Action
-				ImGui::TableSetColumnIndex( 2 );
-				if ( ImGui::SmallButton( "Focus" ) )
-				{
-					camera_controller->focus_target =
-						pawn->transform;
-				}
-				ImGui::SameLine();
-				if ( ImGui::SmallButton( "Kill" ) )
-				{
-					pawn->kill();
-				}
-
-				//  Column 3: Hunger
-				ImGui::TableSetColumnIndex( 3 );
-				float hunger_ratio = math::clamp(
-					pawn->hunger / pawn->data->max_hunger,
-					0.0f, 1.0f
-				);
-				ImGui::Extra::ColoredProgressBar(
-					hunger_ratio,
-					settings::HUNGER_COLOR,
-					{ 0.0f, 0.0f }
-				);
+				_selected_pawn = pawn;
 			}
-			else
+
+			//  Column 1: Name
+			ImGui::TableSetColumnIndex( 1 );
+			ImGui::Text( pawn->get_name().c_str() );
+
+			//  Column 2: Action
+			ImGui::TableSetColumnIndex( 2 );
+			if ( ImGui::SmallButton( "Focus" ) )
 			{
-				ImGui::TableSetColumnIndex( 0 );
-				ImGui::Selectable( "????", _selected_pawn_id == i, selectable_flags );
-
-				ImGui::TableSetColumnIndex( 1 );
-				ImGui::TextUnformatted( "N/A" );
-
-				ImGui::TableSetColumnIndex( 2 );
-				ImGui::TextUnformatted( "N/A" );
-
-				ImGui::TableSetColumnIndex( 3 );
-				ImGui::TextUnformatted( "0%" );
+				camera_controller->focus_target =
+					pawn->transform;
 			}
+			ImGui::SameLine();
+			if ( ImGui::SmallButton( "Kill" ) )
+			{
+				pawn->kill();
+			}
+
+			//  Column 3: Hunger
+			ImGui::TableSetColumnIndex( 3 );
+			float hunger_ratio = math::clamp(
+				pawn->hunger / pawn->data->max_hunger,
+				0.0f, 1.0f
+			);
+			ImGui::Extra::ColoredProgressBar(
+				hunger_ratio,
+				settings::HUNGER_COLOR,
+				{ 0.0f, 0.0f }
+			);
 
 			ImGui::PopID();
 		}
@@ -970,21 +951,21 @@ void DebugMenu::_populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns
 {
 	if ( !ImGui::TreeNode( "Selected Pawn" ) ) return;
 
-	if ( _selected_pawn_id < 0 || _selected_pawn_id >= pawns.size() )
+	if ( !_selected_pawn.is_valid() )
 	{
 		ImGui::Text( "Select a pawn first to inspect it." );
 		ImGui::TreePop();
 		return;
 	}
 
-	auto& pawn = pawns[_selected_pawn_id];
+	auto& pawn = _selected_pawn;
 	if ( !pawn.is_valid() )
 	{
 		ImGui::TreePop();
 		return;
 	}
 	
-	ImGui::Text( *( "Name: " + pawn->get_name() ) );
+	ImGui::Text( "Name: %s", *pawn->get_name() );
 
 	//  Compute hunger
 	float hunger = pawn->hunger;
@@ -1121,13 +1102,14 @@ void DebugMenu::_populate_state_machine( const SafePtr<StateMachine<Pawn>> machi
 
 void DebugMenu::_populate_group_table()
 {
+	ImGui::Spacing();
+
 	if ( !ImGui::TreeNode( "Groups" ) ) return;
 
 	ImGuiTableFlags table_flags =
 		ImGuiTableFlags_ScrollY | ImGuiTableFlags_Borders |
 		ImGuiTableFlags_RowBg;
 
-	ImGui::SeparatorText( "Groups" );
 	if ( ImGui::BeginTable( "eks_groups", 4, table_flags, { 0.0f, 150.0f } ) )
 	{
 		ImGui::TableSetupColumn( "ID", ImGuiTableColumnFlags_WidthFixed );
