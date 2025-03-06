@@ -54,6 +54,7 @@ namespace eks
 		);
 		void _populate_selected_pawn( const std::vector<SafePtr<Pawn>>& pawns );
 		void _populate_state_machine( const SafePtr<StateMachine<Pawn>> machine );
+		void _populate_group_table();
 
 		void _on_window_resized( const Vec2& new_size, const Vec2& old_size );
 

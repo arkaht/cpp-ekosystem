@@ -410,6 +410,8 @@ void DebugMenu::populate()
 		_populate_pawns_table( pawns );
 		_populate_selected_pawn( pawns );
 
+		_populate_group_table();
+
 		_populate_pawn_factory( pawn_datas );
 
 		ImGui::Spacing();
@@ -903,51 +905,6 @@ void DebugMenu::_populate_pawns_table(
 	ImGui::SetItemTooltip( "Kill all existing pawns" );
 
 	ImGui::Spacing();
-
-	ImGui::SeparatorText( "Groups" );
-	if ( ImGui::BeginTable( "eks_groups", 4, table_flags, { 0.0f, 150.0f } ) )
-	{
-		ImGui::TableSetupColumn( "ID", ImGuiTableColumnFlags_WidthFixed );
-		ImGui::TableSetupColumn( "Current", ImGuiTableColumnFlags_WidthFixed );
-		ImGui::TableSetupColumn( "Limit", ImGuiTableColumnFlags_WidthFixed );
-		ImGui::TableSetupScrollFreeze( 0, 1 );
-		ImGui::TableHeadersRow();
-
-		ImGuiSelectableFlags selectable_flags =
-			ImGuiSelectableFlags_SpanAllColumns
-			| ImGuiSelectableFlags_AllowOverlap;
-		for ( int i = 0; i < MAX_PAWN_GROUP_ID + 1; i++ )
-		{
-			ImGui::PushID( i );
-			ImGui::TableNextRow( ImGuiTableRowFlags_None );
-
-			ImGui::TableNextColumn();
-			ImGui::Text( "%01d", i );
-
-			int limit = world->get_group_limit( i );
-			ImGui::TableNextColumn();
-			ImGui::Text( "%d/%d", world->get_pawns_count_in_group( i ), limit );
-
-			ImGui::TableNextColumn();
-			if ( ImGui::InputInt( "Limit", &limit ) )
-			{
-				world->set_group_limit( i,
-					static_cast<int>(
-						math::clamp(
-							limit,
-							0, static_cast<int>( std::numeric_limits<uint8>::max() )
-						)
-					)
-				);
-			}
-
-			ImGui::PopID();
-		}
-
-		ImGui::EndTable();
-	}
-
-	ImGui::Spacing();
 }
 
 void DebugMenu::_populate_pawn_factory(
@@ -1157,6 +1114,60 @@ void DebugMenu::_populate_state_machine( const SafePtr<StateMachine<Pawn>> machi
 		}
 
 		ImGui::TreePop();
+	}
+
+	ImGui::TreePop();
+}
+
+void DebugMenu::_populate_group_table()
+{
+	if ( !ImGui::TreeNode( "Groups" ) ) return;
+
+	ImGuiTableFlags table_flags =
+		ImGuiTableFlags_ScrollY | ImGuiTableFlags_Borders |
+		ImGuiTableFlags_RowBg;
+
+	ImGui::SeparatorText( "Groups" );
+	if ( ImGui::BeginTable( "eks_groups", 4, table_flags, { 0.0f, 150.0f } ) )
+	{
+		ImGui::TableSetupColumn( "ID", ImGuiTableColumnFlags_WidthFixed );
+		ImGui::TableSetupColumn( "Current", ImGuiTableColumnFlags_WidthFixed );
+		ImGui::TableSetupColumn( "Limit", ImGuiTableColumnFlags_WidthFixed );
+		ImGui::TableSetupScrollFreeze( 0, 1 );
+		ImGui::TableHeadersRow();
+
+		ImGuiSelectableFlags selectable_flags =
+			ImGuiSelectableFlags_SpanAllColumns
+			| ImGuiSelectableFlags_AllowOverlap;
+		for ( int i = 0; i < MAX_PAWN_GROUP_ID + 1; i++ )
+		{
+			ImGui::PushID( i );
+			ImGui::TableNextRow( ImGuiTableRowFlags_None );
+
+			ImGui::TableNextColumn();
+			ImGui::Text( "%01d", i );
+
+			int limit = world->get_group_limit( i );
+			ImGui::TableNextColumn();
+			ImGui::Text( "%d/%d", world->get_pawns_count_in_group( i ), limit );
+
+			ImGui::TableNextColumn();
+			if ( ImGui::InputInt( "Limit", &limit, 1, 10 ) )
+			{
+				world->set_group_limit( i,
+					static_cast<int>(
+						math::clamp(
+							limit,
+							0, static_cast<int>( std::numeric_limits<uint8>::max() )
+						)
+					)
+				);
+			}
+
+			ImGui::PopID();
+		}
+
+		ImGui::EndTable();
 	}
 
 	ImGui::TreePop();
