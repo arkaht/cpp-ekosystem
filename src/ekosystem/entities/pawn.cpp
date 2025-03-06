@@ -113,8 +113,24 @@ void Pawn::tick( float dt )
 
 void Pawn::reproduce( SafePtr<Pawn> partner )
 {
-	//	Generate children around
+	//	Get the number of children to born
 	int child_spawn_count = random::generate( data->min_child_spawn_count, data->max_child_spawn_count );
+
+	//	Prevent from giving birth to a number of children that it exceeds the population limit
+	const World* world = get_world();
+	const int population_limit = world->get_group_limit( group_id );
+	if ( population_limit > 0 )
+	{
+		const int current_population = world->get_pawns_count_in_group( group_id );
+		if ( current_population + child_spawn_count > population_limit )
+		{
+			child_spawn_count = population_limit - current_population;
+		}
+	}
+
+	ASSERT( child_spawn_count > 0 );
+
+	//	Generate children around
 	for ( int i = 0; i < child_spawn_count; i++ )
 	{
 		Vec3 spawn_pos;

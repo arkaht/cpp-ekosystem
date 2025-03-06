@@ -30,7 +30,7 @@ namespace eks
 				if ( population_limit > 0 )
 				{
 					const int current_population = world->get_pawns_count_in_group( owner->group_id );
-					if ( current_population > population_limit ) return false;
+					if ( current_population >= population_limit ) return false;
 				}
 			}
 
