@@ -83,6 +83,10 @@ void GameScene::setup_world()
 		auto wolf = _world->create_pawn( wolf_data, _world->find_random_tile_pos() );
 		wolf->group_id = 1; //	Prevent wolves from eating each other
 	}
+
+	//	Set default group limits
+	_world->set_group_limit( 1, 4 );	//	Wolves
+	_world->set_group_limit( 2, 20 );	//	Hares
 }
 
 void GameScene::update( float dt )
