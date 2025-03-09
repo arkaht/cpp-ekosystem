@@ -2,6 +2,8 @@
 
 #include <suprengine/core/component.h>
 
+#include <suprengine/math/vec3.h>
+
 namespace eks
 {
 	using namespace suprengine;
@@ -29,6 +31,6 @@ namespace eks
 
 		Vec3 camera_offset = Vec3::zero;
 
-		SafePtr<Transform> focus_target;
+		SafePtr<Transform> focus_target = nullptr;
 	};
 }
