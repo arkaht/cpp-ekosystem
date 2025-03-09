@@ -3,6 +3,8 @@
 
 It is built using [suprengine](https://github.com/arkaht/cpp-suprengine), my custom engine which uses OpenGL and SDL2.
 
+![image](https://github.com/user-attachments/assets/8476bda7-4dc5-4abb-a424-a4038f6897ae)
+
 ## Dependencies
 ### Project
 + C++20 compiler
