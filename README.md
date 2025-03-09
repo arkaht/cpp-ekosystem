@@ -8,12 +8,17 @@ It is built using [suprengine](https://github.com/arkaht/cpp-suprengine), my cus
 + C++20 compiler
 + OpenGL 3.3.0
 + CMake 3.11
+
 ### Libraries
 + [cpp-suprengine](https://github.com/arkaht/cpp-suprengine)
 
 ## Features
-+ A complete user interface tool using **ImGui** for game development, both system balancing and debug
-+ TODO
++ Data-driven simulation: each animal type is defined by a data asset to specify behavior, movement and visuals (which means you can easily make rabbits carnivore and wolves photosynthetic)
++ Serialization of animals data asset with JSON files.
++ Animals eat according to their metabolism, reproduce within their own species, wander around and flee from their predators.
++ Animals have 3D models and movement animations.
++ Finite State Machine for AI logic, designed mixing with a Behavior Tree.
++ Complete user interface tool using **ImGui** for both system balancing and debugging
 
 ## Project Structure
 This project only holds the engine code since it is de-coupled from games code.
@@ -55,7 +60,10 @@ If running the git submodule update command didn't work for any reasons, replace
 
 <details><summary><b>Need administrator privileges to run the CMakeLists.txt</b></summary>
 
-TODO
+I'm using symbolic links to avoid having to copy the assets folder each time I compile. The problem is that on Windows, the symlink command requires administrator privileges. To resolve that, you can either:
++ Enable Windows developper mode (not recommended).
++ Run your IDE or CLI with administrator privileges.
++ Edit the `CMakeLists.txt` by replacing `suprengine_symlink_assets` with `suprengine_copy_assets`
 </details>
 
 ### Credits
