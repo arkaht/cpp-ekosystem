@@ -18,10 +18,10 @@ void main()
 {
 	out_color = mix( u_modulate * 0.8f, u_modulate, vertex_z );
 
-	//  lighting
-	/*float diffuse = max( 
-		dot( normalize( normal ), u_ambient_direction ), 
-		0.0f 
+	//  Lighting
+	float diffuse = -min( 
+		dot( normal, u_ambient_direction ),
+		0.0f
 	);
-	out_color = mix( u_ambient_color * u_ambient_scale, out_color, diffuse );*/
+	out_color = mix( u_ambient_color * u_ambient_scale, out_color, diffuse );
 }

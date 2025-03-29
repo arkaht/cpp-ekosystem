@@ -47,7 +47,7 @@ void GameScene::init()
 	camera->activate();
 
 	RenderBatch* render_batch = engine.get_render_batch();
-	render_batch->set_ambient_direction( Vec3 { 0.0f, 0.0f, 1.0f } );
+	render_batch->set_ambient_direction( Vec3 { 0.0f, 0.0f, -1.0f } );
 
 	//  Assign references to debug menu
 	_debug_menu.camera_controller = _camera_controller;
@@ -151,9 +151,28 @@ void GameScene::update( float dt )
 		}
 	}
 
+	// Day/Night cycle test
+	const float game_time = engine->get_updater()->get_accumulated_seconds();
+	constexpr float FULL_CYCLE_GAME_TIME = 5.0f;
+	const float ambient_angle = -math::fmod( game_time, FULL_CYCLE_GAME_TIME ) / FULL_CYCLE_GAME_TIME * math::PI;
+	RenderBatch* render_batch = engine->get_render_batch();
+	render_batch->set_ambient_direction( Vec3 { math::cos( ambient_angle ), 0.0f, math::sin( ambient_angle ) } );
+
+#ifdef ENABLE_VISDEBUG
+	if ( VisDebug::is_channel_active( DebugChannel::Lighting ) )
+	{
+		AmbientLightInfos ambient_infos = render_batch->get_ambient_infos();
+		Vec3 ambient_origin { 0.0f, 0.0f, 10.0f };
+
+		VisDebug::add_box( ambient_origin, Quaternion::identity, Box::half, Color::white, 0.0f, DebugChannel::Lighting );
+		VisDebug::add_line( ambient_origin, ambient_origin + ambient_infos.direction * 5.0f, Color::white, 0.0f, DebugChannel::Lighting );
+	}
+#endif
+
+	//	Animate grass shader
 	if ( SharedPtr<Shader> grass_shader = Assets::get_shader( "ekosystem::grass" ) )
 	{
 		grass_shader->activate();
-		grass_shader->set_float( "u_time", engine->get_updater()->get_accumulated_seconds() );
+		grass_shader->set_float( "u_time", game_time );
 	}
 }
