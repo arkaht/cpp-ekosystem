@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Auto-saved Blender files
+*.blend1
+
 .vs/
 build/
 out/

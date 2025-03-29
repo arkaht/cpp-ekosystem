@@ -23,8 +23,8 @@ void Pawn::setup()
 	auto model = Assets::get_model( data->model_name );
 
 	_renderer = create_component<ModelRenderer>( 
-		model, 
-		SHADER_LIT_MESH, 
+		model,
+		data->shader_name,
 		data->modulate
 	);
 

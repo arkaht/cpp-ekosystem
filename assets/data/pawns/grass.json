@@ -1,5 +1,6 @@
 {
     "model_name": "ekosystem::pawn.grass",
+    "shader_name": "ekosystem::grass",
     "modulate": "#6DFF38FF",
     "movement_height_curve_name": "",
     "movement_scale_y_curve_name": "",

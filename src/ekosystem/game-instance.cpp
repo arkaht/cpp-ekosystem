@@ -17,6 +17,13 @@ void GameInstance::load_assets()
 		TextureParams {}
 	);
 
+	//	Shaders
+	SharedPtr<Shader> grass_shader = Assets::load_shader(
+		"ekosystem::grass",
+		"assets/ekosystem/shaders/grass.vert",
+		"assets/suprengine/shaders/lit-mesh.frag"
+	);
+
 	//	Models
 	SharedPtr<Model> floor_model = Assets::load_model(
 		"ekosystem::floor",
@@ -41,8 +48,7 @@ void GameInstance::load_assets()
 
 	SharedPtr<Model> grass_model = Assets::load_model(
 		"ekosystem::pawn.grass",
-		"assets/ekosystem/models/pawns/grass.fbx",
-		SHADER_LIT_MESH
+		"assets/ekosystem/models/pawns/grass.fbx"
 	);
 	grass_model->get_mesh( 0 )->should_cull_faces = false;
 	grass_model->get_mesh( 0 )->add_texture( texture );

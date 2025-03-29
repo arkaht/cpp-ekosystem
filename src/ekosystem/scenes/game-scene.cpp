@@ -89,7 +89,7 @@ void GameScene::setup_world()
 
 void GameScene::update( float dt )
 {
-	const Engine* engine = _game->get_engine();
+	Engine* engine = _game->get_engine();
 
 	const InputManager* inputs = engine->get_inputs();
 
@@ -149,5 +149,11 @@ void GameScene::update( float dt )
 			);
 		#endif
 		}
+	}
+
+	if ( SharedPtr<Shader> grass_shader = Assets::get_shader( "ekosystem::grass" ) )
+	{
+		grass_shader->activate();
+		grass_shader->set_float( "u_time", engine->get_updater()->get_accumulated_seconds() );
 	}
 }

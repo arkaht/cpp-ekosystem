@@ -11,6 +11,7 @@ bool PawnData::serialize( json::document& doc ) const
 	doc.SetObject();
 
 	json::add( doc, JSON_KEY( model_name ) );
+	json::add( doc, JSON_KEY( shader_name ) );
 	json::add( doc, JSON_KEY( modulate ) );
 
 	json::add( doc, JSON_KEY( movement_height_curve_name ) );
@@ -38,6 +39,7 @@ bool PawnData::serialize( json::document& doc ) const
 bool PawnData::unserialize( const json::document& doc )
 {
 	json::get( doc, JSON_KEY_REF( model_name ), std::string( MESH_CUBE ) );
+	json::get( doc, JSON_KEY_REF( shader_name ), std::string( SHADER_LIT_MESH ) );
 	json::get( doc, JSON_KEY_REF( modulate ), Color::white );
 
 	json::get( doc, JSON_KEY_REF( movement_height_curve_name ) );

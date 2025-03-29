@@ -42,6 +42,9 @@ namespace eks
 		std::string name = "N/A";
 		//  Model name of the pawn
 		std::string model_name = MESH_CUBE;
+		//	Shader name for model rendering
+		//	TODO: Export inside the ImGui tool
+		std::string shader_name = SHADER_LIT_MESH;
 		//  Color of the pawn
 		Color modulate = Color::white;
 
