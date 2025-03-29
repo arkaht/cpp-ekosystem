@@ -50,10 +50,17 @@ namespace eks
 			//  Compute this frame position
 			const Vec3 current_tile = owner->get_tile_pos();
 			const Vec3 next_tile = _move_path.at( 0 );
+
+			float render_movement_progress = _move_progress;
+			if ( SharedPtr<Curve> curve = Assets::get_curve( owner->data->movement_progress_curve_name ) )
+			{
+				render_movement_progress = curve->evaluate_by_time( _move_progress );
+			}
+
 			const Vec3 new_tile_pos = Vec3::lerp( 
 				current_tile,
 				next_tile,
-				_move_progress
+				render_movement_progress
 			);
 
 			//	Complete this movement step
@@ -80,15 +87,14 @@ namespace eks
 
 			//	Apply render position
 			Vec3 render_pos = new_tile_pos * world->TILE_SIZE;
-			if ( owner->movement_height_curve )
+			if ( SharedPtr<Curve> curve = Assets::get_curve( owner->data->movement_height_curve_name ) )
 			{
-				render_pos.z = owner->movement_height_curve->evaluate_by_time( _move_progress );
+				render_pos.z = curve->evaluate_by_time( _move_progress );
 			}
-			if ( owner->movement_scale_y_curve )
+			if ( SharedPtr<Curve> curve = Assets::get_curve( owner->data->movement_scale_y_curve_name ) )
 			{
 				Vec3 render_scale = Vec3::one;
-				render_scale.z = owner->movement_scale_y_curve->evaluate_by_time( _move_progress );
-
+				render_scale.z = curve->evaluate_by_time( _move_progress );
 				owner->transform->set_scale( render_scale );
 			}
 			owner->transform->set_location( render_pos );

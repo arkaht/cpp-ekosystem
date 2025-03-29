@@ -48,8 +48,9 @@ namespace eks
 		//  Color of the pawn
 		Color modulate = Color::white;
 
-		std::string movement_height_curve_name = "hare/movement-height";
-		std::string movement_scale_y_curve_name = "hare/movement-scale-y";
+		std::string movement_progress_curve_name = "";
+		std::string movement_height_curve_name = "";
+		std::string movement_scale_y_curve_name = "";
 
 		//  Movement speed in tile per seconds
 		float move_speed = 1.0f;

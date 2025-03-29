@@ -14,6 +14,7 @@ bool PawnData::serialize( json::document& doc ) const
 	json::add( doc, JSON_KEY( shader_name ) );
 	json::add( doc, JSON_KEY( modulate ) );
 
+	json::add( doc, JSON_KEY( movement_progress_curve_name ) );
 	json::add( doc, JSON_KEY( movement_height_curve_name ) );
 	json::add( doc, JSON_KEY( movement_scale_y_curve_name ) );
 
@@ -42,6 +43,7 @@ bool PawnData::unserialize( const json::document& doc )
 	json::get( doc, JSON_KEY_REF( shader_name ), std::string( SHADER_LIT_MESH ) );
 	json::get( doc, JSON_KEY_REF( modulate ), Color::white );
 
+	json::get( doc, JSON_KEY_REF( movement_progress_curve_name ) );
 	json::get( doc, JSON_KEY_REF( movement_height_curve_name ) );
 	json::get( doc, JSON_KEY_REF( movement_scale_y_curve_name ) );
 
