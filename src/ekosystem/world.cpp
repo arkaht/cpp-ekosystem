@@ -4,6 +4,7 @@
 #include <suprengine/core/engine.h>
 
 #include <suprengine/components/colliders/box-collider.h>
+#include <suprengine/components/renderers/model-renderer.hpp>
 
 #include <suprengine/utils/assert.h>
 #include <suprengine/utils/random.h>
@@ -18,12 +19,12 @@ using namespace eks;
 World::World( const Vec2& size )
 {
 	auto& engine = Engine::instance();
-	auto model = Assets::get_model( MESH_CUBE );
+	auto model = Assets::get_model( "ekosystem::floor" );
 
 	//  Setup ground
 	_ground = engine.create_entity<Entity>();
 	_ground->transform->location = Vec3 { 0.0f, 0.0f, -1.0f };
-	_ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
+	_ground_renderer = _ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
 	_ground->create_component<BoxCollider>( Box::one );
 	
 	resize( size );
@@ -113,11 +114,13 @@ void World::resize( const Vec2& size )
 
 	_ground->transform->set_scale(
 		Vec3 {
-			_size.x * TILE_SIZE * 0.5f,
-			_size.y * TILE_SIZE * 0.5f,
+			TILE_SIZE * 0.5f + _size.x * TILE_SIZE * 0.5f,
+			TILE_SIZE * 0.5f + _size.y * TILE_SIZE * 0.5f,
 			1.0f
 		}
 	);
+
+	_ground_renderer->model->get_mesh( 0 )->tiling = _size;
 }
 
 void World::clear()

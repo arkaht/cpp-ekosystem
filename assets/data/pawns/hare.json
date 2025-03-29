@@ -1,6 +1,6 @@
 {
     "model_name": "ekosystem::pawn.hare",
-    "modulate": "#646464FF",
+    "modulate": "#A86436FF",
     "movement_height_curve_name": "pawns/hare/movement-height",
     "movement_scale_y_curve_name": "pawns/hare/movement-scale-y",
     "move_speed": 2.0,

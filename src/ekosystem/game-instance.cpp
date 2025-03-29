@@ -8,7 +8,22 @@ using namespace eks;
 
 void GameInstance::load_assets()
 {
-	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_MEDIUM_GRID );
+	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_WHITE );
+
+	//	Textures
+	SharedPtr<Texture> dirt_texture = Assets::load_texture(
+		"ekosystem::dirt",
+		"assets/ekosystem/textures/dirt01.png",
+		TextureParams {}
+	);
+
+	//	Models
+	SharedPtr<Model> floor_model = Assets::load_model(
+		"ekosystem::floor",
+		"assets/suprengine/models/cube.fbx",
+		SHADER_LIT_MESH
+	);
+	floor_model->get_mesh( 0 )->add_texture( dirt_texture );
 
 	SharedPtr<Model> wolf_model = Assets::load_model(
 		"ekosystem::pawn.wolf",
@@ -24,6 +39,15 @@ void GameInstance::load_assets()
 	);
 	hare_model->get_mesh( 0 )->add_texture( texture );
 
+	SharedPtr<Model> grass_model = Assets::load_model(
+		"ekosystem::pawn.grass",
+		"assets/ekosystem/models/pawns/grass.fbx",
+		SHADER_LIT_MESH
+	);
+	grass_model->get_mesh( 0 )->is_face_culled = false;
+	grass_model->get_mesh( 0 )->add_texture( texture );
+
+	//	Curves
 	Assets::load_curves_in_folder(
 		"assets/ekosystem/curves/",
 		/* is_recurive */ true,

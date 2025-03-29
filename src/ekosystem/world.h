@@ -8,6 +8,11 @@
 
 #include <ekosystem/data/pawn-data.h>
 
+namespace suprengine
+{
+	class ModelRenderer;
+}
+
 namespace eks
 {
 	using namespace suprengine;
@@ -79,6 +84,7 @@ namespace eks
 		Vec2 _size = Vec2::zero;
 
 		SafePtr<Entity> _ground = nullptr;
+		SafePtr<ModelRenderer> _ground_renderer = nullptr;
 		std::vector<SafePtr<Pawn>> _pawns {};
 
 		std::map<std::string, SharedPtr<PawnData>> _pawn_datas {};

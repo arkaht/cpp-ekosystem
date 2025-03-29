@@ -25,10 +25,6 @@ void GameScene::init()
 {
 	auto& engine = Engine::instance();
 
-	auto cube_model = Assets::get_model( MESH_CUBE );
-	auto cylinder_model = Assets::get_model( MESH_CYLINDER );
-	auto sphere_model = Assets::get_model( MESH_SPHERE );
-
 	setup_world();
 
 	//  Setup camera
@@ -44,6 +40,8 @@ void GameScene::init()
 
 	CameraProjectionSettings projection_settings {};
 	projection_settings.fov = 60.0f;
+	projection_settings.znear = 0.1f;
+	projection_settings.zfar = 2000.0f;
 
 	auto camera = camera_owner->create_component<Camera>( projection_settings );
 	camera->activate();

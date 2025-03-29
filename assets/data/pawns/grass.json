@@ -1,6 +1,8 @@
 {
-    "model_name": "suprengine::cube",
-    "modulate": "#00FF00FF",
+    "model_name": "ekosystem::pawn.grass",
+    "modulate": "#6DFF38FF",
+    "movement_height_curve_name": "",
+    "movement_scale_y_curve_name": "",
     "move_speed": 0.0,
     "min_child_spawn_count": 1,
     "max_child_spawn_count": 2,

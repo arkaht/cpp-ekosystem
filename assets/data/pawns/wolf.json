@@ -1,6 +1,6 @@
 {
     "model_name": "ekosystem::pawn.wolf",
-    "modulate": "#FF0A64FF",
+    "modulate": "#F63939FF",
     "movement_height_curve_name": "",
     "movement_scale_y_curve_name": "",
     "move_speed": 2.5,
