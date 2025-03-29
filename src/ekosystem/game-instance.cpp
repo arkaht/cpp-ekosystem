@@ -44,7 +44,7 @@ void GameInstance::load_assets()
 		"assets/ekosystem/models/pawns/grass.fbx",
 		SHADER_LIT_MESH
 	);
-	grass_model->get_mesh( 0 )->is_face_culled = false;
+	grass_model->get_mesh( 0 )->should_cull_faces = false;
 	grass_model->get_mesh( 0 )->add_texture( texture );
 
 	//	Curves
