@@ -71,3 +71,4 @@ I'm using symbolic links to avoid having to copy the assets folder each time I c
 ### Credits
 + Wolf model by [Ezgarth](https://sketchfab.com/Ezgarth) from [Sketchfab](https://skfb.ly/698Sv)
 + Hare model by [616](https://sketchfab.com/Hangry_Cat) from [Sketchfab](https://skfb.ly/o9PB6)
++ Dirt texture by [Cethiel](https://opengameart.org/users/cethiel) from [OpenGameArt](https://opengameart.org/content/tileable-dirt-textures)
