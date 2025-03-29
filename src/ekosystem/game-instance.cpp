@@ -21,7 +21,7 @@ void GameInstance::load_assets()
 	SharedPtr<Shader> grass_shader = Assets::load_shader(
 		"ekosystem::grass",
 		"assets/ekosystem/shaders/grass.vert",
-		"assets/suprengine/shaders/lit-mesh.frag"
+		"assets/ekosystem/shaders/grass.frag"
 	);
 
 	//	Models

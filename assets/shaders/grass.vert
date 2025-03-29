@@ -7,6 +7,7 @@ layout( location = 0 ) in vec3 in_position;
 layout( location = 1 ) in vec3 in_normal;
 layout( location = 2 ) in vec2 in_uv;
 
+out float vertex_z;
 out vec2 uv;
 out vec3 normal;
 
@@ -25,6 +26,7 @@ void main()
 	vec4 pos = vec4( in_position + wind_offset, 1.0f );
 	gl_Position = pos * u_world_transform * u_view_projection;
 
+	vertex_z = in_position.z;
 	uv = in_uv;
 	normal = in_normal;
 }
