@@ -12,7 +12,8 @@
 using namespace eks;
 
 Pawn::Pawn( World* world, SafePtr<PawnData> data )
-	: _world( world ), data( data ), _name( data->name + "#" + std::to_string( get_unique_id() ) )
+	: _world( world ), data( data ), _name( data->name + "#" + std::to_string( get_unique_id() ) ),
+	  stats_manager(), health_system( *this )
 {
 	//  Avoid immediate reproduction upon creation
 	hunger = 1.0f - data->min_hunger_for_reproduction;
@@ -41,6 +42,8 @@ void Pawn::setup()
 		_state_machine->create_state<PawnWanderState>();
 		_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
 	}
+
+	health_system.initialize();
 }
 
 void Pawn::update_this( float dt )

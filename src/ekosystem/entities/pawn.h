@@ -8,6 +8,8 @@
 
 #include <ekosystem/world.h>
 #include <ekosystem/components/state-machine.h>
+#include <ekosystem/data/pawn-anatomy.h>
+#include <ekosystem/data/pawn-health.h>
 
 namespace eks
 {
@@ -38,6 +40,8 @@ namespace eks
 
 	public:
 		SafePtr<PawnData> data = nullptr;
+		PawnStatManager stats_manager;
+		PawnHealthSystem health_system;
 
 		GroupID group_id = 0;
 		float hunger = 1.0f;

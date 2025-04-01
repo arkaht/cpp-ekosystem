@@ -8,9 +8,12 @@
 #include <suprengine/utils/json.h>
 #include <suprengine/utils/usings.h>
 
+
 namespace eks
 {
 	using namespace suprengine;
+	
+	class PawnAnatomyData;
 
 	enum class Adjectives : uint32_t
 	{
@@ -79,6 +82,8 @@ namespace eks
 
 		//  Behaviors defining this pawn
 		Adjectives adjectives = Adjectives::None;
+
+		PawnAnatomyData* anatomy = nullptr;
 
 		/*
 		 * Returns whenever the data has a given adjective.

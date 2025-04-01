@@ -11,6 +11,7 @@
 #include <suprengine/utils/json.h>
 
 #include "entities/pawn.h"
+#include "data/pawn-anatomy.h"
 
 #include <filesystem>
 
@@ -293,6 +294,77 @@ Box World::get_bounds() const
 
 void World::_init_datas()
 {
+	static PawnAnatomyData default_anatomy_data(
+		{
+			//	Head & Neck
+			PawnBodyPart {
+				.type = PawnBodyPartType::Head,
+				.parent_type = PawnBodyPartType::Neck,
+				.is_vital = true,
+				.health = 15,
+				.hit_chance = 0.1f,
+			},
+			PawnBodyPart {
+				.type = PawnBodyPartType::Neck,
+				.parent_type = PawnBodyPartType::Torso,
+				.is_vital = true,
+				.health = 5,
+				.hit_chance = 0.05f,
+			},
+			//	Torso
+			PawnBodyPart {
+				.type = PawnBodyPartType::Torso,
+				.is_vital = true,
+				.health = 20,
+				.hit_chance = 0.4f,
+			},
+			//	Arm & Hand
+			PawnBodyPart {
+				.type = PawnBodyPartType::Arm,
+				.quantity = 2,
+				.stat_modifier = {
+					.type = PawnStatType::AttackSpeed,
+					.value = 0.25f,
+				},
+				.health = 10,
+				.hit_chance = 0.15f,
+			},
+			PawnBodyPart {
+				.type = PawnBodyPartType::Hand,
+				.parent_type = PawnBodyPartType::Arm,
+				.quantity = 2,
+				.stat_modifier = {
+					.type = PawnStatType::AttackSpeed,
+					.value = 0.15f,
+				},
+				.health = 5,
+				.hit_chance = 0.075f,
+			},
+			//	Leg & Foot
+			PawnBodyPart {
+				.type = PawnBodyPartType::Leg,
+				.quantity = 2,
+				.stat_modifier = {
+					.type = PawnStatType::MoveSpeed,
+					.value = 0.1f,
+				},
+				.health = 10,
+				.hit_chance = 0.15f,
+			},
+			PawnBodyPart {
+				.type = PawnBodyPartType::Foot,
+				.parent_type = PawnBodyPartType::Leg,
+				.quantity = 2,
+				.stat_modifier = {
+					.type = PawnStatType::MoveSpeed,
+					.value = 0.35f,
+				},
+				.health = 5,
+				.hit_chance = 0.075f,
+			}
+		}
+	);
+
 	//  Load all pawn data files
 	std::filesystem::directory_iterator itr( "assets/ekosystem/data/pawns/" );
 	for ( const auto& entry : itr )
@@ -317,6 +389,7 @@ void World::_init_datas()
 		//  Unserialize JSON to game data
 		auto data = std::make_shared<PawnData>();
 		data->name = file_path.filename().replace_extension().string();
+		data->anatomy = &default_anatomy_data;
 		data->unserialize( doc );
 		add_pawn_data( data );
 	}
