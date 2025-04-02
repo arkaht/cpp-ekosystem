@@ -20,6 +20,8 @@ namespace eks
 
 		void setup() override;
 		void update_this( float dt ) override;
+
+		// This function is called by World::update
 		void tick( float dt );
 
 		void reproduce( SafePtr<Pawn> partner );

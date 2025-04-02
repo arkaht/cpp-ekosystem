@@ -47,25 +47,12 @@ void Pawn::update_this( float dt )
 {
 	//  TODO: Debug build only
 	_renderer->modulate = data->modulate;
-
-	if ( dt > 0.0f )
-	{
-		//  Substepping tick
-		//  NOTE: It fixes issues in behaviors when the time scale is 
-		//	really high (e.g. time scale set to 32). Reproduction could
-		//  not happen if the threshold was too thin.
-		auto& engine = Engine::instance();
-		int substeps = (int)math::ceil( engine.get_updater()->time_scale );
-		float subdelta = dt / substeps;
-		for ( int substep = 0; substep < substeps; substep++ )
-		{
-			tick( subdelta );
-		}
-	}
 }
 
 void Pawn::tick( float dt )
 {
+	PROFILE_SCOPE( "Pawn::tick" );
+
 	//	Manually update the state machine using the substepping tick
 	//	of the pawn
 	if ( _state_machine != nullptr )

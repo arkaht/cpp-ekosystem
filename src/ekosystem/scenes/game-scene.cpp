@@ -175,4 +175,6 @@ void GameScene::update( float dt )
 		grass_shader->activate();
 		grass_shader->set_float( "u_time", game_time );
 	}
+
+	_world->update( dt );
 }

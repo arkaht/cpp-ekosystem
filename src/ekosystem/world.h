@@ -28,6 +28,8 @@ namespace eks
 		World( const Vec2& size );
 		~World();
 
+		void update( float dt );
+
 		SharedPtr<Pawn> create_pawn(
 			SafePtr<PawnData> data,
 			const Vec3& tile_pos
@@ -85,10 +87,13 @@ namespace eks
 
 		SafePtr<Entity> _ground = nullptr;
 		SafePtr<ModelRenderer> _ground_renderer = nullptr;
+
 		std::vector<SafePtr<Pawn>> _pawns {};
+		std::vector<SafePtr<Pawn>> _pending_pawns {};
 
 		std::map<std::string, SharedPtr<PawnData>> _pawn_datas {};
 
 		uint8 _group_limits[MAX_PAWN_GROUP_ID + 1] {};
+		bool _is_updating = false;
 	};
 }

@@ -44,6 +44,49 @@ World::~World()
 	}
 }
 
+void World::update( float dt )
+{
+	PROFILE_SCOPE( "eks::World::update" );
+
+	if ( dt > 0.0f )
+	{
+		//  Substepping tick
+		//  NOTE: It fixes issues in behaviors when the time scale is 
+		//	really high (e.g. time scale set to 32). Reproduction could
+		//  not happen if the threshold was too thin.
+		auto& engine = Engine::instance();
+		int substeps = (int)math::ceil( engine.get_updater()->time_scale );
+		float subdelta = dt / substeps;
+		for ( int substep = 0; substep < substeps; substep++ )
+		{
+			{
+				PROFILE_SCOPE( "eks::World::update::pending_pawns" );
+				
+				for ( const SafePtr<Pawn>& pawn : _pending_pawns )
+				{
+					_pawns.push_back( pawn );
+				}
+				_pending_pawns.clear();
+			}
+
+			{
+				PROFILE_SCOPE( "eks::World::update::pawns" );
+
+				_is_updating = true;
+				for ( const SafePtr<Pawn>& pawn : _pawns )
+				{
+					if ( !pawn.is_valid() ) continue;
+					// We don't want to tick on pawns that are already dead
+					if ( pawn->state != EntityState::Active ) continue;
+
+					pawn->tick( subdelta );
+				}
+				_is_updating = false;
+			}
+		}
+	}
+}
+
 SharedPtr<Pawn> World::create_pawn(
 	SafePtr<PawnData> data,
 	const Vec3& tile_pos
@@ -54,7 +97,15 @@ SharedPtr<Pawn> World::create_pawn(
 	auto pawn = engine.create_entity<Pawn>( this, data );
 	pawn->set_tile_pos( tile_pos );
 
-	_pawns.push_back( pawn );
+	if ( _is_updating )
+	{
+		_pending_pawns.push_back( pawn );
+	}
+	else
+	{
+		_pawns.push_back( pawn );
+	}
+
 	return pawn;
 }
 
@@ -326,10 +377,13 @@ void World::_on_entity_removed( Entity* entity )
 {
 	if ( auto pawn = entity->cast<Pawn>() )
 	{
+		PROFILE_SCOPE( "World::_on_entity_removed" );
+
 		auto itr = std::find( _pawns.begin(), _pawns.end(), SafePtr<Pawn>( pawn ) );
 		ASSERT_MSG( itr != _pawns.end(), "A removed pawn couldn't be erased from the World pawns list!" );
 
-		_pawns.erase( itr );
+		std::iter_swap( itr, _pawns.end() - 1 );
+		_pawns.pop_back();
 
 		printf( "Pawn '%s' is being removed!\n", pawn->get_name().c_str() );
 	}
