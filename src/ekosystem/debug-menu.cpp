@@ -810,6 +810,8 @@ void DebugMenu::_populate_pawns_table(
 		ImGuiTableFlags_ScrollY | ImGuiTableFlags_Borders |
 		ImGuiTableFlags_RowBg;
 
+	static bool should_filter_grass = true;
+
 	//  Populate pawns
 	ImGui::SeparatorText( "Pawns" );
 	if ( ImGui::BeginTable( "eks_pawns", 4, table_flags, { 0.0f, 150.0f } ) )
@@ -826,11 +828,13 @@ void DebugMenu::_populate_pawns_table(
 			| ImGuiSelectableFlags_AllowOverlap;
 		for ( int i = 0; i < pawns.size(); i++ )
 		{
-			ImGui::PushID( i );
-			ImGui::TableNextRow( ImGuiTableRowFlags_None );
-
 			auto& pawn = pawns[i];
 			if ( !pawn.is_valid() ) continue;
+
+			if ( should_filter_grass && pawn->data->name == "grass" ) continue;
+
+			ImGui::PushID( i );
+			ImGui::TableNextRow( ImGuiTableRowFlags_None );
 
 			//  Column 0: ID
 			ImGui::TableSetColumnIndex( 0 );
@@ -884,6 +888,9 @@ void DebugMenu::_populate_pawns_table(
 		}
 	}
 	ImGui::SetItemTooltip( "Kill all existing pawns" );
+
+	ImGui::SameLine();
+	ImGui::Checkbox( "Filter Grass", &should_filter_grass );
 
 	ImGui::Spacing();
 }
