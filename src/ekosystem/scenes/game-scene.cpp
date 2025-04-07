@@ -28,15 +28,9 @@ void GameScene::init()
 	setup_world();
 
 	//  Setup camera
-	constexpr float CAMERA_SPEED = 100.0f;
-
 	auto camera_owner = engine.create_entity<Entity>();
 	camera_owner->transform->location = Vec3 { _world->get_size() * 0.5f * _world->TILE_SIZE, 0.4f };
-	camera_owner->transform->rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
-	_camera_controller = camera_owner->create_component<CameraController>(
-		CAMERA_SPEED,
-		Vec3 { 15.0f, 15.0f, 20.0f }
-	);
+	_camera_controller = camera_owner->create_component<CameraController>();
 
 	CameraProjectionSettings projection_settings {};
 	projection_settings.fov = 60.0f;
@@ -89,6 +83,8 @@ void GameScene::setup_world()
 
 void GameScene::update( float dt )
 {
+	_world->update( dt );
+
 	Engine* engine = _game->get_engine();
 
 	const InputManager* inputs = engine->get_inputs();
@@ -151,12 +147,7 @@ void GameScene::update( float dt )
 		}
 	}
 
-	// Day/Night cycle test
-	const float game_time = engine->get_updater()->get_accumulated_seconds();
-	constexpr float FULL_CYCLE_GAME_TIME = 5.0f;
-	const float ambient_angle = -math::fmod( game_time, FULL_CYCLE_GAME_TIME ) / FULL_CYCLE_GAME_TIME * math::PI;
 	RenderBatch* render_batch = engine->get_render_batch();
-	render_batch->set_ambient_direction( Vec3 { math::cos( ambient_angle ), 0.0f, math::sin( ambient_angle ) } );
 
 #ifdef ENABLE_VISDEBUG
 	if ( VisDebug::is_channel_active( DebugChannel::Lighting ) )
@@ -172,6 +163,7 @@ void GameScene::update( float dt )
 	//	Animate grass shader
 	if ( SharedPtr<Shader> grass_shader = Assets::get_shader( "ekosystem::grass" ) )
 	{
+		const float game_time = engine->get_updater()->get_accumulated_seconds();
 		grass_shader->activate();
 		grass_shader->set_float( "u_time", game_time );
 	}

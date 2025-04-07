@@ -11,10 +11,10 @@ namespace eks
 	class PawnMoveStateTask : public StateTask<Pawn>
 	{
 	public:
-		PawnMoveStateTask( SafePtr<Pawn>* target_key, int acceptance_radius = 0 )
+		PawnMoveStateTask( SafePtr<Pawn>* target_key, float acceptance_radius = 0.0f )
 			: pawn_target_key( target_key ), _acceptance_radius( acceptance_radius )
 		{};
-		PawnMoveStateTask( Vec3* target_key, int acceptance_radius = 0 )
+		PawnMoveStateTask( Vec3* target_key, float acceptance_radius = 0.0f )
 			: location_target_key( target_key ), _acceptance_radius( acceptance_radius )
 		{};
 
@@ -35,7 +35,7 @@ namespace eks
 				return;
 			}
 
-			if ( _move_path.size() <= _acceptance_radius )
+			if ( _move_path.size() == 0 || Vec3::distance2d_sqr( owner->get_tile_pos(), _target_pos ) <= _acceptance_radius )
 			{
 				finish( StateTaskResult::Succeed );
 				return;
@@ -240,7 +240,7 @@ namespace eks
 	private:
 		std::vector<Vec3> _move_path {};
 
-		int _acceptance_radius = 0;
+		float _acceptance_radius = 0;
 		float _move_progress = 0.0f;
 		Vec3 _target_pos = Vec3::zero;
 

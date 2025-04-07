@@ -12,7 +12,7 @@ namespace eks
 		PawnReproductionState()
 		{
 			create_task<PawnFindMateStateTask>( &_target );
-			create_task<PawnMoveStateTask>( &_target );
+			create_task<PawnMoveStateTask>( &_target, /* acceptance_radius */ 1.0f );
 			create_task<PawnMateStateTask>( &_target );
 		}
 

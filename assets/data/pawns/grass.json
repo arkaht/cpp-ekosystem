@@ -12,8 +12,8 @@
     "hunger_consumption_on_reproduction": 0.9,
     "food_amount": 1.0,
     "max_hunger": 1.0,
-    "natural_hunger_consumption": 0.02,
+    "natural_hunger_consumption": 0.0,
     "min_hunger_to_eat": 0.2,
-    "photosynthesis_gain": 0.15,
+    "photosynthesis_gain": 0.3,
     "adjectives": 49
 }

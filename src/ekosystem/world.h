@@ -28,6 +28,8 @@ namespace eks
 		World( const Vec2& size );
 		~World();
 
+		void update( float dt );
+
 		SharedPtr<Pawn> create_pawn(
 			SafePtr<PawnData> data,
 			const Vec3& tile_pos
@@ -72,6 +74,12 @@ namespace eks
 		Vec2 get_size() const;
 		Box get_bounds() const;
 
+		Vec3 get_sun_direction() const;
+		float get_photosynthesis_multiplier() const;
+
+		bool is_within_world_time( float min_hours, float max_hours ) const;
+		float get_world_time() const;
+
 	public:
 		const float TILE_SIZE = 10.0f;
 
@@ -81,9 +89,15 @@ namespace eks
 		void _on_entity_removed( Entity* entity );
 
 	private:
+		float _world_time = 0.0f;
+		Vec3 _sun_direction = Vec3::zero;
+		float _photosynthesis_multiplier = 0.0f;
+
 		Vec2 _size = Vec2::zero;
 
 		SafePtr<Entity> _ground = nullptr;
+		SafePtr<Entity> _sun = nullptr;
+		SafePtr<Entity> _moon = nullptr;
 		SafePtr<ModelRenderer> _ground_renderer = nullptr;
 		std::vector<SafePtr<Pawn>> _pawns {};
 

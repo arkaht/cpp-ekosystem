@@ -386,20 +386,12 @@ namespace eks
 			{
 				_current_state->reset_task();
 			}
-
+			
 			//	Update the state
 			_current_state->on_update( dt );
 
 			auto current_task = _current_state->get_current_task();
 			if ( current_task == nullptr ) return;
-
-			//	Update the current task only if not finished yet
-			//	NOTE: This prevents running the update method when the result
-			//		  has already been set in the begin method.
-			if ( !current_task->is_finished() )
-			{
-				current_task->on_update( dt );
-			}
 
 			//	Listen to task's result and decide which task should be run next
 			//	NOTE: This is done once per update to prevent infinite looping on tasks
@@ -413,6 +405,14 @@ namespace eks
 				case StateTaskResult::Canceled:
 					_current_state->reset_task();
 					break;
+			}
+
+			//	Update the current task only if not finished yet
+			//	NOTE: This prevents running the update method when the result
+			//		  has already been set in the begin method.
+			if ( !current_task->is_finished() )
+			{
+				current_task->on_update( dt );
 			}
 		}
 

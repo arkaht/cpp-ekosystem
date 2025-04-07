@@ -13,7 +13,7 @@ namespace eks
 		PawnChaseState()
 		{
 			_find_food_task = create_task<PawnFindFoodStateTask>( &_target );
-			create_task<PawnMoveStateTask>( &_target, /* acceptance_radius */ 1 );
+			create_task<PawnMoveStateTask>( &_target, /* acceptance_radius */ 1.0f );
 			create_task<PawnEatStateTask>( &_target );
 			create_task<PawnWaitStateTask>( 1.0f, 0.5f );
 		}

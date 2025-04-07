@@ -26,6 +26,14 @@ World::World( const Vec2& size )
 	_ground->transform->location = Vec3 { 0.0f, 0.0f, -1.0f };
 	_ground_renderer = _ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
 	_ground->create_component<BoxCollider>( Box::one );
+
+	_sun = engine.create_entity<Entity>();
+	_sun->create_component<ModelRenderer>( Assets::get_model( "suprengine::sphere" ), "suprengine::color", Color::from_hex( "#fbff00" ) );
+	_sun->transform->scale = Vec3( 50.0f );
+
+	_moon = engine.create_entity<Entity>();
+	_moon->create_component<ModelRenderer>( Assets::get_model( "suprengine::sphere" ), "suprengine::color", Color::from_hex( "#ffffff" ) );
+	_moon->transform->scale = Vec3( 50.0f );
 	
 	resize( size );
 
@@ -42,6 +50,32 @@ World::~World()
 	{
 		_ground->kill();
 	}
+}
+
+void World::update( float dt )
+{
+	// Update world time
+	constexpr float FULL_CYCLE_GAME_TIME = 24.0f;
+	_world_time = math::fmod( _world_time + dt, FULL_CYCLE_GAME_TIME );
+
+	// Update sun direction
+	const float sun_angle = math::HALF_PI + _world_time / FULL_CYCLE_GAME_TIME * math::DOUBLE_PI;
+	_sun_direction.x = math::cos( sun_angle );
+	_sun_direction.z = math::sin( sun_angle );
+	_photosynthesis_multiplier = math::max( 0.0f, Vec3::dot( _sun_direction, -Vec3::up ) );
+
+	_sun->transform->set_location( -_sun_direction * 500.0f );
+	_moon->transform->set_location( _sun_direction * 500.0f );
+
+	//printf( "WorldTime=%.2f: PhMul=%.2f\n", _world_time, get_photosynthesis_multiplier() );
+
+	const bool is_sun_time = Vec3::dot( _sun_direction, -Vec3::up ) > 0.0f;
+
+	// Update ambient direction
+	Engine& engine = Engine::instance();
+	RenderBatch* render_batch = engine.get_render_batch();
+	render_batch->set_ambient_direction( is_sun_time ? _sun_direction : -_sun_direction );
+	render_batch->set_ambient_color( is_sun_time ? Color::from_hex( "#fff98a" ) : Color::from_hex( "#666666" ) );
 }
 
 SharedPtr<Pawn> World::create_pawn(
@@ -289,6 +323,32 @@ Box World::get_bounds() const
 	//	TODO: Fix the callers using this function giving weird results with an odd-sized world
 	const Vec3 half_size( _size * 0.5f, 0.0f );
 	return Box { -half_size, half_size };
+}
+
+Vec3 World::get_sun_direction() const
+{
+	return _sun_direction;
+}
+
+float World::get_photosynthesis_multiplier() const
+{
+	return _photosynthesis_multiplier;
+}
+
+bool World::is_within_world_time( float min_hours, float max_hours ) const
+{
+	// "Are we between 8am and 4am?" is the same as: "Are we not between 4am and 8am?"
+	if ( min_hours > max_hours )
+	{
+		return !( max_hours < _world_time && _world_time < min_hours );
+	}
+
+	return min_hours < _world_time && _world_time < max_hours;
+}
+
+float World::get_world_time() const
+{
+	return _world_time;
 }
 
 void World::_init_datas()

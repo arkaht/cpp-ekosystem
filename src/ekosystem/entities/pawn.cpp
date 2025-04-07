@@ -7,6 +7,7 @@
 #include "states/pawn-flee.h"
 #include "states/pawn-chase.h"
 #include "states/pawn-reproduction.h"
+#include "states/pawn-sleep.h"
 #include "states/pawn-wander.h"
 
 using namespace eks;
@@ -36,6 +37,7 @@ void Pawn::setup()
 	{
 		_state_machine = create_component<StateMachine<Pawn>>();
 		_state_machine->create_state<PawnFleeState>( 4.0f );
+		_state_machine->create_state<PawnSleepState>();
 		_state_machine->create_state<PawnChaseState>();
 		_state_machine->create_state<PawnReproductionState>();
 		_state_machine->create_state<PawnWanderState>();
@@ -74,16 +76,19 @@ void Pawn::tick( float dt )
 	}
 
 	//  Hunger gain
-	hunger = math::max(
-		hunger - data->natural_hunger_consumption * dt,
-		0.0f
-	);
+	if ( !is_sleeping )
+	{
+		hunger = math::max(
+			hunger - data->natural_hunger_consumption * dt,
+			0.0f
+		);
+	}
 
 	//  Photosynthesis
 	if ( data->has_adjective( Adjectives::Photosynthesis ) )
 	{
 		hunger = math::min( 
-			hunger + data->photosynthesis_gain * dt,
+			hunger + data->photosynthesis_gain * _world->get_photosynthesis_multiplier() * dt,
 			data->max_hunger
 		);
 

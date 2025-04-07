@@ -43,6 +43,7 @@ namespace eks
 		float hunger = 1.0f;
 
 		bool wants_to_mate = false;
+		bool is_sleeping = false;
 
 	private:
 		World* _world = nullptr;
