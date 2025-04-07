@@ -24,4 +24,5 @@ void main()
 		0.0f
 	);
 	out_color = mix( u_ambient_color * u_ambient_scale, out_color, diffuse );
+	out_color.a = 1.0f;
 }
