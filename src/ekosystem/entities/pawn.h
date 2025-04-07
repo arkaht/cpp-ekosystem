@@ -13,6 +13,8 @@ namespace eks
 {
 	using namespace suprengine;
 
+	class ParticleRenderer;
+
 	class Pawn : public Entity
 	{
 	public:
@@ -49,6 +51,7 @@ namespace eks
 		World* _world = nullptr;
 		SharedPtr<ModelRenderer> _renderer = nullptr;
 		SharedPtr<StateMachine<Pawn>> _state_machine = nullptr;
+		SharedPtr<ParticleRenderer> _particle_renderer = nullptr;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;

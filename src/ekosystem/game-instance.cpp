@@ -16,6 +16,16 @@ void GameInstance::load_assets()
 		"assets/ekosystem/textures/dirt01.png",
 		TextureParams {}
 	);
+	Assets::load_texture(
+		"ekosystem::icon.sleep",
+		"assets/ekosystem/textures/icon-sleep.png",
+		TextureParams {}
+	);
+	Assets::load_texture(
+		"ekosystem::icon.love",
+		"assets/ekosystem/textures/icon-love.png",
+		TextureParams {}
+	);
 
 	//	Shaders
 	SharedPtr<Shader> grass_shader = Assets::load_shader(

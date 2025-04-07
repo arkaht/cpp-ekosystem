@@ -4,6 +4,8 @@
 #include <suprengine/core/assets.h>
 #include <suprengine/utils/random.h>
 
+#include <ekosystem/components/particle-renderer.h>
+
 #include "states/pawn-flee.h"
 #include "states/pawn-chase.h"
 #include "states/pawn-reproduction.h"
@@ -29,12 +31,20 @@ void Pawn::setup()
 		data->modulate
 	);
 
-	//	Do not create a state machine for pawns with no ability to move.
-	//	It greatly helps to optimize memory usage and CPU time (e.g. I have
-	//	reduced over 700KiB of RAM by not creating 1 state machine component,
-	//	4 states and 11 tasks for each Grass pawn) since they do not use it.
 	if ( data->move_speed > 0.0f )
 	{
+		_particle_renderer = create_component<ParticleRenderer>();
+		_particle_renderer->system_data.texture = Assets::get_texture( "ekosystem::icon.sleep" );
+		_particle_renderer->system_data.render_scale = Vec3( 3.0f );
+		_particle_renderer->system_data.spawn_location_offset = Vec3 { 0.0f, 0.0f, 6.0f };
+		_particle_renderer->system_data.start_velocity = Vec3 { 0.01f, -0.01f, 0.01f };
+		_particle_renderer->system_data.max_lifetime = 3.0f;
+		_particle_renderer->system_data.spawn_rate = 1.0f;
+
+		//	Do not create a state machine for pawns with no ability to move.
+		//	It greatly helps to optimize memory usage and CPU time (e.g. I have
+		//	reduced over 700KiB of RAM by not creating 1 state machine component,
+		//	4 states and 11 tasks for each Grass pawn) since they do not use it.
 		_state_machine = create_component<StateMachine<Pawn>>();
 		_state_machine->create_state<PawnFleeState>( 4.0f );
 		_state_machine->create_state<PawnSleepState>();
@@ -49,6 +59,12 @@ void Pawn::update_this( float dt )
 {
 	//  TODO: Debug build only
 	_renderer->modulate = data->modulate;
+
+	if ( _particle_renderer )
+	{
+		//	TODO: Fix previous particles still alive when resuming activating
+		_particle_renderer->is_active = is_sleeping;
+	}
 
 	if ( dt > 0.0f )
 	{
