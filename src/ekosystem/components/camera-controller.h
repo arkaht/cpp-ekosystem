@@ -12,7 +12,7 @@ namespace eks
 	{
 	public:
 		CameraController(
-			float move_speed = 20.0f,
+			float move_speed = 100.0f,
 			const Vec3& offset = Vec3::zero
 		);
 
