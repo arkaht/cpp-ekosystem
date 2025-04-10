@@ -34,10 +34,21 @@ void Pawn::setup()
 	if ( data->move_speed > 0.0f )
 	{
 		_particle_renderer = create_component<ParticleRenderer>();
+		_particle_renderer->system_data.mesh = Assets::get_model( "ekosystem::facing.plane" )->get_mesh( 0 );
+		_particle_renderer->system_data.shader = Assets::get_shader( "suprengine::texture" );
 		_particle_renderer->system_data.texture = Assets::get_texture( "ekosystem::icon.sleep" );
-		_particle_renderer->system_data.render_scale = Vec3( 3.0f );
+		_particle_renderer->system_data.render_scale = Vec3( 1.0f );
 		_particle_renderer->system_data.spawn_location_offset = Vec3 { 0.0f, 0.0f, 6.0f };
-		_particle_renderer->system_data.start_velocity = Vec3 { 0.01f, -0.01f, 0.01f };
+		_particle_renderer->system_data.start_velocity = Vec3 { 1.5f, -1.5f, 1.5f };
+		_particle_renderer->system_data.custom_updater = 
+			[&]( Particle* particle, int index, float dt )
+			{
+				float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
+				particle->offset.x = 5.0f * math::sin( ( index + game_time ) * 3.0f ) * dt;
+				particle->offset.y = -10.0f * math::cos( ( index + game_time ) * 3.0f ) * dt;
+
+				particle->scale = particle->get_lifetime() / _particle_renderer->system_data.max_lifetime;
+			};
 		_particle_renderer->system_data.max_lifetime = 3.0f;
 		_particle_renderer->system_data.spawn_rate = 1.0f;
 

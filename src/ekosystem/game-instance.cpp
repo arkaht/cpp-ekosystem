@@ -42,6 +42,8 @@ void GameInstance::load_assets()
 	);
 	floor_model->get_mesh( 0 )->add_texture( dirt_texture );
 
+	Assets::load_model( "ekosystem::facing.plane", "assets/ekosystem/models/facing-plane.fbx" );
+
 	SharedPtr<Model> wolf_model = Assets::load_model(
 		"ekosystem::pawn.wolf",
 		"assets/ekosystem/models/pawns/wolf.fbx",
