@@ -83,7 +83,7 @@ namespace eks
 	public:
 		const float TILE_SIZE = 10.0f;
 
-		float world_time_scale = 1.0f;
+		float world_time_scale = 0.5f;
 
 	private:
 		void _init_datas();
