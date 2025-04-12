@@ -8,12 +8,6 @@
 
 using namespace eks;
 
-float Particle::get_lifetime() const
-{
-	float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
-	return game_time - start_game_time;
-}
-
 
 ParticleRenderer::ParticleRenderer( Color modulate, int priority_order )
 	: Renderer( modulate, priority_order )
@@ -21,14 +15,20 @@ ParticleRenderer::ParticleRenderer( Color modulate, int priority_order )
 
 void ParticleRenderer::update( float dt )
 {
-	//	Spawn new particles with spawn rate
-	_spawn_time -= dt;
-	if ( _spawn_time < 0.0f )
-	{
-		_create_particle();
+	//	Scale delta time by play rate
+	dt *= play_rate;
 
-		const float next_spawn_time = 1.0f / system_data.spawn_rate;
-		_spawn_time += next_spawn_time;
+	if ( is_spawning )
+	{
+		//	Spawn new particles with spawn rate
+		_spawn_time -= dt;
+		if ( _spawn_time < 0.0f )
+		{
+			_spawn_particle();
+
+			const float next_spawn_time = 1.0f / system_data.spawn_rate;
+			_spawn_time += next_spawn_time;
+		}
 	}
 
 	//	Update all particles
@@ -36,10 +36,11 @@ void ParticleRenderer::update( float dt )
 	float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
 	for ( auto itr = _particles.begin(); itr != _particles.end(); )
 	{
-		Particle& particle = *itr;
+		ParticleInstance& particle = *itr;
 
 		//	Update lifetime and check for death
-		if ( particle.get_lifetime() > system_data.max_lifetime )
+		particle.lifetime += dt;
+		if ( particle.lifetime > system_data.max_lifetime )
 		{
 			itr = _particles.erase( itr );
 			continue;
@@ -82,14 +83,14 @@ void ParticleRenderer::render( RenderBatch* render_batch )
 	//shader->set_vec2( "u_origin", Vec2 { 0.5f, 0.5f } );
 
 	glDisable( GL_CULL_FACE );
-	for ( const Particle& particle : _particles )
+	for ( const ParticleInstance& particle : _particles )
 	{
 		const Mtx4 matrix = Mtx4::create_from_transform(
 			transform->scale * system_data.render_scale * particle.scale,
 			camera_rotation,
 			particle.location + particle.offset
 		);
-		render_batch->draw_mesh( matrix, mesh, shader, texture, Color::white );
+		render_batch->draw_mesh( matrix, mesh, shader, texture, particle.modulate );
 
 	#ifdef ENABLE_VISDEBUG
 		VisDebug::add_sphere( particle.location, ( transform->scale * system_data.render_scale ).length(), particle.modulate, 0.0f );
@@ -102,13 +103,14 @@ RenderPhase ParticleRenderer::get_render_phase() const
 	return RenderPhase::World;
 }
 
-void ParticleRenderer::_create_particle()
+void ParticleRenderer::_spawn_particle()
 {
 	float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
 
-	Particle particle {};
+	ParticleInstance particle {};
+	particle.unique_id = _next_unique_id++; // Assigning an unique index which will overflow when reaching max value.
 	particle.location = transform->location + system_data.spawn_location_offset;
 	particle.velocity = system_data.start_velocity;
-	particle.start_game_time = game_time;
+
 	_particles.push_back( particle );
 }

@@ -34,6 +34,7 @@ void Pawn::setup()
 	if ( data->move_speed > 0.0f )
 	{
 		_particle_renderer = create_component<ParticleRenderer>();
+		_particle_renderer->is_spawning = false;
 		_particle_renderer->system_data.mesh = Assets::get_model( "ekosystem::facing.plane" )->get_mesh( 0 );
 		_particle_renderer->system_data.shader = Assets::get_shader( "suprengine::texture" );
 		_particle_renderer->system_data.texture = Assets::get_texture( "ekosystem::icon.sleep" );
@@ -41,13 +42,19 @@ void Pawn::setup()
 		_particle_renderer->system_data.spawn_location_offset = Vec3 { 0.0f, 0.0f, 6.0f };
 		_particle_renderer->system_data.start_velocity = Vec3 { 1.5f, -1.5f, 1.5f };
 		_particle_renderer->system_data.custom_updater = 
-			[&]( Particle* particle, int index, float dt )
+			[&]( ParticleInstance* particle, int index, float dt )
 			{
-				float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
-				particle->offset.x = 5.0f * math::sin( ( index + game_time ) * 3.0f ) * dt;
-				particle->offset.y = -10.0f * math::cos( ( index + game_time ) * 3.0f ) * dt;
+				const SharedPtr<Curve> alpha_curve = Assets::get_curve( "particles/sleep-alpha" );
+				const SharedPtr<Curve> scale_curve = Assets::get_curve( "particles/sleep-scale" );
 
-				particle->scale = particle->get_lifetime() / _particle_renderer->system_data.max_lifetime;
+				//	Offset
+				particle->offset.x = 0.08f * math::sin( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+				particle->offset.y = -0.16f * math::cos( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+
+				//	Modulate & Scale
+				const float time = particle->lifetime / _particle_renderer->system_data.max_lifetime;
+				particle->modulate.a = alpha_curve->evaluate_by_time( time ) * 255.0f;
+				particle->scale = scale_curve->evaluate_by_time( time );
 			};
 		_particle_renderer->system_data.max_lifetime = 3.0f;
 		_particle_renderer->system_data.spawn_rate = 1.0f;
@@ -74,7 +81,12 @@ void Pawn::update_this( float dt )
 	if ( _particle_renderer )
 	{
 		//	TODO: Fix previous particles still alive when resuming activating
-		_particle_renderer->is_active = is_sleeping;
+		_particle_renderer->is_spawning = is_sleeping;
+		_particle_renderer->play_rate = math::lerp(
+			_particle_renderer->play_rate,
+			is_sleeping ? 1.0f : 4.0f,
+			dt * 4.0f
+		);
 	}
 
 	if ( dt > 0.0f )

@@ -12,22 +12,34 @@ namespace eks
 {
 	using namespace suprengine;
 
-	struct Particle
+	/*
+	 * Structure representing a single particle instance from the ParticleRenderer.
+	 */
+	struct ParticleInstance
 	{
 	public:
-		Vec3 location = Vec3::zero;
-		Vec3 velocity = Vec3::zero;
-		Vec3 offset = Vec3::zero;
+		//	Unique index for this particle, ranging from 0 to 65535.
+		uint16 unique_id = 0;
 
+		//	Location of the particle.
+		Vec3 location = Vec3::zero;
+		//	Offset to apply on the location for rendering.
+		Vec3 offset = Vec3::zero;
+		//	Velocity to apply on the particle's location per second.
+		Vec3 velocity = Vec3::zero;
+
+		//	Scale of the particle for rendering.
 		Vec3 scale = Vec3::one;
+		//	Color to modulate the particle's rendering with.
 		Color modulate = Color::white;
 
-		float start_game_time = 0.0f;
-
-	public:;
-		float get_lifetime() const;
+		float lifetime = 0.0f;
 	};
 
+	/*
+	 * Structure representing the template specifying how particles should
+	 * behave and render.
+	 */
 	struct ParticleSystemData
 	{
 		SafePtr<Texture> texture = nullptr;
@@ -43,7 +55,7 @@ namespace eks
 
 		Vec3 spawn_location_offset = Vec3::zero;
 
-		std::function<void( Particle*, int, float )> custom_updater = nullptr;
+		std::function<void( ParticleInstance*, int, float )> custom_updater = nullptr;
 
 		//	Amount of particles to spawn per second.
 		float spawn_rate = 1.0f;
@@ -56,7 +68,7 @@ namespace eks
 	public:
 		ParticleRenderer( 
 			Color modulate = Color::white, 
-			int priority_order = 10
+			int priority_order = -10
 		);
 
 		void update( float dt ) override;
@@ -66,12 +78,15 @@ namespace eks
 
 	public:
 		ParticleSystemData system_data {};
+		bool is_spawning = true;
+		float play_rate = 1.0f;
 
 	private:
-		void _create_particle();
+		void _spawn_particle();
 
 	private:
-		std::vector<Particle> _particles {};
+		std::vector<ParticleInstance> _particles {};
+		uint16 _next_unique_id = 0;
 		float _spawn_time = 0.0f;
 	};
 }
