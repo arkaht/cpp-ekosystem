@@ -28,13 +28,17 @@ World::World( const Vec2& size )
 	_ground_renderer = _ground->create_component<ModelRenderer>( model, SHADER_LIT_MESH );
 	_ground->create_component<BoxCollider>( Box::one );
 
+	_skysphere = engine.create_entity<Entity>();
+	_skysphere->transform->scale = Vec3( 1000.0f );
+	_skysphere_renderer = _skysphere->create_component<ModelRenderer>( Assets::get_model( "ekosystem::skysphere" ), "suprengine::texture", Color::white );
+
 	_sun = engine.create_entity<Entity>();
-	_sun->transform->scale = Vec3( 150.0f );
-	_sun->create_component<ModelRenderer>( Assets::get_model( "ekosystem::sun" ), "suprengine::texture", Color::white );
+	_sun->transform->scale = Vec3( 250.0f );
+	_sun->create_component<ModelRenderer>( Assets::get_model( "ekosystem::sun" ), "suprengine::texture", Color::white, -5 );
 
 	_moon = engine.create_entity<Entity>();
 	_moon->transform->scale = Vec3( 50.0f );
-	_moon->create_component<ModelRenderer>( Assets::get_model( "ekosystem::moon" ), "suprengine::texture", Color::white );
+	_moon->create_component<ModelRenderer>( Assets::get_model( "ekosystem::moon" ), "suprengine::texture", Color::white, -5 );
 	
 	resize( size );
 
@@ -73,6 +77,7 @@ void World::update( float dt )
 	const Vec3 camera_location = engine.camera->transform->location + engine.camera->get_offset();
 	_sun->transform->look_at( camera_location );
 	_moon->transform->look_at( camera_location );
+	_skysphere->transform->set_rotation( Quaternion( RadAngles { -sun_angle, 0.0f, 0.0f } ) );
 
 	const bool is_sun_time = Vec3::dot( _sun_direction, -Vec3::up ) > 0.0f;
 
@@ -81,17 +86,18 @@ void World::update( float dt )
 	struct DayNightColor
 	{
 		float time = 0.0f;
+		float stars_opacity = 0.0f;
 		Color sky_color = Color::white;
 		Color ambient_color = Color::white;
 	};
 	constexpr std::array<DayNightColor, 7> DAYNIGHT_COLORS {
-		DayNightColor { 19.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8D81D4FF ) },
-		DayNightColor { 18.0f, Color::from_0x( 0xAE445AFF ), Color::from_0x( 0xAE445AFF ) },
-		DayNightColor { 17.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
-		DayNightColor { 7.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
-		DayNightColor { 6.0f, Color::from_0x( 0xFCFFBAFF ), Color::from_0x( 0xFCFFBAFF ) },
-		DayNightColor { 5.0f, Color::from_0x( 0x8EA3CDFF ), Color::from_0x( 0x8EA3CDFF ) },
-		DayNightColor { 0.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8d81d4FF ) },
+		DayNightColor { 18.5f, 1.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8D81D4FF ) },
+		DayNightColor { 18.0f, 0.5f, Color::from_0x( 0xAE445AFF ), Color::from_0x( 0xAE445AFF ) },
+		DayNightColor { 17.0f, 0.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
+		DayNightColor { 7.0f, 0.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
+		DayNightColor { 6.0f, 0.0f, Color::from_0x( 0xFCFFBAFF ), Color::from_0x( 0xFCFFBAFF ) },
+		DayNightColor { 5.0f, 0.0f, Color::from_0x( 0x8EA3CDFF ), Color::from_0x( 0x8EA3CDFF ) },
+		DayNightColor { 0.0f, 1.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8d81d4FF ) },
 	};
 	size_t current_daynight_color_index = 0;
 	size_t next_daynight_color_index = 0;
@@ -129,6 +135,8 @@ void World::update( float dt )
 	render_batch->set_ambient_color( Color::lerp( current_daynight.ambient_color, next_daynight.ambient_color, alpha ) );
 	render_batch->set_ambient_scale( 0.2f );
 	render_batch->set_ambient_min_brightness( 0.2f );
+
+	_skysphere_renderer->modulate.a = math::lerp( current_daynight.stars_opacity, next_daynight.stars_opacity, alpha ) * 255.0f;
 }
 
 SharedPtr<Pawn> World::create_pawn(

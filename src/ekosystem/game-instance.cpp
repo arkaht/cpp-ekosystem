@@ -11,31 +11,12 @@ void GameInstance::load_assets()
 	SharedPtr<Texture> texture = Assets::get_texture( TEXTURE_WHITE );
 
 	//	Textures
-	SharedPtr<Texture> dirt_texture = Assets::load_texture(
-		"ekosystem::dirt",
-		"assets/ekosystem/textures/dirt01.png",
-		TextureParams {}
-	);
-	Assets::load_texture(
-		"ekosystem::icon.sleep",
-		"assets/ekosystem/textures/icon-sleep.png",
-		TextureParams {}
-	);
-	Assets::load_texture(
-		"ekosystem::icon.love",
-		"assets/ekosystem/textures/icon-love.png",
-		TextureParams {}
-	);
-	Assets::load_texture(
-		"ekosystem::sun",
-		"assets/ekosystem/textures/sun.png",
-		TextureParams {}
-	);
-	Assets::load_texture(
-		"ekosystem::moon",
-		"assets/ekosystem/textures/moon.png",
-		TextureParams {}
-	);
+	SharedPtr<Texture> dirt_texture = Assets::load_texture( "ekosystem::dirt", "assets/ekosystem/textures/dirt01.png", TextureParams {} );
+	Assets::load_texture( "ekosystem::icon.sleep", "assets/ekosystem/textures/icon-sleep.png", TextureParams {} );
+	Assets::load_texture( "ekosystem::icon.love", "assets/ekosystem/textures/icon-love.png", TextureParams {} );
+	Assets::load_texture( "ekosystem::sun", "assets/ekosystem/textures/sun.png", TextureParams {} );
+	Assets::load_texture( "ekosystem::moon", "assets/ekosystem/textures/moon.png", TextureParams {} );
+	Assets::load_texture( "ekosystem::stars", "assets/ekosystem/textures/stars.png", TextureParams { .filtering = FilteringType::Bilinear } );
 
 	//	Shaders
 	SharedPtr<Shader> grass_shader = Assets::load_shader(
@@ -53,6 +34,8 @@ void GameInstance::load_assets()
 	floor_model->get_mesh( 0 )->add_texture( dirt_texture );
 
 	Assets::load_model( "ekosystem::facing.plane", "assets/ekosystem/models/facing-plane.fbx" );
+	SharedPtr<Model> skysphere_model = Assets::load_model( "ekosystem::skysphere", "assets/ekosystem/models/skysphere.fbx" );
+	skysphere_model->get_mesh( 0 )->add_texture( Assets::get_texture( "ekosystem::stars" ) );
 	SharedPtr<Model> sun_model = Assets::load_model( "ekosystem::sun", "assets/ekosystem/models/facing-plane.fbx" );
 	sun_model->get_mesh( 0 )->add_texture( Assets::get_texture( "ekosystem::sun" ) );
 	SharedPtr<Model> moon_model = Assets::load_model( "ekosystem::moon", "assets/ekosystem/models/facing-plane.fbx" );

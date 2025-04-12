@@ -100,6 +100,8 @@ namespace eks
 		SafePtr<Entity> _ground = nullptr;
 		SafePtr<Entity> _sun = nullptr;
 		SafePtr<Entity> _moon = nullptr;
+		SafePtr<Entity> _skysphere = nullptr;
+		SafePtr<ModelRenderer> _skysphere_renderer = nullptr;
 		SafePtr<ModelRenderer> _ground_renderer = nullptr;
 		std::vector<SafePtr<Pawn>> _pawns {};
 
