@@ -17,8 +17,8 @@ namespace eks
 		{
 			SafePtr<Pawn> partner = *partner_key;
 			Pawn* owner = state->machine->owner;
-			owner->reproduce( partner );
 
+			owner->reproduce( partner );
 			finish( StateTaskResult::Succeed );
 		}
 

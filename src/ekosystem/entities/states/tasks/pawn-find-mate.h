@@ -53,6 +53,12 @@ namespace eks
 			Pawn* owner = state->machine->owner;
 			const World* world = owner->get_world();
 
+			if ( owner->partner_pawn )
+			{
+				*target_key = owner->partner_pawn;
+				return true;
+			}
+
 			auto mate_pawn = world->find_nearest_pawn(
 				owner->get_tile_pos(),
 				[&]( auto pawn )
@@ -68,6 +74,8 @@ namespace eks
 				*owner->get_name(), *mate_pawn->get_name()
 			);
 
+			owner->partner_pawn = mate_pawn;
+			mate_pawn->partner_pawn = owner->as<Pawn>();
 			*target_key = mate_pawn;
 
 			return true;

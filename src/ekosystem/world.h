@@ -46,7 +46,7 @@ namespace eks
 		void resize( const Vec2& size );
 		void clear();
 
-		bool find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const;
+		bool find_empty_tile_pos_around( const Vec3& pos, Vec3* out, Adjectives adjectives_filter = Adjectives::None ) const;
 		Vec3 find_random_tile_pos() const;
 		SafePtr<Pawn> find_pawn_with(
 			Adjectives adjectives,

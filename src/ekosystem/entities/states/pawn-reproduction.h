@@ -9,11 +9,11 @@ namespace eks
 	class PawnReproductionState : public State<Pawn>
 	{
 	public:
-		PawnReproductionState()
+		PawnReproductionState( Pawn* owner )
 		{
-			create_task<PawnFindMateStateTask>( &_target );
-			create_task<PawnMoveStateTask>( &_target, /* acceptance_radius */ 1.0f );
-			create_task<PawnMateStateTask>( &_target );
+			create_task<PawnFindMateStateTask>( &owner->partner_pawn );
+			create_task<PawnMoveStateTask>( &owner->partner_pawn, /* acceptance_radius */ 1.0f );
+			create_task<PawnMateStateTask>( &owner->partner_pawn );
 		}
 
 		bool can_switch_to() const override

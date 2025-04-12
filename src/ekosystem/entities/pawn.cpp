@@ -49,7 +49,7 @@ void Pawn::setup()
 		_state_machine->create_state<PawnFleeState>( 4.0f );
 		_state_machine->create_state<PawnSleepState>();
 		_state_machine->create_state<PawnChaseState>();
-		_state_machine->create_state<PawnReproductionState>();
+		_state_machine->create_state<PawnReproductionState>( this );
 		_state_machine->create_state<PawnWanderState>();
 		_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
 	}
@@ -147,22 +147,36 @@ void Pawn::reproduce( SafePtr<Pawn> partner )
 	ASSERT( child_spawn_count > 0 );
 
 	//	Generate children around
+	//	NOTE: We only want animals to be able to spawn on vegetal.
+	const Adjectives empty_adjectives_filter = data->has_adjective( Adjectives::Vegetal )
+											 ? Adjectives::None
+											 : Adjectives::Vegetal;
+	Vec3 spawn_pos;
+	int spawned_children_count = 0;
 	for ( int i = 0; i < child_spawn_count; i++ )
 	{
-		Vec3 spawn_pos;
-		if ( !_world->find_empty_tile_pos_around( _tile_pos, &spawn_pos ) ) continue;
+		if ( !_world->find_empty_tile_pos_around( _tile_pos, &spawn_pos, empty_adjectives_filter ) ) continue;
 
 		auto child = _world->create_pawn( data, spawn_pos );
 		child->group_id = group_id;
+		spawned_children_count++;
 	}
 
 	//	Consume hunger
 	hunger -= data->hunger_consumption_on_reproduction;
+	partner_pawn = nullptr;
 
 	//	Consume partner's hunger
 	if ( partner.is_valid() )
 	{
 		partner->hunger -= partner->data->hunger_consumption_on_reproduction;
+		partner->partner_pawn = nullptr;
+		Logger::info(
+			"%s gave birth to %d/%d children by mating with %s.",
+			*get_name(),
+			spawned_children_count, child_spawn_count,
+			*partner->get_name()
+		);
 	}
 
 	//	Spawn love particles

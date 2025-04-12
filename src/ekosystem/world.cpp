@@ -169,7 +169,7 @@ void World::clear()
 	_pawns.clear();
 }
 
-bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
+bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out, Adjectives adjectives_filter ) const
 {
 	//  Randomize signs to avoid giving the same direction each time
 	int random_sign_x = random::generate_sign();
@@ -191,7 +191,20 @@ bool World::find_empty_tile_pos_around( const Vec3& pos, Vec3* out ) const
 			if ( out->y < bounds.min.y || out->y > bounds.max.y ) continue;
 
 			//  Filter out position already containing a pawn
-			auto pawn = find_pawn_at( Adjectives::None, *out );
+			SafePtr<Pawn> pawn = nullptr;
+			if ( adjectives_filter == Adjectives::None )
+			{
+				pawn = find_pawn_at( Adjectives::None, *out );
+			}
+			else
+			{
+				pawn = find_pawn( [&]( SafePtr<Pawn> pawn ) {
+					if ( pawn->get_tile_pos() != *out ) return false;
+					if ( pawn->data->has_adjective( adjectives_filter ) ) return false;
+					return true;
+				} );
+			}
+
 			if ( pawn.is_valid() ) continue;
 
 			return true;

@@ -46,6 +46,7 @@ namespace eks
 
 		bool wants_to_mate = false;
 		bool is_sleeping = false;
+		SafePtr<Pawn> partner_pawn = nullptr;
 
 	private:
 		World* _world = nullptr;

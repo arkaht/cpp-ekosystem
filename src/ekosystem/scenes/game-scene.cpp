@@ -151,6 +151,23 @@ void GameScene::update( float dt )
 		}
 	}
 
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
+	{
+		engine->get_updater()->time_scale = 1.0f;
+	}
+	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
+	{
+		engine->get_updater()->time_scale = inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? 1.0f / 2.0f : 2.0f;
+	}
+	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_3 ) )
+	{
+		engine->get_updater()->time_scale = inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? 1.0f / 4.0f : 4.0f;
+	}
+	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_SPACE ) )
+	{
+		engine->is_game_paused = !engine->is_game_paused;
+	}
+
 	RenderBatch* render_batch = engine->get_render_batch();
 
 #ifdef ENABLE_VISDEBUG
