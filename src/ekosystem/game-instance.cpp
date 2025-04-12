@@ -26,6 +26,16 @@ void GameInstance::load_assets()
 		"assets/ekosystem/textures/icon-love.png",
 		TextureParams {}
 	);
+	Assets::load_texture(
+		"ekosystem::sun",
+		"assets/ekosystem/textures/sun.png",
+		TextureParams {}
+	);
+	Assets::load_texture(
+		"ekosystem::moon",
+		"assets/ekosystem/textures/moon.png",
+		TextureParams {}
+	);
 
 	//	Shaders
 	SharedPtr<Shader> grass_shader = Assets::load_shader(
@@ -43,6 +53,10 @@ void GameInstance::load_assets()
 	floor_model->get_mesh( 0 )->add_texture( dirt_texture );
 
 	Assets::load_model( "ekosystem::facing.plane", "assets/ekosystem/models/facing-plane.fbx" );
+	SharedPtr<Model> sun_model = Assets::load_model( "ekosystem::sun", "assets/ekosystem/models/facing-plane.fbx" );
+	sun_model->get_mesh( 0 )->add_texture( Assets::get_texture( "ekosystem::sun" ) );
+	SharedPtr<Model> moon_model = Assets::load_model( "ekosystem::moon", "assets/ekosystem/models/facing-plane.fbx" );
+	moon_model->get_mesh( 0 )->add_texture( Assets::get_texture( "ekosystem::moon" ) );
 
 	SharedPtr<Model> wolf_model = Assets::load_model(
 		"ekosystem::pawn.wolf",

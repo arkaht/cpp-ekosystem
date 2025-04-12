@@ -29,12 +29,12 @@ World::World( const Vec2& size )
 	_ground->create_component<BoxCollider>( Box::one );
 
 	_sun = engine.create_entity<Entity>();
-	_sun->create_component<ModelRenderer>( Assets::get_model( "suprengine::sphere" ), "suprengine::color", Color::from_hex( "#fbff00" ) );
-	_sun->transform->scale = Vec3( 50.0f );
+	_sun->transform->scale = Vec3( 150.0f );
+	_sun->create_component<ModelRenderer>( Assets::get_model( "ekosystem::sun" ), "suprengine::texture", Color::white );
 
 	_moon = engine.create_entity<Entity>();
-	_moon->create_component<ModelRenderer>( Assets::get_model( "suprengine::sphere" ), "suprengine::color", Color::from_hex( "#ffffff" ) );
 	_moon->transform->scale = Vec3( 50.0f );
+	_moon->create_component<ModelRenderer>( Assets::get_model( "ekosystem::moon" ), "suprengine::texture", Color::white );
 	
 	resize( size );
 
@@ -65,12 +65,17 @@ void World::update( float dt )
 	_sun_direction.z = math::sin( sun_angle );
 	_photosynthesis_multiplier = math::max( 0.0f, Vec3::dot( _sun_direction, -Vec3::up ) );
 
+	Engine& engine = Engine::instance();
+
 	_sun->transform->set_location( -_sun_direction * 500.0f );
 	_moon->transform->set_location( _sun_direction * 500.0f );
 
+	const Vec3 camera_location = engine.camera->transform->location + engine.camera->get_offset();
+	_sun->transform->look_at( camera_location );
+	_moon->transform->look_at( camera_location );
+
 	const bool is_sun_time = Vec3::dot( _sun_direction, -Vec3::up ) > 0.0f;
 
-	Engine& engine = Engine::instance();
 	RenderBatch* render_batch = engine.get_render_batch();
 
 	struct DayNightColor
