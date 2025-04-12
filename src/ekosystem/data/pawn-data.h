@@ -57,6 +57,9 @@ namespace eks
 
 		//  Movement speed in tile per seconds
 		float move_speed = 1.0f;
+		
+		float start_sleep_time = 20.0f;
+		float end_sleep_time = 6.0f;
 
 		//  Range amount of child to generate upon reproduction.
 		//  Set to 0 to disable reproduction.

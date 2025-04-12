@@ -57,26 +57,72 @@ void World::update( float dt )
 {
 	// Update world time
 	constexpr float FULL_CYCLE_GAME_TIME = 24.0f;
-	_world_time = math::fmod( _world_time + dt, FULL_CYCLE_GAME_TIME );
+	_world_time = math::fmod( _world_time + dt * world_time_scale, FULL_CYCLE_GAME_TIME );
 
 	// Update sun direction
 	const float sun_angle = math::HALF_PI + _world_time / FULL_CYCLE_GAME_TIME * math::DOUBLE_PI;
-	_sun_direction.x = math::cos( sun_angle );
+	_sun_direction.x = -math::cos( sun_angle );
 	_sun_direction.z = math::sin( sun_angle );
 	_photosynthesis_multiplier = math::max( 0.0f, Vec3::dot( _sun_direction, -Vec3::up ) );
 
 	_sun->transform->set_location( -_sun_direction * 500.0f );
 	_moon->transform->set_location( _sun_direction * 500.0f );
 
-	//printf( "WorldTime=%.2f: PhMul=%.2f\n", _world_time, get_photosynthesis_multiplier() );
-
 	const bool is_sun_time = Vec3::dot( _sun_direction, -Vec3::up ) > 0.0f;
 
-	// Update ambient direction
 	Engine& engine = Engine::instance();
 	RenderBatch* render_batch = engine.get_render_batch();
-	render_batch->set_ambient_direction( is_sun_time ? _sun_direction : -_sun_direction );
-	render_batch->set_ambient_color( is_sun_time ? Color::from_hex( "#fff98a" ) : Color::from_hex( "#666666" ) );
+
+	struct DayNightColor
+	{
+		float time = 0.0f;
+		Color sky_color = Color::white;
+		Color ambient_color = Color::white;
+	};
+	constexpr std::array<DayNightColor, 7> DAYNIGHT_COLORS {
+		DayNightColor { 19.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8D81D4FF ) },
+		DayNightColor { 18.0f, Color::from_0x( 0xAE445AFF ), Color::from_0x( 0xAE445AFF ) },
+		DayNightColor { 17.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
+		DayNightColor { 7.0f, Color::from_0x( 0x8BD5FFFF ), Color::from_0x( 0x8BD5FFFF ) },
+		DayNightColor { 6.0f, Color::from_0x( 0xFCFFBAFF ), Color::from_0x( 0xFCFFBAFF ) },
+		DayNightColor { 5.0f, Color::from_0x( 0x8EA3CDFF ), Color::from_0x( 0x8EA3CDFF ) },
+		DayNightColor { 0.0f, Color::from_0x( 0x0A0816FF ), Color::from_0x( 0x8d81d4FF ) },
+	};
+	size_t current_daynight_color_index = 0;
+	size_t next_daynight_color_index = 0;
+	for ( int i = 0; i < DAYNIGHT_COLORS.size(); i++ )
+	{
+		const DayNightColor& daynight_color = DAYNIGHT_COLORS[i];
+		if ( _world_time > daynight_color.time )
+		{
+			current_daynight_color_index = i;
+			if ( i - 1 >= 0 )
+			{
+				next_daynight_color_index = i - 1;
+			}
+			else
+			{
+				next_daynight_color_index = DAYNIGHT_COLORS.size() - 1;
+			}
+
+			break;
+		}
+	}
+
+	const DayNightColor& current_daynight = DAYNIGHT_COLORS[current_daynight_color_index];
+	const DayNightColor& next_daynight = DAYNIGHT_COLORS[next_daynight_color_index];
+
+	float alpha = math::remap(
+		_world_time,
+		current_daynight.time, current_daynight.time > next_daynight.time ? FULL_CYCLE_GAME_TIME + next_daynight.time : next_daynight.time,
+		0.0f, 1.0f
+	);
+
+	// Apply day-night cycle
+	render_batch->set_background_color( Color::lerp( current_daynight.sky_color, next_daynight.sky_color, alpha ) );
+	render_batch->set_ambient_direction( _sun_direction );
+	render_batch->set_ambient_color( Color::lerp( current_daynight.ambient_color, next_daynight.ambient_color, alpha ) );
+	render_batch->set_ambient_scale( 0.2f );
 }
 
 SharedPtr<Pawn> World::create_pawn(

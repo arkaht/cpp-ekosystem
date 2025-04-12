@@ -29,7 +29,7 @@ namespace eks
 		{
 			const Pawn* owner = machine->owner;
 			const World* world = owner->get_world();
-			if ( world->is_within_world_time( 6.0f, 22.0f ) ) return false;
+			if ( !world->is_within_world_time( owner->data->start_sleep_time, owner->data->end_sleep_time ) ) return false;
 
 			return true;
 		}

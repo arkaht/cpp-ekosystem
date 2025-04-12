@@ -84,7 +84,6 @@ void GameInstance::init()
 	//  setup render batch
 	auto render_batch = get_render_batch();
 	render_batch->set_debug_output( false );
-	render_batch->set_background_color( Color::from_0x( 0x8CDEDCFF ) );
 
 	//  load scene
 	engine.create_scene<GameScene>();

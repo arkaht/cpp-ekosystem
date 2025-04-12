@@ -390,6 +390,18 @@ void DebugMenu::populate()
 	if ( ImGui::CollapsingHeader( "Ecosystem", ImGuiTreeNodeFlags_DefaultOpen ) )
 	{
 		ImGui::SeparatorText( "World" );
+
+		//	Display world time
+		const float world_time = world->get_world_time();
+		ImGui::Text(
+			"World Time: %02dh%02d\n",
+			static_cast<int>( world_time ),
+			static_cast<int>( ( world_time - math::floor( world_time ) ) * 60.0f )
+		);
+
+		ImGui::DragFloat( "World Time Scale", &world->world_time_scale, 0.01f, 0.01f, 4.0f );
+
+		// World Size
 		const Vec2 current_world_size = world->get_size();
 		int world_size[2] {
 			static_cast<int>( current_world_size.x ),
@@ -428,7 +440,7 @@ void DebugMenu::populate()
 		std::string key = _pawn_datas_names[_selected_pawn_data_id];
 		auto& data = pawn_datas.at( key );
 
-		const char* create_pawn_data_popup_id = "Create Data";
+		constexpr const char* create_pawn_data_popup_id = "Create Data";
 		if ( ImGui::Button( "Create Data" ) )
 		{
 			memset( _small_input_buffer, NULL, settings::SMALL_INPUT_BUFFER_SIZE );
@@ -539,6 +551,10 @@ void DebugMenu::populate()
 			//  Move speed
 			ImGui::DragFloat( "Move Speed", &data->move_speed, 0.01f, 0.0f );
 			ImGui::SetItemTooltip( "Movement speed in tile per seconds" );
+
+			//	Sleep time
+			ImGui::DragFloat2( "Sleep Time", &data->start_sleep_time, 0.5f, 0.0f, 23.5f, "%.1fh" );
+			ImGui::SetItemTooltip( "World time period in which the pawn will try to sleep" );
 
 			//  Curves
 			int height_curve_index = find_index_of_element( _curve_assets_ids, data->movement_height_curve_name, 0 );

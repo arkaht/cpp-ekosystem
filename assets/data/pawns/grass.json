@@ -6,6 +6,8 @@
     "movement_height_curve_name": "",
     "movement_scale_y_curve_name": "",
     "move_speed": 0.0,
+    "start_sleep_time": 0.0,
+    "end_sleep_time": 0.0,
     "min_child_spawn_count": 1,
     "max_child_spawn_count": 2,
     "min_hunger_for_reproduction": 0.99,

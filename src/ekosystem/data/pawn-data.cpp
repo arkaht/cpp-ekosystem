@@ -19,6 +19,8 @@ bool PawnData::serialize( json::document& doc ) const
 	json::add( doc, JSON_KEY( movement_scale_y_curve_name ) );
 
 	json::add( doc, JSON_KEY( move_speed ) );
+	json::add( doc, JSON_KEY( start_sleep_time ) );
+	json::add( doc, JSON_KEY( end_sleep_time ) );
 
 	json::add( doc, JSON_KEY( min_child_spawn_count ) );
 	json::add( doc, JSON_KEY( max_child_spawn_count ) );
@@ -48,6 +50,8 @@ bool PawnData::unserialize( const json::document& doc )
 	json::get( doc, JSON_KEY_REF( movement_scale_y_curve_name ) );
 
 	json::get( doc, JSON_KEY_REF( move_speed ) );
+	json::get( doc, JSON_KEY_REF( start_sleep_time ) );
+	json::get( doc, JSON_KEY_REF( end_sleep_time ) );
 
 	json::get( doc, JSON_KEY_REF( max_child_spawn_count ) );
 	json::get( doc, JSON_KEY_REF( min_child_spawn_count ), max_child_spawn_count );
