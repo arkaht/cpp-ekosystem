@@ -33,31 +33,13 @@ void Pawn::setup()
 
 	if ( data->move_speed > 0.0f )
 	{
-		_particle_renderer = create_component<ParticleRenderer>();
-		_particle_renderer->is_spawning = false;
-		_particle_renderer->system_data.mesh = Assets::get_model( "ekosystem::facing.plane" )->get_mesh( 0 );
-		_particle_renderer->system_data.shader = Assets::get_shader( "suprengine::texture" );
-		_particle_renderer->system_data.texture = Assets::get_texture( "ekosystem::icon.sleep" );
-		_particle_renderer->system_data.render_scale = Vec3( 1.0f );
-		_particle_renderer->system_data.spawn_location_offset = Vec3 { 0.0f, 0.0f, 6.0f };
-		_particle_renderer->system_data.start_velocity = Vec3 { 1.5f, -1.5f, 1.5f };
-		_particle_renderer->system_data.custom_updater = 
-			[&]( ParticleInstance* particle, int index, float dt )
-			{
-				const SharedPtr<Curve> alpha_curve = Assets::get_curve( "particles/sleep-alpha" );
-				const SharedPtr<Curve> scale_curve = Assets::get_curve( "particles/sleep-scale" );
+		_sleep_particle_renderer = create_component<ParticleRenderer>();
+		_sleep_particle_renderer->is_spawning = false;
+		_sleep_particle_renderer->system_data = data->sleep_particle_system;
 
-				//	Offset
-				particle->offset.x = 0.08f * math::sin( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
-				particle->offset.y = -0.16f * math::cos( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
-
-				//	Modulate & Scale
-				const float time = particle->lifetime / _particle_renderer->system_data.max_lifetime;
-				particle->modulate.a = alpha_curve->evaluate_by_time( time ) * 255.0f;
-				particle->scale = scale_curve->evaluate_by_time( time );
-			};
-		_particle_renderer->system_data.max_lifetime = 3.0f;
-		_particle_renderer->system_data.spawn_rate = 1.0f;
+		_love_particle_renderer = create_component<ParticleRenderer>();
+		_love_particle_renderer->is_spawning = false;
+		_love_particle_renderer->system_data = data->love_particle_system;
 
 		//	Do not create a state machine for pawns with no ability to move.
 		//	It greatly helps to optimize memory usage and CPU time (e.g. I have
@@ -78,12 +60,12 @@ void Pawn::update_this( float dt )
 	//  TODO: Debug build only
 	_renderer->modulate = data->modulate;
 
-	if ( _particle_renderer )
+	if ( _sleep_particle_renderer )
 	{
 		//	TODO: Fix previous particles still alive when resuming activating
-		_particle_renderer->is_spawning = is_sleeping;
-		_particle_renderer->play_rate = math::lerp(
-			_particle_renderer->play_rate,
+		_sleep_particle_renderer->is_spawning = is_sleeping;
+		_sleep_particle_renderer->play_rate = math::lerp(
+			_sleep_particle_renderer->play_rate,
 			is_sleeping ? 1.0f : 4.0f,
 			dt * 4.0f
 		);
@@ -181,6 +163,12 @@ void Pawn::reproduce( SafePtr<Pawn> partner )
 	if ( partner.is_valid() )
 	{
 		partner->hunger -= partner->data->hunger_consumption_on_reproduction;
+	}
+
+	//	Spawn love particles
+	if ( _love_particle_renderer != nullptr )
+	{
+		_love_particle_renderer->spawn_particles();
 	}
 }
 

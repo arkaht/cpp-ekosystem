@@ -61,7 +61,7 @@ void GameScene::setup_world()
 	auto wolf_data  = _world->get_pawn_data( "wolf" );
 
 	//	Spawn grass
-	for ( int i = 0; i < 8; i++ )
+	for ( int i = 0; i < 16; i++ )
 	{
 		_world->create_pawn( grass_data, _world->find_random_tile_pos() );
 	}

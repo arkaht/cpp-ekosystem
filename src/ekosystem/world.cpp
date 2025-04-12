@@ -11,6 +11,7 @@
 #include <suprengine/utils/json.h>
 
 #include "entities/pawn.h"
+#include "components/particle-renderer.h"
 
 #include <filesystem>
 
@@ -353,6 +354,70 @@ float World::get_world_time() const
 
 void World::_init_datas()
 {
+	// Sleep particle system
+	SharedPtr<ParticleSystemData> sleep_particle_system = std::make_shared<ParticleSystemData>( 
+		ParticleSystemData {
+			.mesh = Assets::get_model( "ekosystem::facing.plane" )->get_mesh( 0 ),
+			.shader = Assets::get_shader( "suprengine::texture" ),
+			.texture = Assets::get_texture( "ekosystem::icon.sleep" ),
+			.render_scale = Vec3( 1.0f ),
+			.start_velocity = Vec3 { 1.5f, -1.5f, 1.5f },
+			.spawn_location_offset = Vec3 { 0.0f, 0.0f, 5.0f },
+			.custom_updater = [&]( ParticleInstance* particle, ParticleRenderer* renderer, float dt )
+			{
+				const SharedPtr<Curve> alpha_curve = Assets::get_curve( "particles/sleep-alpha" );
+				const SharedPtr<Curve> scale_curve = Assets::get_curve( "particles/sleep-scale" );
+
+				//	Offset
+				particle->offset.x = 0.08f * math::sin( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+				particle->offset.y = -0.16f * math::cos( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+
+				//	Modulate & Scale
+				const float time = particle->lifetime / renderer->system_data->max_lifetime;
+				particle->modulate.a = static_cast<uint8>( alpha_curve->evaluate_by_time( time ) * 255.0f );
+				particle->scale = scale_curve->evaluate_by_time( time );
+			},
+			.spawn_rate = 1.0f,
+			.max_lifetime = 3.0f,
+		}
+	);
+	// Love particle system
+	SharedPtr<ParticleSystemData> love_particle_system = std::make_shared<ParticleSystemData>( 
+		ParticleSystemData {
+			.mesh = Assets::get_model( "ekosystem::facing.plane" )->get_mesh( 0 ),
+			.shader = Assets::get_shader( "suprengine::texture" ),
+			.texture = Assets::get_texture( "ekosystem::icon.love" ),
+			.render_scale = Vec3( 1.0f ),
+			.velocity_loss = Vec3 { 3.0f, 3.0f, 1.5f },
+			.spawn_location_offset = Vec3 { 0.0f, 0.0f, 3.0f },
+			.custom_creator = [&]( ParticleInstance* particle, ParticleRenderer* renderer )
+			{
+				particle->velocity = Vec3::transform( Vec3::forward, random::generate_rotation() ) * 25.0f;
+				if ( particle->velocity.z < 0.0f )
+				{
+					particle->velocity.z = -particle->velocity.z;
+				}
+			},
+			.custom_updater = [&]( ParticleInstance* particle, ParticleRenderer* renderer, float dt )
+			{
+				const SharedPtr<Curve> alpha_curve = Assets::get_curve( "particles/sleep-alpha" );
+				const SharedPtr<Curve> scale_curve = Assets::get_curve( "particles/sleep-scale" );
+
+				//	Offset
+				particle->offset.x = 0.3f * math::sin( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+				particle->offset.y = -0.5f * math::cos( ( particle->unique_id * 2.0f + particle->lifetime ) * 3.0f );
+
+				//	Modulate & Scale
+				const float time = particle->lifetime / renderer->system_data->max_lifetime;
+				particle->modulate.a = static_cast<uint8>( alpha_curve->evaluate_by_time( time ) * 255.0f );
+				particle->scale = scale_curve->evaluate_by_time( time );
+			},
+			.is_one_shot = true,
+			.spawn_rate = 10.0f,
+			.max_lifetime = 3.0f,
+		}
+	);
+
 	//  Load all pawn data files
 	std::filesystem::directory_iterator itr( "assets/ekosystem/data/pawns/" );
 	for ( const auto& entry : itr )
@@ -377,6 +442,8 @@ void World::_init_datas()
 		//  Unserialize JSON to game data
 		auto data = std::make_shared<PawnData>();
 		data->name = file_path.filename().replace_extension().string();
+		data->sleep_particle_system = sleep_particle_system;
+		data->love_particle_system = love_particle_system;
 		data->unserialize( doc );
 		add_pawn_data( data );
 	}

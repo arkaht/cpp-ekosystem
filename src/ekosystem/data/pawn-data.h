@@ -12,6 +12,8 @@ namespace eks
 {
 	using namespace suprengine;
 
+	struct ParticleSystemData;
+
 	enum class Adjectives : uint32_t
 	{
 		None			= 0,
@@ -38,6 +40,7 @@ namespace eks
 
 	struct PawnData
 	{
+	public:
 		//  Unique name of the pawn data
 		std::string name = "N/A";
 		//  Model name of the pawn
@@ -80,6 +83,10 @@ namespace eks
 		//  Behaviors defining this pawn
 		Adjectives adjectives = Adjectives::None;
 
+		SharedPtr<ParticleSystemData> sleep_particle_system = nullptr;
+		SharedPtr<ParticleSystemData> love_particle_system = nullptr;
+
+	public:
 		/*
 		 * Returns whenever the data has a given adjective.
 		 */

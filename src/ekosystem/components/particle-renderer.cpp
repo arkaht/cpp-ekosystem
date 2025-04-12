@@ -15,61 +15,76 @@ ParticleRenderer::ParticleRenderer( Color modulate, int priority_order )
 
 void ParticleRenderer::update( float dt )
 {
+	if ( system_data == nullptr ) return;
+
 	//	Scale delta time by play rate
 	dt *= play_rate;
 
 	if ( is_spawning )
 	{
-		//	Spawn new particles with spawn rate
-		_spawn_time -= dt;
-		if ( _spawn_time < 0.0f )
+		if ( system_data->is_one_shot )
 		{
-			_spawn_particle();
+			if ( _particles.empty() )
+			{
+				spawn_particles();
+			}
+		}
+		else
+		{
+			_spawn_time -= dt;
+			//	Spawn new particles with spawn rate
+			if ( _spawn_time < 0.0f )
+			{
+				_spawn_particle();
 
-			const float next_spawn_time = 1.0f / system_data.spawn_rate;
-			_spawn_time += next_spawn_time;
+				const float next_spawn_time = 1.0f / system_data->spawn_rate;
+				_spawn_time += next_spawn_time;
+			}
 		}
 	}
 
 	//	Update all particles
-	int index = 0;
-	float game_time = Engine::instance().get_updater()->get_accumulated_seconds();
 	for ( auto itr = _particles.begin(); itr != _particles.end(); )
 	{
 		ParticleInstance& particle = *itr;
 
 		//	Update lifetime and check for death
 		particle.lifetime += dt;
-		if ( particle.lifetime > system_data.max_lifetime )
+		if ( particle.lifetime > system_data->max_lifetime )
 		{
 			itr = _particles.erase( itr );
 			continue;
 		}
 
 		particle.location += particle.velocity * dt;
-		particle.velocity += system_data.frame_velocity * dt;
 
-		if ( system_data.custom_updater != nullptr )
+		if ( system_data->velocity_loss.length_sqr() > 0.0f )
 		{
-			system_data.custom_updater( &particle, index, dt );
+			particle.velocity -= particle.velocity * system_data->velocity_loss * dt;
+		}
+		particle.velocity += system_data->frame_velocity * dt;
+
+		if ( system_data->custom_updater != nullptr )
+		{
+			system_data->custom_updater( &particle, this, dt );
 		}
 
 		itr++;
-		index++;
 	}
 }
 
 void ParticleRenderer::render( RenderBatch* render_batch )
 {
+	if ( system_data == nullptr ) return;
 	if ( _particles.empty() ) return;
 
-	Mesh* mesh = system_data.mesh;
+	Mesh* mesh = system_data->mesh;
 	ASSERT( mesh != nullptr );
 
-	SharedPtr<Shader> shader = system_data.shader.lock();
+	SharedPtr<Shader> shader = system_data->shader.lock();
 	ASSERT( shader != nullptr );
 
-	SharedPtr<Texture> texture = system_data.texture.lock();
+	SharedPtr<Texture> texture = system_data->texture.lock();
 	ASSERT( texture != nullptr );
 
 	Engine& engine = Engine::instance();
@@ -86,15 +101,32 @@ void ParticleRenderer::render( RenderBatch* render_batch )
 	for ( const ParticleInstance& particle : _particles )
 	{
 		const Mtx4 matrix = Mtx4::create_from_transform(
-			transform->scale * system_data.render_scale * particle.scale,
+			transform->scale * system_data->render_scale * particle.scale,
 			camera_rotation,
 			particle.location + particle.offset
 		);
 		render_batch->draw_mesh( matrix, mesh, shader, texture, particle.modulate );
 
 	#ifdef ENABLE_VISDEBUG
-		VisDebug::add_sphere( particle.location, ( transform->scale * system_data.render_scale ).length(), particle.modulate, 0.0f );
+		VisDebug::add_sphere( particle.location, ( transform->scale * system_data->render_scale ).length(), particle.modulate, 0.0f );
 	#endif
+	}
+}
+
+void ParticleRenderer::spawn_particles( int amount )
+{
+	//	Default to system's spawn rate
+	if ( amount < 0 )
+	{
+		amount = static_cast<int>( system_data->spawn_rate );
+	}
+
+	//	Ensure we don't try to spawn zero particles
+	ASSERT( amount != 0 );
+
+	for ( int i = 0; i < amount; i++ )
+	{
+		_spawn_particle();
 	}
 }
 
@@ -109,8 +141,13 @@ void ParticleRenderer::_spawn_particle()
 
 	ParticleInstance particle {};
 	particle.unique_id = _next_unique_id++; // Assigning an unique index which will overflow when reaching max value.
-	particle.location = transform->location + system_data.spawn_location_offset;
-	particle.velocity = system_data.start_velocity;
+	particle.location = transform->location + system_data->spawn_location_offset;
+	particle.velocity = system_data->start_velocity;
+
+	if ( system_data->custom_creator != nullptr )
+	{
+		system_data->custom_creator( &particle, this );
+	}
 
 	_particles.push_back( particle );
 }

@@ -51,7 +51,8 @@ namespace eks
 		World* _world = nullptr;
 		SharedPtr<ModelRenderer> _renderer = nullptr;
 		SharedPtr<StateMachine<Pawn>> _state_machine = nullptr;
-		SharedPtr<ParticleRenderer> _particle_renderer = nullptr;
+		SharedPtr<ParticleRenderer> _sleep_particle_renderer = nullptr;
+		SharedPtr<ParticleRenderer> _love_particle_renderer = nullptr;
 
 		//  Position in tile coordinates
 		Vec3 _tile_pos = Vec3::zero;

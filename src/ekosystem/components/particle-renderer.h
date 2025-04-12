@@ -5,6 +5,7 @@
 #include <suprengine/math/vec3.h>
 
 #include <suprengine/rendering/texture.h>
+#include <suprengine/utils/memory.h>
 
 #include <vector>
 
@@ -37,14 +38,13 @@ namespace eks
 	};
 
 	/*
-	 * Structure representing the template specifying how particles should
-	 * behave and render.
+	 * Structure representing the template for particles behavior and renderings.
 	 */
 	struct ParticleSystemData
 	{
-		SafePtr<Texture> texture = nullptr;
-		SafePtr<Shader> shader = nullptr;
 		Mesh* mesh = nullptr;
+		SafePtr<Shader> shader = nullptr;
+		SafePtr<Texture> texture = nullptr;
 
 		Vec3 render_scale = Vec3::one;
 
@@ -52,11 +52,16 @@ namespace eks
 		Vec3 start_velocity = Vec3::zero;
 		//	Velocity, in world space, to apply per second.
 		Vec3 frame_velocity = Vec3::zero;
+		Vec3 velocity_loss = Vec3::zero;
 
 		Vec3 spawn_location_offset = Vec3::zero;
 
-		std::function<void( ParticleInstance*, int, float )> custom_updater = nullptr;
+		std::function<void( ParticleInstance*, class ParticleRenderer* )> custom_creator = nullptr;
+		std::function<void( ParticleInstance*, class ParticleRenderer*, float )> custom_updater = nullptr;
 
+
+		//	Should spawn particles at the same time
+		bool is_one_shot = false;
 		//	Amount of particles to spawn per second.
 		float spawn_rate = 1.0f;
 		//	Maximum time in seconds for a particle to live.
@@ -74,10 +79,13 @@ namespace eks
 		void update( float dt ) override;
 		void render( RenderBatch* render_batch ) override;
 
+		void spawn_particles( int amount = -1 );
+
 		RenderPhase get_render_phase() const override;
 
 	public:
-		ParticleSystemData system_data {};
+		SharedPtr<ParticleSystemData> system_data = nullptr;
+
 		bool is_spawning = true;
 		float play_rate = 1.0f;
 
