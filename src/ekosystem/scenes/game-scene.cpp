@@ -151,19 +151,25 @@ void GameScene::update( float dt )
 		}
 	}
 
-	if ( inputs->is_key_just_pressed( SDL_SCANCODE_1 ) )
+	//	Numerical keys: Time scale modifiers
+	constexpr SDL_Scancode TIME_SCALE_SCANCODES[]
 	{
-		engine->get_updater()->time_scale = 1.0f;
-	}
-	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_2 ) )
+		SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4
+	};
+	int index = 0;
+	for ( SDL_Scancode scancode : TIME_SCALE_SCANCODES )
 	{
-		engine->get_updater()->time_scale = inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? 1.0f / 2.0f : 2.0f;
+		if ( inputs->is_key_just_pressed( scancode ) )
+		{
+			float scale_modifier = static_cast<float>( 1 << index );
+			engine->get_updater()->time_scale = inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? 1.0f / scale_modifier : scale_modifier;
+			break;
+		}
+		index++;
 	}
-	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_3 ) )
-	{
-		engine->get_updater()->time_scale = inputs->is_key_down( SDL_SCANCODE_LSHIFT ) ? 1.0f / 4.0f : 4.0f;
-	}
-	else if ( inputs->is_key_just_pressed( SDL_SCANCODE_SPACE ) )
+	
+	//	Space: Pausing/Un-pausing game
+	if ( inputs->is_key_just_pressed( SDL_SCANCODE_SPACE ) )
 	{
 		engine->is_game_paused = !engine->is_game_paused;
 	}
