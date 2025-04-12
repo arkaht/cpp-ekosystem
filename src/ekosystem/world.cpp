@@ -123,6 +123,7 @@ void World::update( float dt )
 	render_batch->set_ambient_direction( _sun_direction );
 	render_batch->set_ambient_color( Color::lerp( current_daynight.ambient_color, next_daynight.ambient_color, alpha ) );
 	render_batch->set_ambient_scale( 0.2f );
+	render_batch->set_ambient_min_brightness( 0.2f );
 }
 
 SharedPtr<Pawn> World::create_pawn(
