@@ -398,6 +398,10 @@ void DebugMenu::populate()
 			static_cast<int>( world_time ),
 			static_cast<int>( ( world_time - math::floor( world_time ) ) * 60.0f )
 		);
+		ImGui::Text(
+			"Photosynthesis Multiplier: %03d%%",
+			static_cast<int>( math::ceil( world->get_photosynthesis_multiplier() * 100.0f ) )
+		);
 
 		ImGui::DragFloat( "World Time Scale", &world->world_time_scale, 0.01f, 0.1f, 4.0f, "x%.2f" );
 

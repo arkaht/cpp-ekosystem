@@ -67,7 +67,12 @@ void World::update( float dt )
 	const float sun_angle = math::HALF_PI + _world_time / FULL_CYCLE_GAME_TIME * math::DOUBLE_PI;
 	_sun_direction.x = -math::cos( sun_angle );
 	_sun_direction.z = math::sin( sun_angle );
-	_photosynthesis_multiplier = math::max( 0.0f, Vec3::dot( _sun_direction, -Vec3::up ) );
+
+	constexpr const char* PHOTOSYNTHESIS_CURVE_NAME = "world/photosynthesis-multiplier";
+	if ( SharedPtr<Curve> photosynthesis_curve = Assets::get_curve( PHOTOSYNTHESIS_CURVE_NAME ) )
+	{
+		_photosynthesis_multiplier = photosynthesis_curve->evaluate_by_time( _world_time );
+	}
 
 	Engine& engine = Engine::instance();
 
