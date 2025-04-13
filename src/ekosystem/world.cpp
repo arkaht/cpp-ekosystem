@@ -209,8 +209,8 @@ void World::resize( const Vec2& size )
 
 	_ground->transform->set_scale(
 		Vec3 {
-			TILE_SIZE * 0.5f + _size.x * TILE_SIZE * 0.5f,
-			TILE_SIZE * 0.5f + _size.y * TILE_SIZE * 0.5f,
+			( _size.x + 1.5f ) * TILE_SIZE * 0.5f,
+			( _size.y + 1.5f ) * TILE_SIZE * 0.5f,
 			1.0f
 		}
 	);

@@ -47,8 +47,8 @@ void Pawn::setup()
 		//	4 states and 11 tasks for each Grass pawn) since they do not use it.
 		_state_machine = create_component<StateMachine<Pawn>>();
 		_state_machine->create_state<PawnFleeState>( 4.0f );
-		_state_machine->create_state<PawnSleepState>();
 		_state_machine->create_state<PawnChaseState>();
+		_state_machine->create_state<PawnSleepState>();
 		_state_machine->create_state<PawnReproductionState>( this );
 		_state_machine->create_state<PawnWanderState>();
 		_state_machine->is_active = false;	//	Disable updates by the engine for manual updates
@@ -97,10 +97,11 @@ void Pawn::tick( float dt )
 	}
 
 	//  Hunger gain
-	if ( !is_sleeping )
+	float hunger_modifier = is_sleeping ? _world->pawn_hunger_sleep_modifier : 1.0f;
+	if ( hunger_modifier > 0.0f )
 	{
 		hunger = math::max(
-			hunger - data->natural_hunger_consumption * dt,
+			hunger - data->natural_hunger_consumption * hunger_modifier * dt,
 			0.0f
 		);
 	}

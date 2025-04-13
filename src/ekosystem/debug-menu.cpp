@@ -399,7 +399,7 @@ void DebugMenu::populate()
 			static_cast<int>( ( world_time - math::floor( world_time ) ) * 60.0f )
 		);
 
-		ImGui::DragFloat( "World Time Scale", &world->world_time_scale, 0.01f, 0.01f, 4.0f );
+		ImGui::DragFloat( "World Time Scale", &world->world_time_scale, 0.01f, 0.1f, 4.0f, "x%.2f" );
 
 		// World Size
 		const Vec2 current_world_size = world->get_size();
@@ -416,6 +416,8 @@ void DebugMenu::populate()
 				}
 			);
 		}
+
+		ImGui::DragFloat( "Hunger when Sleeping Modifier", &world->pawn_hunger_sleep_modifier, 0.01f, 0.0f, 2.0f, "x%.2f" );
 
 		ImGui::Spacing();
 

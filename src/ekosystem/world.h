@@ -84,6 +84,7 @@ namespace eks
 		const float TILE_SIZE = 10.0f;
 
 		float world_time_scale = 0.5f;
+		float pawn_hunger_sleep_modifier = 0.0f;
 
 	private:
 		void _init_datas();
@@ -91,7 +92,7 @@ namespace eks
 		void _on_entity_removed( Entity* entity );
 
 	private:
-		float _world_time = 0.0f;
+		float _world_time = 8.0f;
 		Vec3 _sun_direction = Vec3::zero;
 		float _photosynthesis_multiplier = 0.0f;
 
