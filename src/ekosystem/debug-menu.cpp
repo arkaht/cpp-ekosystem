@@ -658,6 +658,10 @@ void DebugMenu::populate()
 			);
 			ImGui::SetItemTooltip( "Minimum amount of hunger to start eating" );
 
+			//	Hunger at Spawn
+			ImGui::DragFloat( "Hunger at Spawn", &data->hunger_at_spawn, 0.001f, 0.0f, MAX_HUNGER );
+			ImGui::SetItemTooltip( "Amount of hunger to spawn with" );
+
 			bool has_photosynthesis = data->has_adjective( Adjectives::Photosynthesis );
 			if ( !has_photosynthesis ) ImGui::BeginDisabled();
 			ImGui::DragFloat(

@@ -17,8 +17,7 @@ using namespace eks;
 Pawn::Pawn( World* world, SafePtr<PawnData> data )
 	: _world( world ), data( data ), _name( data->name + "#" + std::to_string( get_unique_id() ) )
 {
-	//  Avoid immediate reproduction upon creation
-	hunger = 1.0f - data->min_hunger_for_reproduction;
+	hunger = data->hunger_at_spawn;
 }
 
 void Pawn::setup()

@@ -79,6 +79,8 @@ namespace eks
 		float natural_hunger_consumption = 0.1f;
 		//  Minimum amount of hunger to start eating
 		float min_hunger_to_eat = 0.4f;
+		//	Amount of hunger to spawn with
+		float hunger_at_spawn = 0.5f;
 
 		//  Rate of increase of hunger per second by photosynthesis
 		float photosynthesis_gain = 0.05f;

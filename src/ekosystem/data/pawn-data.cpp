@@ -31,6 +31,7 @@ bool PawnData::serialize( json::document& doc ) const
 	json::add( doc, JSON_KEY( max_hunger ) );
 	json::add( doc, JSON_KEY( natural_hunger_consumption ) );
 	json::add( doc, JSON_KEY( min_hunger_to_eat ) );
+	json::add( doc, JSON_KEY( hunger_at_spawn ) );
 
 	json::add( doc, JSON_KEY( photosynthesis_gain ) );
 
@@ -62,6 +63,7 @@ bool PawnData::unserialize( const json::document& doc )
 	json::get( doc, JSON_KEY_REF( max_hunger ) );
 	json::get( doc, JSON_KEY_REF( natural_hunger_consumption ) );
 	json::get( doc, JSON_KEY_REF( min_hunger_to_eat ) );
+	json::get( doc, JSON_KEY_REF( hunger_at_spawn ), hunger_at_spawn );
 
 	json::get( doc, JSON_KEY_REF( photosynthesis_gain ) );
 
