@@ -92,21 +92,39 @@ void DebugMenu::populate()
 	static bool show_implot_demo = false;
 	if ( show_implot_demo ) ImPlot::ShowDemoWindow( &show_implot_demo );
 
+	//	Show Profiler window
+	static bool show_profiler = false;
+	if ( show_profiler )
+	{
+		if ( ImGui::Begin( "Profiler", &show_profiler ) )
+		{
+			Profiler* profiler = engine.get_profiler();
+			profiler->populate_imgui();
+		}
+		ImGui::End();
+	}
+
+	//	Shortcuts
+	if ( ImGui::Shortcut( ImGuiKey_F1, ImGuiInputFlags_RouteAlways ) )
+	{
+		show_profiler = !show_profiler;
+	}
+
 	//  Populate menu bar
 	if ( ImGui::BeginMenuBar() )
 	{
-		if ( ImGui::BeginMenu( "Development" ) )
+		if ( ImGui::BeginMenu( "Engine" ) )
+		{
+			ImGui::MenuItem( "Profiler", "F1", &show_profiler );
+			ImGui::EndMenu();
+		}
+		if ( ImGui::BeginMenu( "ImGui" ) )
 		{
 			ImGui::MenuItem( "ImGui Demo", NULL, &show_imgui_demo );
 			ImGui::MenuItem( "ImPlot Demo", NULL, &show_implot_demo );
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
-	}
-
-	if ( ImGui::Button( "Don't touch" ) )
-	{
-		engine.on_imgui_update.unlisten( &DebugMenu::populate, this );
 	}
 
 	//  Populate Engine header
@@ -158,9 +176,11 @@ void DebugMenu::populate()
 
 		//  Window mode
 		Window* window = engine.get_window();
-		const char* window_modes[] { "Windowed", "Fullscreen", "Borderless Fullscreen" };
+		constexpr const char* WINDOW_MODES_NAMES[] { "Windowed", "Fullscreen", "Borderless Fullscreen" };
+		constexpr int WINDOW_MODES_COUNT = IM_ARRAYSIZE( WINDOW_MODES_NAMES );
+
 		int current_window_mode = static_cast<int>( window->get_mode() );
-		if ( ImGui::Combo( "Window Mode", &current_window_mode, window_modes, 3 ) )
+		if ( ImGui::Combo( "Window Mode", &current_window_mode, WINDOW_MODES_NAMES, WINDOW_MODES_COUNT ) )
 		{
 			window->set_mode( static_cast<WindowMode>( current_window_mode ) );
 		}
@@ -255,14 +275,6 @@ void DebugMenu::populate()
 	#else
 		ImGui::TextWrapped( "Compile with ENABLE_VISDEBUG to access this feature." );
 	#endif
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-	}
-	if ( ImGui::CollapsingHeader( "Profiler" ) )
-	{
-		Profiler* profiler = engine.get_profiler();
-		profiler->populate_imgui();
 
 		ImGui::Spacing();
 		ImGui::Spacing();
