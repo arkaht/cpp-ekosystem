@@ -144,7 +144,7 @@ void Pawn::reproduce( SafePtr<Pawn> partner )
 		}
 	}
 
-	ASSERT( child_spawn_count > 0 );
+	if ( child_spawn_count <= 0 ) return;
 
 	//	Generate children around
 	//	NOTE: We only want animals to be able to spawn on vegetal.
