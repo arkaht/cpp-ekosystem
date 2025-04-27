@@ -108,7 +108,12 @@ void ParticleRenderer::render( RenderBatch* render_batch )
 		render_batch->draw_mesh( matrix, mesh, shader, texture, particle.modulate );
 
 	#ifdef ENABLE_VISDEBUG
-		VisDebug::add_sphere( particle.location, ( transform->scale * system_data->render_scale ).length(), particle.modulate, 0.0f );
+		VisDebug::add_sphere(
+			particle.location,
+			( transform->scale * system_data->render_scale ).length(),
+			particle.modulate, 0.0f,
+			DebugChannel::Particles
+		);
 	#endif
 	}
 }

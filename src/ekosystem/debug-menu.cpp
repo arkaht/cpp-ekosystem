@@ -285,6 +285,13 @@ void DebugMenu::populate()
 				static_cast<uint32>( DebugChannel::Pathfinding )
 			);
 
+			ImGui::TableNextColumn();
+			has_changed |= ImGui::CheckboxFlags(
+				"Particles",
+				&channels,
+				static_cast<uint32>( DebugChannel::Particles )
+			);
+
 			if ( has_changed )
 			{
 				VisDebug::active_channels = static_cast<DebugChannel>( channels );
