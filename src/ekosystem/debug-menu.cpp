@@ -174,15 +174,35 @@ void DebugMenu::populate()
 		ImGui::Spacing();
 		ImGui::SeparatorText( "Window" );
 
-		//  Window mode
+		// Window mode
 		Window* window = engine.get_window();
-		constexpr const char* WINDOW_MODES_NAMES[] { "Windowed", "Fullscreen", "Borderless Fullscreen" };
+		constexpr const char* WINDOW_MODES_NAMES[] { "Windowed", "Borderless Windowed", "Fullscreen", "Borderless Fullscreen" };
 		constexpr int WINDOW_MODES_COUNT = IM_ARRAYSIZE( WINDOW_MODES_NAMES );
 
 		int current_window_mode = static_cast<int>( window->get_mode() );
 		if ( ImGui::Combo( "Window Mode", &current_window_mode, WINDOW_MODES_NAMES, WINDOW_MODES_COUNT ) )
 		{
 			window->set_mode( static_cast<WindowMode>( current_window_mode ) );
+		}
+
+		// Window size
+		constexpr int WINDOW_SIZES_COUNT = 2;
+		constexpr const char* WINDOW_SIZES_NAMES[WINDOW_SIZES_COUNT] { "1280x720", "1920x1080" };
+		constexpr Vec2 WINDOW_SIZES[WINDOW_SIZES_COUNT] { Vec2 { 1280, 720 }, Vec2 { 1920, 1070 } };
+
+		int current_window_size = 0;
+		for ( int i = 0; i < WINDOW_SIZES_COUNT; i++ )
+		{
+			if ( window->get_size() == WINDOW_SIZES[i] )
+			{
+				current_window_size = i;
+			}
+		}
+
+		if ( ImGui::Combo( "Window Size", &current_window_size, WINDOW_SIZES_NAMES, WINDOW_SIZES_COUNT ) )
+		{
+			window->set_size( WINDOW_SIZES[current_window_size] );
+			SDL_SetWindowPosition( window->get_sdl_window(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED );
 		}
 
 		//	Vsync mode
