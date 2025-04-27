@@ -10,6 +10,11 @@
 
 using namespace suprengine;
 
+namespace suprengine
+{
+	class ModelRenderer;
+}
+
 namespace eks
 {
 	class GameScene : public Scene
@@ -27,6 +32,7 @@ namespace eks
 	private:
 		World* _world { nullptr };
 		SafePtr<CameraController> _camera_controller;
+		SafePtr<ModelRenderer> _inspector_arrow = nullptr;
 		DebugMenu _debug_menu;
 	};
 }

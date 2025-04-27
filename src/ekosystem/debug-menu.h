@@ -35,6 +35,7 @@ namespace eks
 		 */
 		SharedPtr<Pawn> create_pawn( SafePtr<PawnData> data, const Vec3& pos );
 
+		SafePtr<Pawn> get_selected_pawn() const;
 		const char* get_selected_pawn_data_name() const;
 
 	public:

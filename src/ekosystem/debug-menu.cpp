@@ -837,6 +837,11 @@ SharedPtr<Pawn> DebugMenu::create_pawn( SafePtr<PawnData> data, const Vec3& pos 
 	return pawn;
 }
 
+SafePtr<Pawn> DebugMenu::get_selected_pawn() const
+{
+	return _selected_pawn;
+}
+
 const char* DebugMenu::get_selected_pawn_data_name() const
 {
 	return _pawn_datas_names[_selected_pawn_data_id];

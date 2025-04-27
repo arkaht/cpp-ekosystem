@@ -25,6 +25,15 @@ void GameScene::init()
 {
 	auto& engine = Engine::instance();
 
+	SharedPtr<Entity> inspector_arrow = engine.create_entity<Entity>();
+	inspector_arrow->transform->rotation = Quaternion::look_at( -Vec3::up, Vec3::up );
+	inspector_arrow->transform->scale = Vec3( 3.0f );
+	_inspector_arrow = inspector_arrow->create_component<ModelRenderer>(
+		Assets::get_model( "suprengine::arrow" ),
+		"suprengine::color",
+		Color::red
+	);
+
 	setup_world();
 
 	//  Setup camera
@@ -186,6 +195,17 @@ void GameScene::update( float dt )
 		VisDebug::add_line( ambient_origin, ambient_origin + ambient_infos.direction * 5.0f, Color::white, 0.0f, DebugChannel::Lighting );
 	}
 #endif
+
+	const SafePtr<Pawn> selected_pawn = _debug_menu.get_selected_pawn();
+	if ( selected_pawn.is_valid() )
+	{
+		_inspector_arrow->transform->set_location( selected_pawn->transform->location + Vec3::up * 20.0f );
+		_inspector_arrow->is_active = true;
+	}
+	else
+	{
+		_inspector_arrow->is_active = false;
+	}
 
 	//	Animate grass shader
 	if ( SharedPtr<Shader> grass_shader = Assets::get_shader( "ekosystem::grass" ) )
