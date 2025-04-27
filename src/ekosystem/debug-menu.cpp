@@ -112,7 +112,7 @@ void DebugMenu::populate()
 	}
 
 	//	Shortcuts
-	if ( ImGui::Shortcut( ImGuiKey_F1, ImGuiInputFlags_RouteAlways ) )
+	if ( ImGui::Shortcut( ImGuiKey_F3, ImGuiInputFlags_RouteAlways ) )
 	{
 		show_profiler = !show_profiler;
 	}
@@ -122,7 +122,7 @@ void DebugMenu::populate()
 	{
 		if ( ImGui::BeginMenu( "Engine" ) )
 		{
-			ImGui::MenuItem( "Profiler", "F1", &show_profiler );
+			ImGui::MenuItem( "Profiler", "F3", &show_profiler );
 			ImGui::EndMenu();
 		}
 		if ( ImGui::BeginMenu( "ImGui" ) )
