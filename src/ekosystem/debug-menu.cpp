@@ -50,6 +50,13 @@ int find_index_of_element(
 
 void DebugMenu::populate()
 {
+	if ( ImGui::Shortcut( ImGuiKey_F2, ImGuiInputFlags_RouteAlways ) )
+	{
+		is_visible = !is_visible;
+	}
+
+	if ( !is_visible ) return;
+
 	auto& engine = Engine::instance();
 	auto updater = engine.get_updater();
 
@@ -69,7 +76,7 @@ void DebugMenu::populate()
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
 		| ImGuiWindowFlags_NoSavedSettings; //  Disable saved settings to avoid weird sizes caused by window modes
 
-	if ( !ImGui::Begin( "Ekosystem Debug Menu", nullptr, window_flags ) )
+	if ( !ImGui::Begin( "Ekosystem Debug Menu", &is_visible, window_flags ) )
 	{
 		ImGui::End();
 		return;

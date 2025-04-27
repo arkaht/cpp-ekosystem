@@ -41,6 +41,8 @@ namespace eks
 		World* world = nullptr;
 		SafePtr<CameraController> camera_controller = nullptr;
 
+		bool is_visible = true;
+
 	private:
 		void _refresh_assets_ids();
 		void _refresh_pawn_datas_names(
