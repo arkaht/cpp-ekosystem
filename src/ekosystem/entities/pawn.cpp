@@ -32,13 +32,19 @@ void Pawn::setup()
 
 	if ( data->move_speed > 0.0f )
 	{
-		_sleep_particle_renderer = create_component<ParticleRenderer>();
-		_sleep_particle_renderer->is_spawning = false;
-		_sleep_particle_renderer->system_data = data->sleep_particle_system;
+		if ( data->sleep_particle_system != nullptr )
+		{
+			_sleep_particle_renderer = create_component<ParticleRenderer>();
+			_sleep_particle_renderer->is_spawning = false;
+			_sleep_particle_renderer->system_data = data->sleep_particle_system;
+		}
 
-		_love_particle_renderer = create_component<ParticleRenderer>();
-		_love_particle_renderer->is_spawning = false;
-		_love_particle_renderer->system_data = data->love_particle_system;
+		if ( data->love_particle_system != nullptr )
+		{
+			_love_particle_renderer = create_component<ParticleRenderer>();
+			_love_particle_renderer->is_spawning = false;
+			_love_particle_renderer->system_data = data->love_particle_system;
+		}
 
 		//	Do not create a state machine for pawns with no ability to move.
 		//	It greatly helps to optimize memory usage and CPU time (e.g. I have
