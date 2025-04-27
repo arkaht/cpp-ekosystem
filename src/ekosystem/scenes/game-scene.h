@@ -31,7 +31,7 @@ namespace eks
 
 	private:
 		World* _world { nullptr };
-		SafePtr<CameraController> _camera_controller;
+		SafePtr<CameraController> _camera_controller = nullptr;
 		SafePtr<ModelRenderer> _inspector_arrow = nullptr;
 		DebugMenu _debug_menu;
 	};

@@ -3,6 +3,7 @@
 #include <suprengine/core/component.h>
 
 #include <suprengine/math/vec3.h>
+#include <suprengine/math/quaternion.h>
 
 namespace eks
 {
@@ -30,6 +31,8 @@ namespace eks
 		float target_arm_length = -1.0f;
 
 		Vec3 camera_offset = Vec3::zero;
+		Vec3 start_location = Vec3::zero;
+		Quaternion camera_rotation = Quaternion( DegAngles { -45.0f, -135.0f, 0.0f } );
 
 		SafePtr<Transform> focus_target = nullptr;
 	};
